@@ -1,0 +1,56 @@
+# To run from the command line, use the --build option to build the api image
+# The command should be run from the folder containing this file
+#
+# docker compose -p microservices-email up -d --build
+
+networks:
+  microservices-infrastructure_microservices-net:
+    external: true
+
+services:
+
+  mysql.microservices-email:
+    image: mysql:8.1
+    container_name: mysql.microservices-email
+    command: --default-authentication-plugin=caching_sha2_password
+    environment:
+      - MYSQL_DATABASE=email
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=P@ssw0rd
+      - MYSQL_ROOT_PASSWORD=P@ssw0rd
+    networks:
+      microservices-infrastructure_microservices-net:
+        ipv4_address: 172.30.0.81
+    ports:
+      - 17306:3306 # MySQL
+    healthcheck:
+      test: ["CMD-SHELL", "mysql -h localhost -u root -p$$MYSQL_ROOT_PASSWORD" ]
+      interval: 30s
+      timeout: 20s
+      retries: 10
+
+  api.microservices-email:
+    image: ${DOCKER_REGISTRY-}api.microservices-email
+    container_name: api.microservices-email
+    build:
+      context: ../../
+      dockerfile: Email/Email/Email.Api/Dockerfile
+      target: final
+    env_file:
+      - docker-compose.env
+    restart: no
+    extra_hosts:
+      - rabbitmq1:172.30.0.2
+      - rabbitmq2:172.30.0.3
+      - seq:172.30.0.4
+      - cloudfiles:172.30.0.8
+      - secretsmanager:172.30.0.12
+      - cloudemail:172.30.0.13
+    networks:
+      microservices-infrastructure_microservices-net:
+        ipv4_address: 172.30.0.80
+    ports:
+      - 17080:8080 # HTTP
+      - 17081:8081 # Prometheus metrics
+    depends_on:
+      - mysql.microservices-email

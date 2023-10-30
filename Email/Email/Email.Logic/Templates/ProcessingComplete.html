@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+            padding: 5px 15px 40px 15px;
+            background-color:  whitesmoke;
+            color: #222;
+        }
+        img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+        .Daily {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            display: inline-block;
+            text-align: center;
+            margin: 2px;
+            padding: 10px;
+            .Day { font-size: large; font-weight: bold; }
+            .MaxC { font-size: x-large; }
+            .MinC { font-size: small; }
+            .Percent { font-size: large; margin: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Your Journey</h1>
+
+    <p>You requested a journey from</p>
+    <p><b>{{ start }}</b></p>
+    <p>to</p>
+    <p><b>{{ destination }}</b></p>
+
+    {{ if hasimage }}
+        <img src="cid:{{image}}" />
+    {{ else }}
+        No Image Available
+    {{ end }}
+    <br />
+
+    <h1>Weather Forecast</h1>
+    {{ if hasweather }}
+        <div class="Weather">
+            {{ for day in forecast }}
+                <div class="Daily">
+                    <div class="Day">{{ day.day }}</div>
+                    <div class="Date">{{ day.date }}</div>
+                    <div class="Image"><img src="{{ day.image }}"/></div>
+                    <div class="MaxC">{{ day.max }}&deg;C</div>
+                    <div class="MinC">{{ day.min }}&deg;C</div>
+                    <div class="Percent">&#9748;{{ day.percentage }}%</div>
+                </div>
+            {{ end }}
+        </div>
+    {{ else }}
+        <b>No Weather Available</b>
+    {{ end }}
+
+    <h1>Directions</h1>
+    {{ if hasdirections }}
+        <p>Distance {{ distance }}km, travel time {{ time }}</p>
+        <ul>
+            {{ for step in directions }}
+                <li>{{step.description}}</li>
+            {{ end }}
+        </ul>
+    {{ else }}
+        <b>No Directions Available</b>
+    {{ end }}
+
+</body>
+</html>

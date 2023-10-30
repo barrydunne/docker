@@ -1,0 +1,54 @@
+@HostAddress = http://localhost:13080
+
+GET {{HostAddress}}/health/status
+Accept: application/json
+
+###
+GET {{HostAddress}}/health/version
+Accept: application/json
+
+###
+POST {{HostAddress}}/geocoding/jobcreated
+Content-Type: application/json
+Accept: application/json
+
+{
+  "jobId": "786E45DD-BE7A-4540-B606-2A94B8810F85",
+  "startingAddress": "Silver Creek Court, Orlando, FL 34714, United States",
+  "destinationAddress": "Chocolate Emporium, 6000 Universal Blvd, Orlando, FL 32819, United States",
+  "email": "microservices.notifications@example.com"
+}
+
+###
+POST {{HostAddress}}/geocoding/jobcreated
+Content-Type: application/json
+Accept: application/json
+
+{
+  "jobId": "786E45DD-BE7A-4540-B606-2A94B8810F85",
+  "startingAddress": "Silver Creek Court, Orlando, FL 34714, United States",
+  "destinationAddress": "",
+  "email": "microservices.notifications@example.com"
+}
+
+###
+POST {{HostAddress}}/geocoding/jobcreated
+Content-Type: application/json
+Accept: application/json
+
+{
+}
+
+###
+POST {{HostAddress}}/geocoding/jobcreated
+Content-Type: application/json
+Accept: application/json
+
+{
+  "jobId": "786E45DD-BE7A-4540-B606-2A94B8810F85",
+  "startingAddress": "Silver Creek Court, Orlando, FL 34714, United States",
+  "destinationAddress": "Chocolate Emporium, 6000 Universal Blvd, Orlando, FL 32819, United States",
+  "email": "Not an email address"
+}
+
+###

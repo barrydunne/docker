@@ -1,0 +1,285 @@
+# The command should be run from the folder containing this file
+#
+# docker compose -p microservices-infrastructure up -d --build
+
+networks:
+  microservices-net:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+services:
+
+  rabbitmq1.microservices-infrastructure:
+    image: rabbitmq.microservices-infrastructure
+    container_name: rabbitmq1.microservices-infrastructure
+    hostname: rabbitmq1
+    build:
+      context: ../RabbitMQ/
+      dockerfile: Dockerfile
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=P@ssw0rd
+      - RABBITMQ_DEFAULT_VHOST=microservices
+      - RABBITMQ_NODENAME=rabbit1
+      - RABBITMQ_ERLANG_COOKIE=2fde70c0-3606-4576-b83f-85e964f66f8d
+    command: /opt/rabbitmq/start-cluster.sh
+    restart: unless-stopped
+    extra_hosts:
+      - rabbitmq2:172.30.0.3
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.2
+    ports:
+      - 10572:5672 # AMQP
+      - 10672:15672 # HTTP
+      - 10692:15692 # Prometheus metrics
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmqctl status"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  rabbitmq2.microservices-infrastructure:
+    image: rabbitmq.microservices-infrastructure
+    container_name: rabbitmq2.microservices-infrastructure
+    hostname: rabbitmq2
+    build:
+      context: ../RabbitMQ/
+      dockerfile: Dockerfile
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=P@ssw0rd
+      - RABBITMQ_DEFAULT_VHOST=microservices
+      - RABBITMQ_NODENAME=rabbit2
+      - RABBITMQ_ERLANG_COOKIE=2fde70c0-3606-4576-b83f-85e964f66f8d
+      - RABBITMQ_JOIN_NODE=rabbit1@rabbitmq1
+    command: /opt/rabbitmq/start-cluster.sh
+    restart: unless-stopped
+    extra_hosts:
+      - rabbitmq1:172.30.0.2
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.3
+    ports:
+      - 10573:5672 # AMQP
+      - 10673:15672 # HTTP
+      - 10693:15692 # Prometheus metrics
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmqctl status"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      - rabbitmq1.microservices-infrastructure
+
+  seq.microservices-infrastructure:
+    image: datalust/seq:2023.4
+    container_name: seq.microservices-infrastructure
+    environment:
+      - ACCEPT_EULA=Y
+    restart: unless-stopped
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.4
+    ports:
+      - 10081:80 # HTTP
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep seqsvr | grep -v grep || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+
+  # Temporary service to create default Seq signals
+  seq.init.microservices-infrastructure:
+    image: seq.init.microservices-infrastructure
+    container_name: seq.init.microservices-infrastructure
+    build:
+      context: ../Seq.Init/
+      dockerfile: Dockerfile
+    restart: "no"
+    extra_hosts:
+      - seq:172.30.0.4
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.5
+    depends_on:
+      - seq.microservices-infrastructure
+
+  prometheus.microservices-infrastructure:
+    image: prometheus.microservices-infrastructure
+    container_name: prometheus.microservices-infrastructure
+    build:
+      context: ../Prometheus/
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    extra_hosts:
+      - rabbitmq1:172.30.0.2
+      - rabbitmq2:172.30.0.3
+      - redis-metrics:172.30.0.11
+      - publicapi:172.30.0.21
+      - state:172.30.0.30
+      - geocoding:172.30.0.40
+      - directions:172.30.0.50
+      - weather:172.30.0.60
+      - imaging:172.30.0.70
+      - email:172.30.0.80
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.6
+    ports:
+      - 10082:9090 # HTTP
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+
+  grafana.microservices-infrastructure:
+    image: grafana.microservices-infrastructure
+    container_name: grafana.microservices-infrastructure
+    build:
+      context: ../Grafana/
+      dockerfile: Dockerfile
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=P@ssw0rd
+      # Anonymous access is currently not working in Grafana - see https://github.com/grafana/grafana/issues/54974
+      #- GF_AUTH_DISABLE_LOGIN_FORM=true
+      #- GF_AUTH_ANONYMOUS_ENABLED=true
+      #- GF_AUTH_ANONYMOUS_ORG_ROLE=Editor
+    restart: unless-stopped
+    extra_hosts:
+      - prometheus:172.30.0.6
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.7
+    ports:
+      - 10088:3000 # HTTP (Would have used 10080 but it's blocked by browsers: https://bugzilla.mozilla.org/show_bug.cgi?id=1677940)
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent --output /dev/null http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+    depends_on:
+      - prometheus.microservices-infrastructure
+
+  ftp.microservices-infrastructure:
+    image: ftp.microservices-infrastructure
+    container_name: ftp.microservices-infrastructure
+    build:
+      context: ../Ftp/
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.8
+    ports:
+      - 10020-10021:20-21 # FTP
+      - 10200-10299:10200-10299 # PASV FTP
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep vsftpd | grep -v grep || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  redis.microservices-infrastructure:
+    image: redis:7.2.2
+    container_name: redis.microservices-infrastructure
+    restart: unless-stopped
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.9
+    ports:
+      - 10379:6379
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+
+  redis.init.microservices-infrastructure:
+    image: redis.init.microservices-infrastructure
+    container_name: redis.init.microservices-infrastructure
+    build:
+      context: ../Redis.Init/
+      dockerfile: Dockerfile
+    restart: "no"
+    extra_hosts:
+      - redis:172.30.0.9
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.10
+    depends_on:
+      - redis.microservices-infrastructure
+
+  redis-metrics.microservices-infrastructure:
+    image: oliver006/redis_exporter:v1.55.0
+    container_name: redis-metrics.microservices-infrastructure
+    environment:
+      REDIS_ADDR: "redis:6379"
+      REDIS_USER: null
+      REDIS_PASSWORD: null
+    restart: unless-stopped
+    extra_hosts:
+      - redis:172.30.0.9
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.11
+    ports:
+      - 10121:9121 # Prometheus metrics
+    # No healthcheck as this image has no shell
+    depends_on:
+      - redis.microservices-infrastructure
+
+  secretsmanager.microservices-infrastructure:
+    image: ${DOCKER_REGISTRY-}secretsmanager.microservices-infrastructure
+    container_name: secretsmanager.microservices-infrastructure
+    build:
+      context: ../../
+      dockerfile: Infrastructure/SecretsManager/SecretsManager.Api/Dockerfile
+      target: final
+    restart: unless-stopped
+    extra_hosts:
+      - seq:172.30.0.4
+      - redis:172.30.0.9
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.12
+    ports:
+      - 10083:8080 # HTTP
+    depends_on:
+      - seq.microservices-infrastructure
+      - redis.microservices-infrastructure
+      - ids.microservices-infrastructure
+
+  smtp.microservices-infrastructure:
+    image: dockage/mailcatcher:0.9.0
+    container_name: smtp.microservices-infrastructure
+    restart: unless-stopped
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.13
+    ports:
+      - 10025:1025 # SMTP
+      - 10084:1080 # HTTP
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:1080/messages"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+
+  ids.microservices-infrastructure:
+    image: ${DOCKER_REGISTRY-}ids.microservices-infrastructure
+    container_name: ids.microservices-infrastructure
+    build:
+      context: ../IdentityServer/
+      dockerfile: IdentityServer.Api/Dockerfile
+      target: final
+    restart: unless-stopped
+    extra_hosts:
+      - seq:172.30.0.4
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.14
+    ports:
+      - 10004:8080 # HTTP

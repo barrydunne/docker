@@ -1,0 +1,32 @@
+# To run from the command line, use the --build option to build the api image
+# The command should be run from the folder containing this file
+#
+# docker compose -p microservices-directions up -d --build
+
+networks:
+  microservices-infrastructure_microservices-net:
+    external: true
+
+services:
+
+  api.microservices-directions:
+    image: ${DOCKER_REGISTRY-}api.microservices-directions
+    container_name: api.microservices-directions
+    build:
+      context: ../../
+      dockerfile: Directions/Directions/Directions.Api/Dockerfile
+      target: final
+    env_file:
+      - docker-compose.env
+    restart: no
+    extra_hosts:
+      - rabbitmq1:172.30.0.2
+      - rabbitmq2:172.30.0.3
+      - seq:172.30.0.4
+      - secretsmanager:172.30.0.12
+    networks:
+      microservices-infrastructure_microservices-net:
+        ipv4_address: 172.30.0.50
+    ports:
+      - 14080:8080 # HTTP
+      - 14081:8081 # Prometheus metrics

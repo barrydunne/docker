@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>Barry Dunne</Authors>
+    <PackageOutputPath>..\Packages\</PackageOutputPath>
+    <Version>8.0.0-rc1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="4.18.0" />
+    <PackageReference Include="FluentFTP" Version="48.0.3" />
+    <PackageReference Include="Moq" Version="4.20.69" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microservices.Shared.CloudEmail\Microservices.Shared.CloudEmail.csproj" />
+    <ProjectReference Include="..\Microservices.Shared.CloudFiles\Microservices.Shared.CloudFiles.csproj" />
+    <ProjectReference Include="..\Microservices.Shared.CloudSecrets\Microservices.Shared.CloudSecrets.csproj" />
+    <ProjectReference Include="..\Microservices.Shared.Events\Microservices.Shared.Events.csproj" />
+    <ProjectReference Include="..\Microservices.Shared.Queues\Microservices.Shared.Queues.csproj" />
+    <ProjectReference Include="..\Microservices.Shared.RestSharpFactory\Microservices.Shared.RestSharpFactory.csproj" />
+  </ItemGroup>
+
+</Project>

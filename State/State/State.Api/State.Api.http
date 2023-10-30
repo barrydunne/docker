@@ -1,0 +1,39 @@
+@HostAddress = http://localhost:12080
+
+GET {{HostAddress}}/health/status
+Accept: application/json
+
+###
+GET {{HostAddress}}/health/version
+Accept: application/json
+
+###
+POST {{HostAddress}}/state/jobcreated
+Content-Type: application/json
+Accept: application/json
+
+{
+  "jobId": "786E45DD-BE7A-4540-B606-2A94B8810F85",
+  "status": "Processing"
+}
+
+###
+POST {{HostAddress}}/state/jobcreated
+Content-Type: application/json
+Accept: application/json
+
+{
+  "jobId": "786E45DD-BE7A-4540-B606-2A94B8810F85",
+  "status": "Failed",
+  "details": "Geocoding error"
+}
+
+###
+POST {{HostAddress}}/state/jobcreated
+Content-Type: application/json
+Accept: application/json
+
+{
+}
+
+###

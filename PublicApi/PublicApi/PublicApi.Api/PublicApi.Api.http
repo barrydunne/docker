@@ -1,0 +1,53 @@
+# To test idempotency caching use the 11080 port for nginx
+#@HostAddress = http://localhost:11080
+@HostAddress = http://localhost:11081
+
+GET {{HostAddress}}/nginx-health
+Accept: application/json
+
+###
+GET {{HostAddress}}/health/status
+Accept: application/json
+
+###
+GET {{HostAddress}}/health/version
+Accept: application/json
+
+###
+POST {{HostAddress}}/job
+X-Idempotency-Key: 29ED8480-767E-4B7C-ABCB-02DD95F72B46
+Content-Type: application/json
+Accept: application/json
+
+{
+  "startingAddress": "Silver Creek Court, Orlando, FL 34714, United States",
+  "destinationAddress": "Chocolate Emporium, 6000 Universal Blvd, Orlando, FL 32819, United States",
+  "email": "microservices.notifications@example.com"
+}
+
+###
+POST {{HostAddress}}/job
+X-Idempotency-Key: 29ED8480-767E-4B7C-ABCB-02DD95F72B46
+Content-Type: application/json
+Accept: application/json
+
+{
+}
+
+###
+POST {{HostAddress}}/job
+X-Idempotency-Key: 29ED8480-767E-4B7C-ABCB-02DD95F72B46
+Content-Type: application/json
+Accept: application/json
+
+{
+  "startingAddress": "Silver Creek Court, Orlando, FL 34714, United States",
+  "destinationAddress": "Chocolate Emporium, 6000 Universal Blvd, Orlando, FL 32819, United States",
+  "email": "Not an email address"
+}
+
+###
+GET {{HostAddress}}/job/c747509b-10a7-42a6-9137-d2e7fc045e06
+Accept: application/json
+
+###

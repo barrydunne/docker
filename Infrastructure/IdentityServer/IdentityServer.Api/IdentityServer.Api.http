@@ -1,0 +1,16 @@
+@HostAddress = http://localhost:10004
+
+GET {{HostAddress}}/.well-known/openid-configuration
+Accept: application/json
+
+###
+GET {{HostAddress}}/.well-known/openid-configuration/jwks
+Accept: application/json
+
+###
+POST {{HostAddress}}/connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=client&client_secret=secret&grant_type=client_credentials&scope=publicapi
+
+###

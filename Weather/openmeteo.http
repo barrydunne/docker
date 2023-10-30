@@ -1,0 +1,12 @@
+GET https://api.open-meteo.com/v1/forecast?latitude=28.3359915&longitude=-81.5957835&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timeformat=unixtime&timezone=auto
+Accept: application/json
+
+###
+GET https://api.open-meteo.com/v1/forecast?latitude=328.3359915&longitude=-81.5957835&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timeformat=unixtime&timezone=auto
+Accept: application/json
+
+###
+GET https://api.open-meteo.com/v1/forecast?daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timeformat=unixtime&timezone=auto
+Accept: application/json
+
+###

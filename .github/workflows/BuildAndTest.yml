@@ -1,0 +1,106 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build-and-test:
+
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      statuses: write
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Build
+      run: |
+        dotnet build -c Release ./Microservices.SharedLibraries/Microservices.SharedLibraries.sln
+
+        $workspace = $env:GITHUB_WORKSPACE
+        $packages = Join-Path -Path $workspace -ChildPath Microservices.SharedLibraries/Packages
+        dotnet nuget add source $packages -n Microservices.SharedLibraries
+
+        dotnet build -c Release ./Infrastructure/IdentityServer/IdentityServer.sln
+        dotnet build -c Release ./Infrastructure/SecretsManager/SecretsManager.sln
+        dotnet build -c Release ./PublicApi/PublicApi/PublicApi.sln
+        dotnet build -c Release ./State/State/State.sln
+        dotnet build -c Release ./Geocoding/Geocoding/Geocoding.sln
+        dotnet build -c Release ./Directions/Directions/Directions.sln
+        dotnet build -c Release ./Weather/Weather/Weather.sln
+        dotnet build -c Release ./Imaging/Imaging/Imaging.sln
+        dotnet build -c Release ./Email/Email/Email.sln
+        dotnet build -c Release ./Client/Client.sln
+
+    - name: Test SharedLibraries
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test ./Microservices.SharedLibraries/Microservices.Shared.CloudEmail.Smtp.UnitTests/Microservices.Shared.CloudEmail.Smtp.UnitTests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/ce.u.xml" /p:Include=[Microservices.Shared.CloudEmail.Smtp]* /p:Threshold=100
+        dotnet test ./Microservices.SharedLibraries/Microservices.Shared.CloudFiles.Ftp.UnitTests/Microservices.Shared.CloudFiles.Ftp.UnitTests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/cf.u.xml" /p:Include=[Microservices.Shared.CloudFiles.Ftp]* /p:Threshold=100
+        dotnet test ./Microservices.SharedLibraries/Microservices.Shared.CloudSecrets.SecretsManager.UnitTests/Microservices.Shared.CloudSecrets.SecretsManager.UnitTests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/cs.u.xml" /p:Include=[Microservices.Shared.CloudSecrets.SecretsManager]* /p:Threshold=100
+        dotnet test ./Microservices.SharedLibraries/Microservices.Shared.Queues.RabbitMQ.UnitTests/Microservices.Shared.Queues.RabbitMQ.UnitTests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/mq.u.xml" /p:Include=[Microservices.Shared.Queues.RabbitMQ]* /p:Threshold=100
+
+    - name: Test SecretsManager
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test ./Infrastructure/SecretsManager/SecretsManager.Logic.Tests/SecretsManager.Logic.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/sm.l.xml" /p:Include=[SecretsManager.Logic]* /p:Threshold=100
+
+    - name: Test PublicApi
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test ./PublicApi/PublicApi/PublicApi.Logic.Tests/PublicApi.Logic.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/p.l.xml" /p:Include=[PublicApi.Logic]* /p:Threshold=100
+
+    - name: Test State
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test ./State/State/State.Logic.Tests/State.Logic.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/s.l.xml" /p:Include=[State.Logic]* /p:Threshold=100
+
+    - name: Test Geocoding
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test ./Geocoding/Geocoding/Geocoding.Logic.Tests/Geocoding.Logic.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/g.l.xml" /p:Include=[Geocoding.Logic]* /p:Exclude=[*]*.MapQuestModels.* /p:Threshold=100
+        dotnet test ./Geocoding/Geocoding/Geocoding.ExternalService.Tests/Geocoding.ExternalService.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/g.e.xml" /p:Include=[Geocoding.ExternalService]* /p:Exclude=[*]*.MapQuestModels.* /p:Threshold=100
+
+    - name: Test Directions
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test ./Directions/Directions/Directions.Logic.Tests/Directions.Logic.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/d.l.xml" /p:Include=[Directions.Logic]* /p:Exclude=[*]*.MapQuestModels.* /p:Threshold=100
+        dotnet test ./Directions/Directions/Directions.ExternalService.Tests/Directions.ExternalService.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/d.e.xml" /p:Include=[Directions.ExternalService]* /p:Exclude=[*]*.MapQuestModels.* /p:Threshold=100
+
+    - name: Test Weather
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test ./Weather/Weather/Weather.Logic.Tests/Weather.Logic.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/w.l.xml" /p:Include=[Weather.Logic]* /p:Threshold=100
+        dotnet test ./Weather/Weather/Weather.ExternalService.Tests/Weather.ExternalService.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/w.e.xml" /p:Include=[Weather.ExternalService]* /p:Threshold=100
+
+    - name: Test Imaging
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test ./Imaging/Imaging/Imaging.Logic.Tests/Imaging.Logic.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/i.l.xml" /p:Include=[Imaging.Logic]* /p:Exclude=[*]*.BingModels.* /p:Threshold=100
+        dotnet test ./Imaging/Imaging/Imaging.ExternalService.Tests/Imaging.ExternalService.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/i.e.xml" /p:Include=[Imaging.ExternalService]* /p:Exclude=[*]*.BingModels.* /p:Threshold=100
+
+    - name: Test Email
+      run: |
+        $workspace = $env:GITHUB_WORKSPACE
+        dotnet test ./Email/Email/Email.Logic.Tests/Email.Logic.Tests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/e.l.xml" /p:Include=[Email.Logic]* /p:Threshold=100
+        dotnet test ./Email/Email/Email.Repository.UnitTests/Email.Repository.UnitTests.csproj -c Release --no-build --framework net8.0 -l "console;verbosity=normal" --results-directory:"$workspace/TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="$workspace/TestResults/e.ru.xml" /p:Include=[Email.Repository]* /p:Threshold=100
+
+    - name: Report Generator
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.26
+      with:
+        reports: TestResults/ce.u.xml;TestResults/cf.u.xml;TestResults/cs.u.xml;TestResults/cs.i.xml;TestResults/mq.u.xml;TestResults/sm.l.xml;TestResults/p.l.xml;TestResults/s.l.xml;TestResults/g.l.xml;TestResults/g.e.xml;TestResults/d.l.xml;TestResults/d.e.xml;TestResults/w.l.xml;TestResults/w.e.xml;TestResults/i.l.xml;TestResults/e.l.xml;TestResults/e.ru.xml
+        targetdir: TestResults/CoverageReport
+        reporttypes: HtmlInline_AzurePipelines_Dark
+
+    - name: Upload CoverageReport Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Code Coverage Report
+        path: TestResults/CoverageReport

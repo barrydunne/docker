@@ -1,0 +1,46 @@
+@HostAddress = http://localhost:14080
+
+GET {{HostAddress}}/health/status
+Accept: application/json
+
+###
+GET {{HostAddress}}/health/version
+Accept: application/json
+
+###
+POST {{HostAddress}}/directions/locationsready
+Content-Type: application/json
+Accept: application/json
+
+{
+  "jobId": "786E45DD-BE7A-4540-B606-2A94B8810F85",
+  "startingAddress": "Silver Creek Court, Orlando, FL 34714, United States",
+  "startingCoordinates": {
+    "Latitude": 28.3643807,
+    "Longitude": -81.6681109
+  },
+  "destinationAddress": "Chocolate Emporium, 6000 Universal Blvd, Orlando, FL 32819, United States",
+  "destinationCoordinates": {
+    "Latitude": 28.3359915,
+    "Longitude": -81.5957835
+  }
+}
+
+###
+POST {{HostAddress}}/directions/locationsready
+Content-Type: application/json
+Accept: application/json
+
+{
+}
+
+###
+POST {{HostAddress}}/directions/locationsready
+Content-Type: application/json
+Accept: application/json
+
+{
+  "jobId": "786E45DD-BE7A-4540-B606-2A94B8810F85"
+}
+
+###

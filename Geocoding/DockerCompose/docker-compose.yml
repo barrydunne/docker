@@ -1,0 +1,49 @@
+# To run from the command line, use the --build option to build the api image
+# The command should be run from the folder containing this file
+#
+# docker compose -p microservices-geocoding up -d --build
+
+networks:
+  microservices-infrastructure_microservices-net:
+    external: true
+
+services:
+
+  redis.microservices-geocoding:
+    image: redis:7.2.2
+    container_name: redis.microservices-geocoding
+    restart: no
+    networks:
+      microservices-infrastructure_microservices-net:
+        ipv4_address: 172.30.0.41
+    ports:
+      - 13379:6379
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+
+  api.microservices-geocoding:
+    image: ${DOCKER_REGISTRY-}api.microservices-geocoding
+    container_name: api.microservices-geocoding
+    build:
+      context: ../../
+      dockerfile: Geocoding/Geocoding/Geocoding.Api/Dockerfile
+      target: final
+    env_file:
+      - docker-compose.env
+    restart: no
+    extra_hosts:
+      - rabbitmq1:172.30.0.2
+      - rabbitmq2:172.30.0.3
+      - seq:172.30.0.4
+      - secretsmanager:172.30.0.12
+    networks:
+      microservices-infrastructure_microservices-net:
+        ipv4_address: 172.30.0.40
+    ports:
+      - 13080:8080 # HTTP
+      - 13081:8081 # Prometheus metrics
+    depends_on:
+      - redis.microservices-geocoding

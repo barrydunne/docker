@@ -1,0 +1,67 @@
+# To run from the command line, use the --build option to build the api image
+# The command should be run from the folder containing this file
+#
+# docker compose -p microservices-publicapi up -d --build
+
+networks:
+  microservices-infrastructure_microservices-net:
+    external: true
+
+services:
+
+  nginx.microservices-publicapi:
+    container_name: nginx.microservices-publicapi
+    image: nginx.microservices-publicapi
+    build:
+      context: ../Nginx/
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    networks:
+      microservices-infrastructure_microservices-net:
+        ipv4_address: 172.30.0.20
+    ports:
+      - 11080:80 # HTTP
+    depends_on:
+      - api.microservices-publicapi
+
+  mongo.microservices-publicapi:
+    image: mongo:7.0.2
+    container_name: mongo.microservices-publicapi
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=P@ssw0rd
+    restart: unless-stopped
+    networks:
+      microservices-infrastructure_microservices-net:
+        ipv4_address: 172.30.0.22
+    ports:
+      - 11017:27017 # Can connect from MongoDB Compass on mongodb://admin:P%40ssw0rd@localhost:11017/
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --eval 'db.runCommand({ ping: 1 })'"]
+      interval: 30s
+      timeout: 20s
+      retries: 10
+
+  api.microservices-publicapi:
+    image: ${DOCKER_REGISTRY-}api.microservices-publicapi
+    container_name: api.microservices-publicapi
+    build:
+      context: ../../
+      dockerfile: PublicApi/PublicApi/PublicApi.Api/Dockerfile
+      target: final
+    env_file:
+      - docker-compose.env
+    restart: no
+    extra_hosts:
+      - rabbitmq1:172.30.0.2
+      - rabbitmq2:172.30.0.3
+      - seq:172.30.0.4
+      - secretsmanager:172.30.0.12
+    networks:
+      microservices-infrastructure_microservices-net:
+        ipv4_address: 172.30.0.21
+    ports:
+      - 11081:8080 # HTTP
+      - 11082:8081 # Prometheus metrics
+    depends_on:
+      - mongo.microservices-publicapi

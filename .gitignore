@@ -1,0 +1,13 @@
+bin
+obj
+.vs
+.vscode
+.vscodecounter
+*.coverage
+*.log
+*.user
+TestResults
+/Microservices.SharedLibraries/Packages
+api-keys.json
+bing.http
+mapquest.http

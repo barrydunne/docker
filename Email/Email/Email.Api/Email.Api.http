@@ -1,0 +1,87 @@
+@HostAddress = http://localhost:17080
+
+GET {{HostAddress}}/health/status
+Accept: application/json
+
+###
+GET {{HostAddress}}/health/version
+Accept: application/json
+
+###
+POST {{HostAddress}}/email/processingcomplete
+Content-Type: application/json
+Accept: application/json
+
+{
+  "JobId":"4c9b1590-1d9c-4e67-b736-7b3a59ae8155",
+  "Email":"test@example.com",
+  "StartingAddress":"Silver Creek Court, Orlando, FL 34714, United States",
+  "DestinationAddress":"Chocolate Emporium, 6000 Universal Blvd, Orlando, FL 32819, United States",
+  "Directions":{"IsSuccessful":true,"TravelTimeSeconds":930,"DistanceKm":13.6,"Steps":[{"Description":"Head southeast on Silver Creek Ct. Go for 60 m.","TravelTimeSeconds":10,"DistanceKm":0.1},{"Description":"Turn right onto Clear Creek Cir. Go for 192 m.","TravelTimeSeconds":29,"DistanceKm":0.2},{"Description":"Turn right onto Woodcrest Way. Go for 1.4 km.","TravelTimeSeconds":200,"DistanceKm":1.4},{"Description":"Turn left onto US Highway 27 (US-27 S). Go for 2.0 km.","TravelTimeSeconds":109,"DistanceKm":2},{"Description":"Take slip road onto W Irlo Bronson Memorial Hwy (US-192 E) toward Kissimmee. Go for 9.0 km.","TravelTimeSeconds":428,"DistanceKm":9},{"Description":"Turn right onto Entry Point Blvd. Go for 361 m.","TravelTimeSeconds":51,"DistanceKm":0.4},{"Description":"Turn right onto Funie Steed Rd. Go for 273 m.","TravelTimeSeconds":38,"DistanceKm":0.3},{"Description":"Turn right onto Lake Dr. Go for 319 m.","TravelTimeSeconds":64,"DistanceKm":0.3},{"Description":"Arrive at Lake Dr. Your destination is on the left.","TravelTimeSeconds":0,"DistanceKm":0}],"Error":null},
+  "Weather":{"IsSuccessful":true,"Items":[{"ForecastTimeUnixSeconds":1697083200,"LocalTimeOffsetSeconds":-14400,"WeatherCode":96,"Description":"Light Thunderstorms With Hail","ImageUrl":"http://openweathermap.org/img/wn/11d@2x.png","MinimumTemperatureC":25,"MaximumTemperatureC":31.9,"PrecipitationProbabilityPercentage":100,"LocalTime":"2023-10-12T00:00:00-04:00"},{"ForecastTimeUnixSeconds":1697169600,"LocalTimeOffsetSeconds":-14400,"WeatherCode":96,"Description":"Light Thunderstorms With Hail","ImageUrl":"http://openweathermap.org/img/wn/11d@2x.png","MinimumTemperatureC":25.2,"MaximumTemperatureC":29.4,"PrecipitationProbabilityPercentage":65,"LocalTime":"2023-10-13T00:00:00-04:00"},{"ForecastTimeUnixSeconds":1697256000,"LocalTimeOffsetSeconds":-14400,"WeatherCode":3,"Description":"Cloudy","ImageUrl":"http://openweathermap.org/img/wn/03d@2x.png","MinimumTemperatureC":22.8,"MaximumTemperatureC":30.9,"PrecipitationProbabilityPercentage":13,"LocalTime":"2023-10-14T00:00:00-04:00"},{"ForecastTimeUnixSeconds":1697342400,"LocalTimeOffsetSeconds":-14400,"WeatherCode":0,"Description":"Sunny","ImageUrl":"http://openweathermap.org/img/wn/01d@2x.png","MinimumTemperatureC":18.5,"MaximumTemperatureC":27.4,"PrecipitationProbabilityPercentage":3,"LocalTime":"2023-10-15T00:00:00-04:00"},{"ForecastTimeUnixSeconds":1697428800,"LocalTimeOffsetSeconds":-14400,"WeatherCode":2,"Description":"Partly Cloudy","ImageUrl":"http://openweathermap.org/img/wn/02d@2x.png","MinimumTemperatureC":14.2,"MaximumTemperatureC":21.6,"PrecipitationProbabilityPercentage":0,"LocalTime":"2023-10-16T00:00:00-04:00"},{"ForecastTimeUnixSeconds":1697515200,"LocalTimeOffsetSeconds":-14400,"WeatherCode":0,"Description":"Sunny","ImageUrl":"http://openweathermap.org/img/wn/01d@2x.png","MinimumTemperatureC":12.2,"MaximumTemperatureC":21.7,"PrecipitationProbabilityPercentage":0,"LocalTime":"2023-10-17T00:00:00-04:00"},{"ForecastTimeUnixSeconds":1697601600,"LocalTimeOffsetSeconds":-14400,"WeatherCode":0,"Description":"Sunny","ImageUrl":"http://openweathermap.org/img/wn/01d@2x.png","MinimumTemperatureC":12.6,"MaximumTemperatureC":24.5,"PrecipitationProbabilityPercentage":3,"LocalTime":"2023-10-18T00:00:00-04:00"}],"Error":null},
+  "Imaging":{"IsSuccessful":true,"ImageUrl":"https://source.unsplash.com/featured/?Ireland","ImagePath":"4c9b15901d9c4e67b7367b3a59ae8155","Error":null},
+  "CreatedUtc":"2023-10-18T19:21:09.9303602Z"
+}
+
+###
+POST {{HostAddress}}/email/processingcomplete
+Content-Type: application/json
+Accept: application/json
+
+{
+}
+
+###
+POST {{HostAddress}}/email/locationsready
+Content-Type: application/json
+Accept: application/json
+
+{
+  "jobId": "786E45DD-BE7A-4540-B606-2A94B8810F85"
+}
+
+###
+GET {{HostAddress}}/search/recipient/test@example.com
+Accept: application/json
+
+###
+GET {{HostAddress}}/search/recipient/test@example.com?pageSize=40
+Accept: application/json
+
+###
+GET {{HostAddress}}/search/recipient/test@example.com?pageSize=2&pageNumber=1
+Accept: application/json
+
+###
+GET {{HostAddress}}/search/recipient/test@example.com?pageSize=-40
+Accept: application/json
+
+###
+GET {{HostAddress}}/search/recipient/test@example.com?pageSize=40&pageNumber=-2
+Accept: application/json
+
+###
+GET {{HostAddress}}/search/times/1672531200/1704067199
+Accept: application/json
+
+###
+GET {{HostAddress}}/search/times/1672531200/1704067199?pageSize=40
+Accept: application/json
+
+###
+GET {{HostAddress}}/search/times/1672531200/1704067199?pageSize=40&pageNumber=2
+Accept: application/json
+
+###
+GET {{HostAddress}}/search/times/1/9999999999
+Accept: application/json
+
+###
+GET {{HostAddress}}/search/times/1672531200/1704067199?pageSize=-40
+Accept: application/json
+
+###
+GET {{HostAddress}}/search/times/1672531200/1704067199?pageSize=40&pageNumber=-2
+Accept: application/json
+
+###

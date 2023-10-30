@@ -1,0 +1,31 @@
+global:
+  scrape_interval:     5s
+
+scrape_configs:
+  - job_name: 'rabbitmq'
+    static_configs:
+    - targets: ['rabbitmq1:15692', 'rabbitmq2:15692']
+  - job_name: 'redis'
+    static_configs:
+    - targets: ['redis-metrics:9121']
+  - job_name: 'public-api'
+    static_configs:
+    - targets: ['publicapi:8081']
+  - job_name: 'state'
+    static_configs:
+    - targets: ['state:8081']
+  - job_name: 'geocoding'
+    static_configs:
+    - targets: ['geocoding:8081']
+  - job_name: 'directions'
+    static_configs:
+    - targets: ['directions:8081']
+  - job_name: 'weather'
+    static_configs:
+    - targets: ['weather:8081']
+  - job_name: 'imaging'
+    static_configs:
+    - targets: ['imaging:8081']
+  - job_name: 'email'
+    static_configs:
+    - targets: ['email:8081']
