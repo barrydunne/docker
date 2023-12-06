@@ -7,13 +7,13 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "..\Docker
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "State.Api", "State.Api\State.Api.csproj", "{02825E17-96E4-4361-9C6B-BD9F5DCA8CDA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "State.Logic", "State.Logic\State.Logic.csproj", "{507CC8F2-AC92-4279-AD21-BFDCD81E6D51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "State.Application", "State.Application\State.Application.csproj", "{507CC8F2-AC92-4279-AD21-BFDCD81E6D51}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "State.Logic.Tests", "State.Logic.Tests\State.Logic.Tests.csproj", "{6CD4D57B-7FA1-4AF5-A354-EE7CE4EE69C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "State.Application.Tests", "State.Application.Tests\State.Application.Tests.csproj", "{6CD4D57B-7FA1-4AF5-A354-EE7CE4EE69C3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "State.Repository", "State.Repository\State.Repository.csproj", "{36296F39-E795-44E4-BA3D-0C8F7B73941B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "State.Infrastructure", "State.Infrastructure\State.Infrastructure.csproj", "{36296F39-E795-44E4-BA3D-0C8F7B73941B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "State.Repository.IntegrationTests", "State.Repository.IntegrationTests\State.Repository.IntegrationTests.csproj", "{EBD4A10C-ED6C-41D0-A395-B00AF37802AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "State.Infrastructure.IntegrationTests", "State.Infrastructure.IntegrationTests\State.Infrastructure.IntegrationTests.csproj", "{EBD4A10C-ED6C-41D0-A395-B00AF37802AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

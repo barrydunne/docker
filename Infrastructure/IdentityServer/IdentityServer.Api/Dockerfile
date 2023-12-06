@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 
 # Build from SDK image - This is the image that gets used when debugging from Visual Studio
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build

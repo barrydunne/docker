@@ -1,20 +1,20 @@
 using AspNet.KickStarter;
-using CSharpFunctionalExtensions;
+using AspNet.KickStarter.CQRS;
 using Microservices.Shared.Events;
 using Microservices.Shared.Utilities;
 using Weather.Api;
 using Weather.Api.BackgroundServices;
-using Weather.Logic.Commands;
-using Weather.Logic.Metrics;
+using Weather.Application.Commands.GenerateWeather;
 
 new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
     .WithSwagger()
+    .WithHealthHandler()
     .WithServices(IoC.RegisterServices)
     .WithEndpoints(Endpoints.Map)
     .WithMetrics(8081)
     .WithAdditionalConfiguration(_ => _.Services
-        .RegisterLogicMetrics()
         .AddQueueToCommandProcessor<LocationsReadyEvent, GenerateWeatherCommand, Result, LocationsReadyEventProcessor>())
+    .WithMappings(Mappings.Map)
     .Build(args)
     .Run();

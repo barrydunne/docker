@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 
 # Build from SDK image - This is the image that gets used when debugging from Visual Studio
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -15,19 +15,19 @@ RUN dotnet nuget add source /packages -n Microservices.SharedLibraries
 WORKDIR /src
 COPY ["Directions/Directions/Directions.Api/Directions.Api.csproj", "Directions.Api/"]
 RUN dotnet restore "Directions.Api/Directions.Api.csproj"
-COPY ["Directions/Directions/Directions.Logic/Directions.Logic.csproj", "Directions.Logic/"]
-RUN dotnet restore "Directions.Logic/Directions.Logic.csproj"
-COPY ["Directions/Directions/Directions.ExternalService/Directions.ExternalService.csproj", "Directions.ExternalService/"]
-RUN dotnet restore "Directions.ExternalService/Directions.ExternalService.csproj"
-COPY ["Directions/Directions/Directions.Logic.Tests/Directions.Logic.Tests.csproj", "Directions.Logic.Tests/"]
-RUN dotnet restore "Directions.Logic.Tests/Directions.Logic.Tests.csproj"
-COPY ["Directions/Directions/Directions.ExternalService.Tests/Directions.ExternalService.Tests.csproj", "Directions.ExternalService.Tests/"]
-RUN dotnet restore "Directions.ExternalService.Tests/Directions.ExternalService.Tests.csproj"
+COPY ["Directions/Directions/Directions.Application/Directions.Application.csproj", "Directions.Application/"]
+RUN dotnet restore "Directions.Application/Directions.Application.csproj"
+COPY ["Directions/Directions/Directions.Infrastructure/Directions.Infrastructure.csproj", "Directions.Infrastructure/"]
+RUN dotnet restore "Directions.Infrastructure/Directions.Infrastructure.csproj"
+COPY ["Directions/Directions/Directions.Application.Tests/Directions.Application.Tests.csproj", "Directions.Application.Tests/"]
+RUN dotnet restore "Directions.Application.Tests/Directions.Application.Tests.csproj"
+COPY ["Directions/Directions/Directions.Infrastructure.Tests/Directions.Infrastructure.Tests.csproj", "Directions.Infrastructure.Tests/"]
+RUN dotnet restore "Directions.Infrastructure.Tests/Directions.Infrastructure.Tests.csproj"
 # Build and test the projects
 COPY Directions/Directions/ .
 RUN dotnet build "Directions.Api/Directions.Api.csproj" -c Release -o /app/build
-RUN dotnet test "Directions.Logic.Tests/Directions.Logic.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Directions.Logic]* /p:Threshold=100
-RUN dotnet test "Directions.ExternalService.Tests/Directions.ExternalService.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Directions.ExternalService]* /p:Exclude=[Directions.ExternalService]*.MapQuestModels.* /p:Threshold=100
+RUN dotnet test "Directions.Application.Tests/Directions.Application.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Directions.Application]* /p:Threshold=100
+RUN dotnet test "Directions.Infrastructure.Tests/Directions.Infrastructure.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Directions.Infrastructure]* /p:Exclude=[Directions.Infrastructure]*.MapQuestModels.* /p:Threshold=100
 
 # Publish the application - Skipped for Visual Studio debugging
 FROM build AS publish

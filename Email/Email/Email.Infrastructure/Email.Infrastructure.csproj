@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microservices.Shared.CloudEmail.Smtp" Version="8.0.0" />
+    <PackageReference Include="Microservices.Shared.CloudFiles.Ftp" Version="8.0.0" />
+    <PackageReference Include="Microservices.Shared.CloudSecrets.SecretsManager" Version="8.0.0" />
+    <PackageReference Include="Microservices.Shared.Events" Version="8.0.0" />
+    <PackageReference Include="Microservices.Shared.Utilities" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.0-beta.2" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.14.0.81108">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.507">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Email.Application\Email.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Templates\ProcessingComplete.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\ProcessingComplete.html" />
+  </ItemGroup>
+
+</Project>

@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 
 # Build from SDK image - This is the image that gets used when debugging from Visual Studio
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -15,17 +15,17 @@ RUN dotnet nuget add source /packages -n Microservices.SharedLibraries
 WORKDIR /src
 COPY ["Email/Email/Email.Api/Email.Api.csproj", "Email.Api/"]
 RUN dotnet restore "Email.Api/Email.Api.csproj"
-COPY ["Email/Email/Email.Logic/Email.Logic.csproj", "Email.Logic/"]
-RUN dotnet restore "Email.Logic/Email.Logic.csproj"
-COPY ["Email/Email/Email.Logic.Tests/Email.Logic.Tests.csproj", "Email.Logic.Tests/"]
-RUN dotnet restore "Email.Logic.Tests/Email.Logic.Tests.csproj"
-COPY ["Email/Email/Email.Repository.UnitTests/Email.Repository.UnitTests.csproj", "Email.Repository.UnitTests/"]
-RUN dotnet restore "Email.Repository.UnitTests/Email.Repository.UnitTests.csproj"
+COPY ["Email/Email/Email.Application/Email.Application.csproj", "Email.Application/"]
+RUN dotnet restore "Email.Application/Email.Application.csproj"
+COPY ["Email/Email/Email.Application.Tests/Email.Application.Tests.csproj", "Email.Application.Tests/"]
+RUN dotnet restore "Email.Application.Tests/Email.Application.Tests.csproj"
+COPY ["Email/Email/Email.Infrastructure.UnitTests/Email.Infrastructure.UnitTests.csproj", "Email.Infrastructure.UnitTests/"]
+RUN dotnet restore "Email.Infrastructure.UnitTests/Email.Infrastructure.UnitTests.csproj"
 # Build and test the projects
 COPY Email/Email/ .
 RUN dotnet build "Email.Api/Email.Api.csproj" -c Release -o /app/build
-RUN dotnet test "Email.Logic.Tests/Email.Logic.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Email.Logic]* /p:Threshold=100
-RUN dotnet test "Email.Repository.UnitTests/Email.Repository.UnitTests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Email.Repository]* /p:Threshold=100
+RUN dotnet test "Email.Application.Tests/Email.Application.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Email.Application]* /p:Threshold=100
+RUN dotnet test "Email.Infrastructure.UnitTests/Email.Infrastructure.UnitTests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Email.Infrastructure]* /p:Threshold=100
 
 # Publish the application - Skipped for Visual Studio debugging
 FROM build AS publish

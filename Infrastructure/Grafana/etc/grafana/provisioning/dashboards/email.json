@@ -69,9 +69,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -140,9 +141,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -175,6 +177,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -283,6 +286,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -390,6 +394,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -497,6 +502,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -604,6 +610,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -748,9 +755,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -759,7 +767,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "email_logic_sendemail_handled_count{job=\"email\"}",
+          "expr": "email_application_sendemail_handled_count{job=\"email\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -769,7 +777,7 @@
           "useBackend": false
         }
       ],
-      "title": "Create Job Commands",
+      "title": "Send Email Commands",
       "type": "stat"
     },
     {
@@ -968,6 +976,7 @@
         "displayMode": "gradient",
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
@@ -979,7 +988,7 @@
         "showUnfilled": true,
         "valueMode": "hidden"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -988,7 +997,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "email_logic_sendemail_guard_bucket{job=\"email\"}",
+          "expr": "email_application_sendemail_guard_bucket{job=\"email\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1000,7 +1009,7 @@
           "useBackend": false
         }
       ],
-      "title": "Send Email Handler Guard Time",
+      "title": "Send Email Guard Time",
       "type": "bargauge"
     },
     {
@@ -1199,6 +1208,7 @@
         "displayMode": "gradient",
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
@@ -1210,7 +1220,7 @@
         "showUnfilled": true,
         "valueMode": "hidden"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -1219,7 +1229,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "email_logic_sendemail_image_bucket{job=\"email\"}",
+          "expr": "email_application_sendemail_image_bucket{job=\"email\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1231,7 +1241,7 @@
           "useBackend": false
         }
       ],
-      "title": "Send Email Handler Image Time",
+      "title": "Send Email Obtain Image Time",
       "type": "bargauge"
     },
     {
@@ -1430,6 +1440,7 @@
         "displayMode": "gradient",
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
@@ -1441,7 +1452,7 @@
         "showUnfilled": true,
         "valueMode": "hidden"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -1450,7 +1461,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "email_logic_sendemail_generate_bucket{job=\"email\"}",
+          "expr": "email_application_sendemail_generate_bucket{job=\"email\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1462,7 +1473,7 @@
           "useBackend": false
         }
       ],
-      "title": "Send Email Handler HTML Generation Time",
+      "title": "Send Email HTML Generation Time",
       "type": "bargauge"
     },
     {
@@ -1661,6 +1672,7 @@
         "displayMode": "gradient",
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
@@ -1672,7 +1684,7 @@
         "showUnfilled": true,
         "valueMode": "hidden"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -1681,7 +1693,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "email_logic_sendemail_email_bucket{job=\"email\"}",
+          "expr": "email_application_sendemail_email_bucket{job=\"email\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1693,7 +1705,7 @@
           "useBackend": false
         }
       ],
-      "title": "Send Email Handler Email Time",
+      "title": "Send Email Sending Email Time",
       "type": "bargauge"
     },
     {
@@ -1744,9 +1756,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -1755,7 +1768,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "email_logic_getemailssentbetweentimes_handled_count{job=\"email\"}",
+          "expr": "email_application_getemailssentbetweentimes_handled_count{job=\"email\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1964,6 +1977,7 @@
         "displayMode": "gradient",
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
@@ -1975,7 +1989,7 @@
         "showUnfilled": true,
         "valueMode": "hidden"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -1984,7 +1998,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "email_logic_getemailssentbetweentimes_load_bucket{job=\"email\"}",
+          "expr": "email_application_getemailssentbetweentimes_guard_bucket{job=\"email\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1996,7 +2010,239 @@
           "useBackend": false
         }
       ],
-      "title": "Get Emails Between Times Handler Load Time",
+      "title": "Get Emails Between Times Guard Time",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "DS_PROMETHEUS"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.001"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1μs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.005"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "5μs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.1"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "0.1"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.5"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "0.5"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "10.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "10"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "125.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "⅛"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "250.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "¼"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "500.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "½"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1000.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1s"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "+Inf"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": ">"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 8,
+        "y": 14
+      },
+      "id": 15,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "valueMode": "hidden"
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DS_PROMETHEUS"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "email_application_getemailssentbetweentimes_load_bucket{job=\"email\"}",
+          "format": "heatmap",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "{{le}}",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Get Emails Between Times Load Time",
       "type": "bargauge"
     },
     {
@@ -2031,10 +2277,10 @@
       "gridPos": {
         "h": 7,
         "w": 4,
-        "x": 8,
-        "y": 14
+        "x": 0,
+        "y": 21
       },
-      "id": 15,
+      "id": 16,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -2047,9 +2293,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -2058,7 +2305,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "email_logic_getemailssenttorecipient_handled_count{job=\"email\"}",
+          "expr": "email_application_getemailssenttorecipient_handled_count{job=\"email\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2259,14 +2506,15 @@
       "gridPos": {
         "h": 7,
         "w": 4,
-        "x": 12,
-        "y": 14
+        "x": 4,
+        "y": 21
       },
-      "id": 16,
+      "id": 17,
       "options": {
         "displayMode": "gradient",
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
@@ -2278,7 +2526,7 @@
         "showUnfilled": true,
         "valueMode": "hidden"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -2287,7 +2535,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "email_logic_getemailssenttorecipient_load_bucket{job=\"email\"}",
+          "expr": "email_application_getemailssenttorecipient_guard_bucket{job=\"email\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2299,13 +2547,244 @@
           "useBackend": false
         }
       ],
-      "title": "Get Emails To Recipient Handler Load Time",
+      "title": "Get Emails Sent To Recipient Guard Time",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "DS_PROMETHEUS"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.001"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1μs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.005"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "5μs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.1"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "0.1"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.5"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "0.5"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "10.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "10"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "125.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "⅛"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "250.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "¼"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "500.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "½"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1000.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1s"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "+Inf"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": ">"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 8,
+        "y": 21
+      },
+      "id": 18,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "valueMode": "hidden"
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DS_PROMETHEUS"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "email_application_getemailssenttorecipient_load_bucket{job=\"email\"}",
+          "format": "heatmap",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "{{le}}",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Get Emails To Recipient Load Time",
       "type": "bargauge"
     }
   ],
   "refresh": "5s",
   "schemaVersion": 38,
-  "style": "dark",
   "tags": [
     "Microservices",
     "email"

@@ -7,15 +7,15 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "..\Docker
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email.Api", "Email.Api\Email.Api.csproj", "{55D299C4-D70F-4AC5-BA22-D57A0D172E01}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email.Logic", "Email.Logic\Email.Logic.csproj", "{1AD50F30-50AC-49F9-BA30-42441C2BCB45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email.Application", "Email.Application\Email.Application.csproj", "{1AD50F30-50AC-49F9-BA30-42441C2BCB45}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email.Logic.Tests", "Email.Logic.Tests\Email.Logic.Tests.csproj", "{E73F381F-37A7-4991-BAC9-10AC0AA45DA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email.Application.Tests", "Email.Application.Tests\Email.Application.Tests.csproj", "{E73F381F-37A7-4991-BAC9-10AC0AA45DA4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email.Repository", "Email.Repository\Email.Repository.csproj", "{36D27384-CAF1-484F-B571-161A42A30AC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email.Infrastructure", "Email.Infrastructure\Email.Infrastructure.csproj", "{36D27384-CAF1-484F-B571-161A42A30AC7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email.Repository.IntegrationTests", "Email.Repository.IntegrationTests\Email.Repository.IntegrationTests.csproj", "{EA22AD02-B044-48BB-A1CC-9DB7A6605323}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email.Infrastructure.IntegrationTests", "Email.Infrastructure.IntegrationTests\Email.Infrastructure.IntegrationTests.csproj", "{EA22AD02-B044-48BB-A1CC-9DB7A6605323}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email.Repository.UnitTests", "Email.Repository.UnitTests\Email.Repository.UnitTests.csproj", "{E2B842FE-51B3-4AAE-9775-DEE215CB83A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Email.Infrastructure.UnitTests", "Email.Infrastructure.UnitTests\Email.Infrastructure.UnitTests.csproj", "{E2B842FE-51B3-4AAE-9775-DEE215CB83A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

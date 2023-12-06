@@ -7,13 +7,13 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "..\Docker
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Api", "Weather.Api\Weather.Api.csproj", "{CDDE5125-A8B0-4BF2-B409-2B76B34B0D70}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Logic", "Weather.Logic\Weather.Logic.csproj", "{9FAB722E-5988-46DB-994E-C78435FAB64F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Application", "Weather.Application\Weather.Application.csproj", "{9FAB722E-5988-46DB-994E-C78435FAB64F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Logic.Tests", "Weather.Logic.Tests\Weather.Logic.Tests.csproj", "{F5743A88-B64F-4A5E-9227-203CF038D8AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Application.Tests", "Weather.Application.Tests\Weather.Application.Tests.csproj", "{F5743A88-B64F-4A5E-9227-203CF038D8AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.ExternalService", "Weather.ExternalService\Weather.ExternalService.csproj", "{2A39F3F5-ACAC-49A7-8DBB-E877039ECE01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Infrastructure", "Weather.Infrastructure\Weather.Infrastructure.csproj", "{2A39F3F5-ACAC-49A7-8DBB-E877039ECE01}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.ExternalService.Tests", "Weather.ExternalService.Tests\Weather.ExternalService.Tests.csproj", "{3D95E76B-1EB6-40EA-828D-2EEAF4D73D83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Weather.Infrastructure.Tests", "Weather.Infrastructure.Tests\Weather.Infrastructure.Tests.csproj", "{3D95E76B-1EB6-40EA-828D-2EEAF4D73D83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

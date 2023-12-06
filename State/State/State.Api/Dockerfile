@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 
 # Build from SDK image - This is the image that gets used when debugging from Visual Studio
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -15,14 +15,14 @@ RUN dotnet nuget add source /packages -n Microservices.SharedLibraries
 WORKDIR /src
 COPY ["State/State/State.Api/State.Api.csproj", "State.Api/"]
 RUN dotnet restore "State.Api/State.Api.csproj"
-COPY ["State/State/State.Logic/State.Logic.csproj", "State.Logic/"]
-RUN dotnet restore "State.Logic/State.Logic.csproj"
-COPY ["State/State/State.Logic.Tests/State.Logic.Tests.csproj", "State.Logic.Tests/"]
-RUN dotnet restore "State.Logic.Tests/State.Logic.Tests.csproj"
+COPY ["State/State/State.Application/State.Application.csproj", "State.Application/"]
+RUN dotnet restore "State.Application/State.Application.csproj"
+COPY ["State/State/State.Application.Tests/State.Application.Tests.csproj", "State.Application.Tests/"]
+RUN dotnet restore "State.Application.Tests/State.Application.Tests.csproj"
 # Build and test the projects
 COPY State/State/ .
 RUN dotnet build "State.Api/State.Api.csproj" -c Release -o /app/build
-RUN dotnet test "State.Logic.Tests/State.Logic.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[State.Logic]* /p:Threshold=100
+RUN dotnet test "State.Application.Tests/State.Application.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[State.Application]* /p:Threshold=100
 
 # Publish the application - Skipped for Visual Studio debugging
 FROM build AS publish

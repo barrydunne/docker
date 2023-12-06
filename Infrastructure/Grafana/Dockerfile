@@ -1,2 +1,2 @@
-FROM grafana/grafana:10.2.0-ubuntu
+FROM grafana/grafana:10.2.2-ubuntu
 COPY etc/grafana /etc/grafana

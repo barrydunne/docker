@@ -14,16 +14,16 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Barry Dunne</Authors>
     <PackageOutputPath>..\Packages\</PackageOutputPath>
-    <Version>8.0.0-rc1</Version>
+    <Version>8.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ardalis.GuardClauses" Version="4.1.1" />
+    <PackageReference Include="Ardalis.GuardClauses" Version="4.2.0" />
     <PackageReference Include="FluentFTP" Version="48.0.3" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.1.23419.4" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0-rc.1.23419.4" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0-rc.1.23419.4" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.11.0.78383">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.14.0.81108">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

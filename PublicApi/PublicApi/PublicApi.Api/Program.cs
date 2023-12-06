@@ -1,5 +1,5 @@
 using AspNet.KickStarter;
-using CSharpFunctionalExtensions;
+using AspNet.KickStarter.CQRS;
 using Microservices.Shared.Events;
 using Microservices.Shared.Utilities;
 using Microsoft.AspNetCore.Http.Json;
@@ -7,19 +7,18 @@ using Microsoft.IdentityModel.Tokens;
 using PublicApi.Api;
 using PublicApi.Api.BackgroundServices;
 using PublicApi.Api.Validators;
-using PublicApi.Logic.Commands;
-using PublicApi.Logic.Metrics;
+using PublicApi.Application.Commands.UpdateStatus;
 using System.Text.Json.Serialization;
 
 new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
     .WithSwagger(useBearerToken: true)
+    .WithHealthHandler()
     .WithServices(IoC.RegisterServices)
     .WithEndpoints(Endpoints.Map)
     .WithFluentValidationFromAssemblyContaining<CreateJobRequestValidator>()
     .WithMetrics(8081)
     .WithAdditionalConfiguration(builder => builder.Services
-        .RegisterLogicMetrics()
         .AddQueueToCommandProcessor<JobStatusUpdateEvent, UpdateStatusCommand, Result, JobStatusUpdateEventProcessor>()
         .Configure<JsonOptions>(_ =>
         {
@@ -39,5 +38,6 @@ new ApiBuilder()
                 ValidateIssuerSigningKey = true
             };
         }))
+    .WithMappings(Mappings.Map)
     .Build(args)
     .Run();

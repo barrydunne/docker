@@ -69,9 +69,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -140,9 +141,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -175,6 +177,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -283,6 +286,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -390,6 +394,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -497,6 +502,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -604,6 +610,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -748,9 +755,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -759,7 +767,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "imaging_logic_saveimage_handled_count{job=\"imaging\"}",
+          "expr": "imaging_application_saveimage_handled_count{job=\"imaging\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -769,7 +777,7 @@
           "useBackend": false
         }
       ],
-      "title": "Save Image Commands",
+      "title": "Save Image - Commands",
       "type": "stat"
     },
     {
@@ -968,6 +976,7 @@
         "displayMode": "gradient",
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
@@ -979,7 +988,7 @@
         "showUnfilled": true,
         "valueMode": "hidden"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -988,7 +997,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "imaging_logic_saveimage_guard_bucket{job=\"imaging\"}",
+          "expr": "imaging_application_saveimage_guard_bucket{job=\"imaging\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1000,7 +1009,7 @@
           "useBackend": false
         }
       ],
-      "title": "Save Image Handler Guard Time",
+      "title": "Save Image - Guard Time",
       "type": "bargauge"
     },
     {
@@ -1199,6 +1208,7 @@
         "displayMode": "gradient",
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
@@ -1210,7 +1220,7 @@
         "showUnfilled": true,
         "valueMode": "hidden"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -1219,7 +1229,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "imaging_logic_saveimage_imaging_bucket{job=\"imaging\"}",
+          "expr": "imaging_application_saveimage_imaging_bucket{job=\"imaging\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1231,7 +1241,7 @@
           "useBackend": false
         }
       ],
-      "title": "Save Image Handler Imaging Time",
+      "title": "Save Image - Obtain URL Time",
       "type": "bargauge"
     },
     {
@@ -1430,6 +1440,7 @@
         "displayMode": "gradient",
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
@@ -1441,7 +1452,7 @@
         "showUnfilled": true,
         "valueMode": "hidden"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -1450,7 +1461,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "imaging_logic_saveimage_download_bucket{job=\"imaging\"}",
+          "expr": "imaging_application_saveimage_download_bucket{job=\"imaging\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1462,7 +1473,7 @@
           "useBackend": false
         }
       ],
-      "title": "Save Image Handler Download Time",
+      "title": "Save Image - Download Time",
       "type": "bargauge"
     },
     {
@@ -1661,6 +1672,7 @@
         "displayMode": "gradient",
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
@@ -1672,7 +1684,7 @@
         "showUnfilled": true,
         "valueMode": "hidden"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -1681,7 +1693,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "imaging_logic_saveimage_upload_bucket{job=\"imaging\"}",
+          "expr": "imaging_application_saveimage_upload_bucket{job=\"imaging\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1693,7 +1705,7 @@
           "useBackend": false
         }
       ],
-      "title": "Save Image Handler Upload Time",
+      "title": "Save Image - Upload Time",
       "type": "bargauge"
     },
     {
@@ -1892,6 +1904,7 @@
         "displayMode": "gradient",
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
@@ -1903,7 +1916,7 @@
         "showUnfilled": true,
         "valueMode": "hidden"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -1912,7 +1925,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "imaging_logic_saveimage_publish_bucket{job=\"imaging\"}",
+          "expr": "imaging_application_saveimage_publish_bucket{job=\"imaging\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1924,7 +1937,7 @@
           "useBackend": false
         }
       ],
-      "title": "Save Image Handler Publish Time",
+      "title": "Save Image - Publish Time",
       "type": "bargauge"
     },
     {
@@ -1975,9 +1988,10 @@
           "fields": "",
           "values": false
         },
-        "textMode": "auto"
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -1986,7 +2000,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "imaging_logic_getimageurl_handled_count{job=\"imaging\"}",
+          "expr": "imaging_application_getimageurl_handled_count{job=\"imaging\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1996,7 +2010,7 @@
           "useBackend": false
         }
       ],
-      "title": "Get Imaging URL Queries",
+      "title": "Get Image - URL Queries",
       "type": "stat"
     },
     {
@@ -2195,6 +2209,7 @@
         "displayMode": "gradient",
         "minVizHeight": 10,
         "minVizWidth": 0,
+        "namePlacement": "auto",
         "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
@@ -2206,7 +2221,7 @@
         "showUnfilled": true,
         "valueMode": "hidden"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -2215,7 +2230,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "imaging_logic_getimageurl_external_bucket{job=\"imaging\"}",
+          "expr": "imaging_application_getimageurl_guard_bucket{job=\"imaging\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2227,13 +2242,244 @@
           "useBackend": false
         }
       ],
-      "title": "Get Image URL Query Handler External Time",
+      "title": "Get Image URL - Guard Time",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "DS_PROMETHEUS"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.001"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1μs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.005"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "5μs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.1"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "0.1"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.5"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "0.5"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "10.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "10"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "125.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "⅛"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "250.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "¼"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "500.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "½"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1000.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1s"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "+Inf"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": ">"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 8,
+        "y": 14
+      },
+      "id": 16,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "auto",
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "valueMode": "hidden"
+      },
+      "pluginVersion": "10.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DS_PROMETHEUS"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "imaging_application_getimageurl_external_bucket{job=\"imaging\"}",
+          "format": "heatmap",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "{{le}}",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Get Image - URL External Time",
       "type": "bargauge"
     }
   ],
   "refresh": "5s",
   "schemaVersion": 38,
-  "style": "dark",
   "tags": [
     "Microservices",
     "imaging"

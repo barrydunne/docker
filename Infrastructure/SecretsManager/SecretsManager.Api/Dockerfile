@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 
 # Build from SDK image - This is the image that gets used when debugging from Visual Studio
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -15,14 +15,14 @@ RUN dotnet nuget add source /packages -n Microservices.SharedLibraries
 WORKDIR /src
 COPY ["Infrastructure/SecretsManager/SecretsManager.Api/SecretsManager.Api.csproj", "SecretsManager.Api/"]
 RUN dotnet restore "SecretsManager.Api/SecretsManager.Api.csproj"
-COPY ["Infrastructure/SecretsManager/SecretsManager.Logic/SecretsManager.Logic.csproj", "SecretsManager.Logic/"]
-RUN dotnet restore "SecretsManager.Logic/SecretsManager.Logic.csproj"
-COPY ["Infrastructure/SecretsManager/SecretsManager.Logic.Tests/SecretsManager.Logic.Tests.csproj", "SecretsManager.Logic.Tests/"]
-RUN dotnet restore "SecretsManager.Logic.Tests/SecretsManager.Logic.Tests.csproj"
+COPY ["Infrastructure/SecretsManager/SecretsManager.Application/SecretsManager.Application.csproj", "SecretsManager.Application/"]
+RUN dotnet restore "SecretsManager.Application/SecretsManager.Application.csproj"
+COPY ["Infrastructure/SecretsManager/SecretsManager.Application.Tests/SecretsManager.Application.Tests.csproj", "SecretsManager.Application.Tests/"]
+RUN dotnet restore "SecretsManager.Application.Tests/SecretsManager.Application.Tests.csproj"
 # Build and test the projects
 COPY Infrastructure/SecretsManager/ .
 RUN dotnet build "SecretsManager.Api/SecretsManager.Api.csproj" -c Release -o /app/build
-RUN dotnet test "SecretsManager.Logic.Tests/SecretsManager.Logic.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[SecretsManager.Logic]* /p:Threshold=100
+RUN dotnet test "SecretsManager.Application.Tests/SecretsManager.Application.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[SecretsManager.Application]* /p:Threshold=100
 
 # Publish the application - Skipped for Visual Studio debugging
 FROM build AS publish

@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 
 # Build from SDK image - This is the image that gets used when debugging from Visual Studio
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -15,19 +15,19 @@ RUN dotnet nuget add source /packages -n Microservices.SharedLibraries
 WORKDIR /src
 COPY ["Weather/Weather/Weather.Api/Weather.Api.csproj", "Weather.Api/"]
 RUN dotnet restore "Weather.Api/Weather.Api.csproj"
-COPY ["Weather/Weather/Weather.Logic/Weather.Logic.csproj", "Weather.Logic/"]
-RUN dotnet restore "Weather.Logic/Weather.Logic.csproj"
-COPY ["Weather/Weather/Weather.ExternalService/Weather.ExternalService.csproj", "Weather.ExternalService/"]
-RUN dotnet restore "Weather.ExternalService/Weather.ExternalService.csproj"
-COPY ["Weather/Weather/Weather.Logic.Tests/Weather.Logic.Tests.csproj", "Weather.Logic.Tests/"]
-RUN dotnet restore "Weather.Logic.Tests/Weather.Logic.Tests.csproj"
-COPY ["Weather/Weather/Weather.ExternalService.Tests/Weather.ExternalService.Tests.csproj", "Weather.ExternalService.Tests/"]
-RUN dotnet restore "Weather.ExternalService.Tests/Weather.ExternalService.Tests.csproj"
+COPY ["Weather/Weather/Weather.Application/Weather.Application.csproj", "Weather.Application/"]
+RUN dotnet restore "Weather.Application/Weather.Application.csproj"
+COPY ["Weather/Weather/Weather.Infrastructure/Weather.Infrastructure.csproj", "Weather.Infrastructure/"]
+RUN dotnet restore "Weather.Infrastructure/Weather.Infrastructure.csproj"
+COPY ["Weather/Weather/Weather.Application.Tests/Weather.Application.Tests.csproj", "Weather.Application.Tests/"]
+RUN dotnet restore "Weather.Application.Tests/Weather.Application.Tests.csproj"
+COPY ["Weather/Weather/Weather.Infrastructure.Tests/Weather.Infrastructure.Tests.csproj", "Weather.Infrastructure.Tests/"]
+RUN dotnet restore "Weather.Infrastructure.Tests/Weather.Infrastructure.Tests.csproj"
 # Build and test the projects
 COPY Weather/Weather/ .
 RUN dotnet build "Weather.Api/Weather.Api.csproj" -c Release -o /app/build
-RUN dotnet test "Weather.Logic.Tests/Weather.Logic.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Weather.Logic]* /p:Threshold=100
-RUN dotnet test "Weather.ExternalService.Tests/Weather.ExternalService.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Weather.ExternalService]* /p:Exclude=[Weather.ExternalService]*.OpenMeteoModels.* /p:Threshold=100
+RUN dotnet test "Weather.Application.Tests/Weather.Application.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Weather.Application]* /p:Threshold=100
+RUN dotnet test "Weather.Infrastructure.Tests/Weather.Infrastructure.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Weather.Infrastructure]* /p:Exclude=[Weather.Infrastructure]*.OpenMeteoModels.* /p:Threshold=100
 
 # Publish the application - Skipped for Visual Studio debugging
 FROM build AS publish

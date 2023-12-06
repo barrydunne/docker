@@ -7,13 +7,13 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "..\Docker
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Directions.Api", "Directions.Api\Directions.Api.csproj", "{AD83EA34-BBA2-4631-924C-787B26FD69FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Directions.Logic", "Directions.Logic\Directions.Logic.csproj", "{DEF1F84B-0C6A-4A3B-8254-12F3D5220A10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Directions.Application", "Directions.Application\Directions.Application.csproj", "{DEF1F84B-0C6A-4A3B-8254-12F3D5220A10}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Directions.Logic.Tests", "Directions.Logic.Tests\Directions.Logic.Tests.csproj", "{9059BD3F-BF9E-42B9-83D4-2F3296114571}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Directions.Application.Tests", "Directions.Application.Tests\Directions.Application.Tests.csproj", "{9059BD3F-BF9E-42B9-83D4-2F3296114571}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Directions.ExternalService", "Directions.ExternalService\Directions.ExternalService.csproj", "{C420A261-220C-4801-B933-7079277F57C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Directions.Infrastructure", "Directions.Infrastructure\Directions.Infrastructure.csproj", "{C420A261-220C-4801-B933-7079277F57C6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Directions.ExternalService.Tests", "Directions.ExternalService.Tests\Directions.ExternalService.Tests.csproj", "{51BBB29B-E8AA-4B76-9E97-D00963DEA3DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Directions.Infrastructure.Tests", "Directions.Infrastructure.Tests\Directions.Infrastructure.Tests.csproj", "{51BBB29B-E8AA-4B76-9E97-D00963DEA3DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

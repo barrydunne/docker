@@ -14,14 +14,14 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Barry Dunne</Authors>
     <PackageOutputPath>..\Packages\</PackageOutputPath>
-    <Version>8.0.0-rc1</Version>
+    <Version>8.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNet.KickStarter" Version="1.0.7" />
-    <PackageReference Include="AspNet.KickStarter.CQRS.Abstractions" Version="1.0.7" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0-rc.1.23419.4" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.11.0.78383">
+    <PackageReference Include="AspNet.KickStarter.CQRS" Version="1.1.0" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.14.0.81108">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

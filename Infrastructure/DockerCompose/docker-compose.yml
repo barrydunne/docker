@@ -143,10 +143,9 @@ services:
       dockerfile: Dockerfile
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=P@ssw0rd
-      # Anonymous access is currently not working in Grafana - see https://github.com/grafana/grafana/issues/54974
-      #- GF_AUTH_DISABLE_LOGIN_FORM=true
-      #- GF_AUTH_ANONYMOUS_ENABLED=true
-      #- GF_AUTH_ANONYMOUS_ORG_ROLE=Editor
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Editor
     restart: unless-stopped
     extra_hosts:
       - prometheus:172.30.0.6

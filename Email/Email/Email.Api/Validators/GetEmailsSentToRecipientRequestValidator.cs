@@ -1,32 +1,30 @@
 ﻿using Email.Api.Models;
+using Email.Application.Queries;
 using FluentValidation;
 
-namespace Email.Api.Validators
+namespace Email.Api.Validators;
+
+/// <summary>
+/// Validation rules for <see cref="GetEmailsSentToRecipientRequest"/>.
+/// </summary>
+public class GetEmailsSentToRecipientRequestValidator : AbstractValidator<GetEmailsSentToRecipientRequest>
 {
     /// <summary>
-    /// Validation rules for <see cref="GetEmailsSentToRecipientRequest"/>.
+    /// Initializes a new instance of the <see cref="GetEmailsSentToRecipientRequestValidator"/> class.
     /// </summary>
-    public class GetEmailsSentToRecipientRequestValidator : AbstractValidator<GetEmailsSentToRecipientRequest>
+    public GetEmailsSentToRecipientRequestValidator()
     {
-        private const int _maxPageSize = 500;
+        RuleFor(_ => _.RecipientEmail)
+            .Cascade(CascadeMode.Stop)
+            .NotNull()
+            .NotEmpty()
+            .EmailAddress();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GetEmailsSentToRecipientRequestValidator"/> class.
-        /// </summary>
-        public GetEmailsSentToRecipientRequestValidator()
-        {
-            RuleFor(_ => _.RecipientEmail)
-                .Cascade(CascadeMode.Stop) // If NotNull validator fails then do not run (and report) NotEmpty
-                .NotNull()
-                .NotEmpty()
-                .EmailAddress();
+        RuleFor(_ => _.PageSize)
+            .GreaterThanOrEqualTo(1)
+            .LessThanOrEqualTo(SearchRules.MaximumPageSize);
 
-            RuleFor(_ => _.PageSize)
-                .GreaterThanOrEqualTo(1)
-                .LessThanOrEqualTo(_maxPageSize);
-
-            RuleFor(_ => _.PageNumber)
-                .GreaterThanOrEqualTo(1);
-        }
+        RuleFor(_ => _.PageNumber)
+            .GreaterThanOrEqualTo(1);
     }
 }

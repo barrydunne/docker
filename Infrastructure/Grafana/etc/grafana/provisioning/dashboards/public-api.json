@@ -759,7 +759,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_logic_createjob_handled_count{job=\"public-api\"}",
+          "expr": "publicapi_application_createjob_handled_count{job=\"public-api\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -769,7 +769,7 @@
           "useBackend": false
         }
       ],
-      "title": "Create Job Commands",
+      "title": "Create Job - Commands",
       "type": "stat"
     },
     {
@@ -988,7 +988,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_logic_createjob_guard_bucket{job=\"public-api\"}",
+          "expr": "publicapi_application_createjob_guard_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1000,7 +1000,7 @@
           "useBackend": false
         }
       ],
-      "title": "Create Job Handler Guard Time",
+      "title": "Create Job - Guard Time",
       "type": "bargauge"
     },
     {
@@ -1219,7 +1219,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_logic_createjob_idempotency_bucket{job=\"public-api\"}",
+          "expr": "publicapi_application_createjob_idempotency_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1231,7 +1231,7 @@
           "useBackend": false
         }
       ],
-      "title": "Create Job Handler Idempotency Time",
+      "title": "Create Job - Idempotency Time",
       "type": "bargauge"
     },
     {
@@ -1450,7 +1450,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_logic_createjob_save_bucket{job=\"public-api\"}",
+          "expr": "publicapi_application_createjob_save_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1462,7 +1462,7 @@
           "useBackend": false
         }
       ],
-      "title": "Create Job Handler Save Time",
+      "title": "Create Job - Save Time",
       "type": "bargauge"
     },
     {
@@ -1681,7 +1681,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_logic_createjob_publish_bucket{job=\"public-api\"}",
+          "expr": "publicapi_application_createjob_publish_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1693,7 +1693,7 @@
           "useBackend": false
         }
       ],
-      "title": "Create Job Handler Publish Time",
+      "title": "Create Job - Publish Time",
       "type": "bargauge"
     },
     {
@@ -1755,7 +1755,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_logic_getjobstatus_handled_count{job=\"public-api\"}",
+          "expr": "publicapi_application_getjobstatus_handled_count{job=\"public-api\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1765,7 +1765,7 @@
           "useBackend": false
         }
       ],
-      "title": "Get Status Queries",
+      "title": "Get Job Status - Queries",
       "type": "stat"
     },
     {
@@ -1984,7 +1984,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_logic_getjobstatus_cacheget_bucket{job=\"public-api\"}",
+          "expr": "publicapi_application_getjobstatus_guard_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1996,7 +1996,7 @@
           "useBackend": false
         }
       ],
-      "title": "Get Status Handler Cache Get Time",
+      "title": "Get Job Status - Guard Time",
       "type": "bargauge"
     },
     {
@@ -2215,7 +2215,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_logic_getjobstatus_load_bucket{job=\"public-api\"}",
+          "expr": "publicapi_application_getjobstatus_cacheget_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2227,7 +2227,7 @@
           "useBackend": false
         }
       ],
-      "title": "Get Status Handler Load Time",
+      "title": "Get Job Status - Cache Get Time",
       "type": "bargauge"
     },
     {
@@ -2446,7 +2446,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_logic_getjobstatus_cacheset_bucket{job=\"public-api\"}",
+          "expr": "publicapi_application_getjobstatus_load_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2458,7 +2458,238 @@
           "useBackend": false
         }
       ],
-      "title": "Get Status Handler Cache Set Time",
+      "title": "Get Job Status - Load Time",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "DS_PROMETHEUS"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.001"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1μs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.005"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "5μs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.1"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "0.1"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "0.5"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "0.5"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "10.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "10"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "125.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "⅛"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "250.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "¼"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "500.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "½"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1000.0"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1s"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "+Inf"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": ">"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 16,
+        "y": 14
+      },
+      "id": 17,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "vertical",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "valueMode": "hidden"
+      },
+      "pluginVersion": "10.1.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "DS_PROMETHEUS"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "publicapi_application_getjobstatus_cacheset_bucket{job=\"public-api\"}",
+          "format": "heatmap",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "{{le}}",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Get Job Status - Cache Set Time",
       "type": "bargauge"
     },
     {
@@ -2496,7 +2727,7 @@
         "x": 0,
         "y": 21
       },
-      "id": 17,
+      "id": 18,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -2520,7 +2751,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_logic_updatestatus_handled_count{job=\"public-api\"}",
+          "expr": "publicapi_application_updatestatus_handled_count{job=\"public-api\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2530,7 +2761,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Status Commands",
+      "title": "Update Status - Commands",
       "type": "stat"
     },
     {
@@ -2724,7 +2955,7 @@
         "x": 4,
         "y": 21
       },
-      "id": 18,
+      "id": 19,
       "options": {
         "displayMode": "gradient",
         "minVizHeight": 10,
@@ -2749,7 +2980,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_logic_updatestatus_guard_bucket{job=\"public-api\"}",
+          "expr": "publicapi_application_updatestatus_guard_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2761,7 +2992,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Status Handler Guard Time",
+      "title": "Update Status - Guard Time",
       "type": "bargauge"
     },
     {
@@ -2955,7 +3186,7 @@
         "x": 8,
         "y": 21
       },
-      "id": 19,
+      "id": 20,
       "options": {
         "displayMode": "gradient",
         "minVizHeight": 10,
@@ -2980,7 +3211,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_logic_updatestatus_update_bucket{job=\"public-api\"}",
+          "expr": "publicapi_application_updatestatus_update_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2992,7 +3223,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Status Handler Update Time",
+      "title": "Update Status - Update Time",
       "type": "bargauge"
     }
   ],

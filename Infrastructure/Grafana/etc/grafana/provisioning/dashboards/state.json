@@ -759,7 +759,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_createjob_handled_count{job=\"state\"}",
+          "expr": "state_application_createjob_handled_count{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -769,7 +769,7 @@
           "useBackend": false
         }
       ],
-      "title": "Create Job Commands",
+      "title": "Create Job - Commands",
       "type": "stat"
     },
     {
@@ -988,7 +988,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_createjob_guard_bucket{job=\"state\"}",
+          "expr": "state_application_createjob_guard_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1000,7 +1000,7 @@
           "useBackend": false
         }
       ],
-      "title": "Create Job Handler Guard Time",
+      "title": "Create Job - Guard Time",
       "type": "bargauge"
     },
     {
@@ -1219,7 +1219,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_createjob_save_bucket{job=\"state\"}",
+          "expr": "state_application_createjob_save_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1231,7 +1231,7 @@
           "useBackend": false
         }
       ],
-      "title": "Create Job Handler Save Time",
+      "title": "Create Job - Save Time",
       "type": "bargauge"
     },
     {
@@ -1450,7 +1450,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_createjob_publish_bucket{job=\"state\"}",
+          "expr": "state_application_createjob_publish_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1462,7 +1462,7 @@
           "useBackend": false
         }
       ],
-      "title": "Create Job Handler Publish Time",
+      "title": "Create Job - Publish Time",
       "type": "bargauge"
     },
     {
@@ -1524,7 +1524,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updategeocodingresult_handled_count{job=\"state\"}",
+          "expr": "state_application_updategeocodingresult_handled_count{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1534,7 +1534,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Geocoding Commands",
+      "title": "Update Geocoding - Commands",
       "type": "stat"
     },
     {
@@ -1753,7 +1753,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updategeocodingresult_guard_bucket{job=\"state\"}",
+          "expr": "state_application_updategeocodingresult_guard_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1765,7 +1765,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Geocoding Handler Guard Time",
+      "title": "Update Geocoding - Guard Time",
       "type": "bargauge"
     },
     {
@@ -1984,7 +1984,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updategeocodingresult_update_bucket{job=\"state\"}",
+          "expr": "state_application_updategeocodingresult_update_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1996,7 +1996,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Geocoding Handler Update Time",
+      "title": "Update Geocoding - Update Time",
       "type": "bargauge"
     },
     {
@@ -2215,7 +2215,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updategeocodingresult_publish_bucket{job=\"state\"}",
+          "expr": "state_application_updategeocodingresult_publish_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2227,7 +2227,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Geocoding Handler Publish Time",
+      "title": "Update Geocoding - Publish Time",
       "type": "bargauge"
     },
     {
@@ -2289,7 +2289,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updatedirectionsresult_handled_count{job=\"state\"}",
+          "expr": "state_application_updatedirectionsresult_handled_count{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2299,7 +2299,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Directions Commands",
+      "title": "Update Directions - Commands",
       "type": "stat"
     },
     {
@@ -2518,7 +2518,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updatedirectionsresult_guard_bucket{job=\"state\"}",
+          "expr": "state_application_updatedirectionsresult_guard_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2530,7 +2530,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Directions Handler Guard Time",
+      "title": "Update Directions - Guard Time",
       "type": "bargauge"
     },
     {
@@ -2749,7 +2749,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updatedirectionsresult_update_bucket{job=\"state\"}",
+          "expr": "state_application_updatedirectionsresult_update_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2761,7 +2761,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Directions Handler Update Time",
+      "title": "Update Directions - Update Time",
       "type": "bargauge"
     },
     {
@@ -2980,7 +2980,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updatedirectionsresult_publish_bucket{job=\"state\"}",
+          "expr": "state_application_updatedirectionsresult_publish_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2992,7 +2992,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Directions Handler Publish Time",
+      "title": "Update Directions - Publish Time",
       "type": "bargauge"
     },
     {
@@ -3054,7 +3054,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updateweatherresult_handled_count{job=\"state\"}",
+          "expr": "state_application_updateweatherresult_handled_count{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -3064,7 +3064,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Weather Commands",
+      "title": "Update Weather - Commands",
       "type": "stat"
     },
     {
@@ -3283,7 +3283,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updateweatherresult_guard_bucket{job=\"state\"}",
+          "expr": "state_application_updateweatherresult_guard_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -3295,7 +3295,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Weather Handler Guard Time",
+      "title": "Update Weather - Guard Time",
       "type": "bargauge"
     },
     {
@@ -3514,7 +3514,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updateweatherresult_update_bucket{job=\"state\"}",
+          "expr": "state_application_updateweatherresult_update_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -3526,7 +3526,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Weather Handler Update Time",
+      "title": "Update Weather - Update Time",
       "type": "bargauge"
     },
     {
@@ -3745,7 +3745,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updateweatherresult_publish_bucket{job=\"state\"}",
+          "expr": "state_application_updateweatherresult_publish_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -3757,7 +3757,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Weather Handler Publish Time",
+      "title": "Update Weather - Publish Time",
       "type": "bargauge"
     },
     {
@@ -3819,7 +3819,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updateimagingresult_handled_count{job=\"state\"}",
+          "expr": "state_application_updateimagingresult_handled_count{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -3829,7 +3829,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Imaging Commands",
+      "title": "Update Imaging - Commands",
       "type": "stat"
     },
     {
@@ -4048,7 +4048,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updateimagingresult_guard_bucket{job=\"state\"}",
+          "expr": "state_application_updateimagingresult_guard_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -4060,7 +4060,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Imaging Handler Guard Time",
+      "title": "Update Imaging - Guard Time",
       "type": "bargauge"
     },
     {
@@ -4279,7 +4279,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updateimagingresult_update_bucket{job=\"state\"}",
+          "expr": "state_application_updateimagingresult_update_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -4291,7 +4291,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Imaging Handler Update Time",
+      "title": "Update Imaging - Update Time",
       "type": "bargauge"
     },
     {
@@ -4510,7 +4510,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_updateimagingresult_publish_bucket{job=\"state\"}",
+          "expr": "state_application_updateimagingresult_publish_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -4522,7 +4522,7 @@
           "useBackend": false
         }
       ],
-      "title": "Update Imaging Handler Publish Time",
+      "title": "Update Imaging - Publish Time",
       "type": "bargauge"
     },
     {
@@ -4584,7 +4584,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_notifyjobstatusupdate_handled_count{job=\"state\"}",
+          "expr": "state_application_notifyjobstatusupdate_handled_count{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -4594,7 +4594,7 @@
           "useBackend": false
         }
       ],
-      "title": "Notify Job Status Commands",
+      "title": "Notify Job Status - Commands",
       "type": "stat"
     },
     {
@@ -4813,7 +4813,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_notifyjobstatusupdate_guard_bucket{job=\"state\"}",
+          "expr": "state_application_notifyjobstatusupdate_guard_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -4825,7 +4825,7 @@
           "useBackend": false
         }
       ],
-      "title": "Notify Job Status Handler Guard Time",
+      "title": "Notify Job Status - Guard Time",
       "type": "bargauge"
     },
     {
@@ -5044,7 +5044,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_notifyjobstatusupdate_publish_bucket{job=\"state\"}",
+          "expr": "state_application_notifyjobstatusupdate_publish_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -5056,7 +5056,7 @@
           "useBackend": false
         }
       ],
-      "title": "Notify Job Status Handler Publish Time",
+      "title": "Notify Job Status - Publish Time",
       "type": "bargauge"
     },
     {
@@ -5118,7 +5118,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_notifyprocessingcomplete_handled_count{job=\"state\"}",
+          "expr": "state_application_notifyprocessingcomplete_handled_count{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -5128,7 +5128,7 @@
           "useBackend": false
         }
       ],
-      "title": "Notify Processing Complete Commands",
+      "title": "Notify Processing Complete - Commands",
       "type": "stat"
     },
     {
@@ -5347,7 +5347,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_notifyprocessingcomplete_guard_bucket{job=\"state\"}",
+          "expr": "state_application_notifyprocessingcomplete_guard_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -5359,7 +5359,7 @@
           "useBackend": false
         }
       ],
-      "title": "Notify Processing Complete Handler Guard Time",
+      "title": "Notify Processing Complete - Guard Time",
       "type": "bargauge"
     },
     {
@@ -5578,7 +5578,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_logic_notifyprocessingcomplete_publish_bucket{job=\"state\"}",
+          "expr": "state_application_notifyprocessingcomplete_publish_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -5590,7 +5590,7 @@
           "useBackend": false
         }
       ],
-      "title": "Notify Processing Complete Handler Publish Time",
+      "title": "Notify Processing Complete - Publish Time",
       "type": "bargauge"
     }
   ],

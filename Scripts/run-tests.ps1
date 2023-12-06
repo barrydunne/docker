@@ -44,22 +44,22 @@ Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudSe
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudSecrets.SecretsManager.IntegrationTests/Microservices.Shared.CloudSecrets.SecretsManager.IntegrationTests.csproj' -includeAssembly 'Microservices.Shared.CloudSecrets.SecretsManager' -coverageName 'cs.i'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.Queues.RabbitMQ.UnitTests/Microservices.Shared.Queues.RabbitMQ.UnitTests.csproj' -includeAssembly 'Microservices.Shared.Queues.RabbitMQ' -coverageName 'mq.u'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.Queues.RabbitMQ.IntegrationTests/Microservices.Shared.Queues.RabbitMQ.IntegrationTests.csproj' -includeAssembly 'Microservices.Shared.Queues.RabbitMQ' -coverageName 'mq.i'
-Invoke-Tests -csproj 'Infrastructure/SecretsManager/SecretsManager.Logic.Tests/SecretsManager.Logic.Tests.csproj' -includeAssembly 'SecretsManager.Logic' -coverageName 'sm.l'
-Invoke-Tests -csproj 'PublicApi/PublicApi/PublicApi.Logic.Tests/PublicApi.Logic.Tests.csproj' -includeAssembly 'PublicApi.Logic' -coverageName 'p.l'
-Invoke-Tests -csproj 'PublicApi/PublicApi/PublicApi.Repository.IntegrationTests/PublicApi.Repository.IntegrationTests.csproj' -includeAssembly 'PublicApi.Repository' -coverageName 'p.r'
-Invoke-Tests -csproj 'State/State/State.Logic.Tests/State.Logic.Tests.csproj' -includeAssembly 'State.Logic' -coverageName 's.l'
-Invoke-Tests -csproj 'State/State/State.Repository.IntegrationTests/State.Repository.IntegrationTests.csproj' -includeAssembly 'State.Repository' -coverageName 's.r'
-Invoke-Tests -csproj 'Geocoding/Geocoding/Geocoding.Logic.Tests/Geocoding.Logic.Tests.csproj' -includeAssembly 'Geocoding.Logic' -coverageName 'g.l'
-Invoke-Tests -csproj 'Geocoding/Geocoding/Geocoding.ExternalService.Tests/Geocoding.ExternalService.Tests.csproj' -includeAssembly 'Geocoding.ExternalService' -exclude '*.MapQuestModels.*' -coverageName 'g.e'
-Invoke-Tests -csproj 'Directions/Directions/Directions.Logic.Tests/Directions.Logic.Tests.csproj' -includeAssembly 'Directions.Logic' -coverageName 'd.l'
-Invoke-Tests -csproj 'Directions/Directions/Directions.ExternalService.Tests/Directions.ExternalService.Tests.csproj' -includeAssembly 'Directions.ExternalService' -exclude '*.MapQuestModels.*' -coverageName 'd.e'
-Invoke-Tests -csproj 'Weather/Weather/Weather.Logic.Tests/Weather.Logic.Tests.csproj' -includeAssembly 'Weather.Logic' -coverageName 'w.l'
-Invoke-Tests -csproj 'Weather/Weather/Weather.ExternalService.Tests/Weather.ExternalService.Tests.csproj' -includeAssembly 'Weather.ExternalService' -exclude '*.OpenMeteoModels.*' -coverageName 'w.e'
-Invoke-Tests -csproj 'Imaging/Imaging/Imaging.Logic.Tests/Imaging.Logic.Tests.csproj' -includeAssembly 'Imaging.Logic' -coverageName 'i.l'
-Invoke-Tests -csproj 'Imaging/Imaging/Imaging.ExternalService.Tests/Imaging.ExternalService.Tests.csproj' -includeAssembly 'Imaging.ExternalService' -exclude '*.BingModels.*' -coverageName 'i.e'
-Invoke-Tests -csproj 'Email/Email/Email.Logic.Tests/Email.Logic.Tests.csproj' -includeAssembly 'Email.Logic' -coverageName 'e.l'
-Invoke-Tests -csproj 'Email/Email/Email.Repository.IntegrationTests/Email.Repository.IntegrationTests.csproj' -includeAssembly 'Email.Repository' -coverageName 'e.ri'
-Invoke-Tests -csproj 'Email/Email/Email.Repository.UnitTests/Email.Repository.UnitTests.csproj' -includeAssembly 'Email.Repository' -coverageName 'e.ru'
+Invoke-Tests -csproj 'Infrastructure/SecretsManager/SecretsManager.Application.Tests/SecretsManager.Application.Tests.csproj' -includeAssembly 'SecretsManager.Application' -coverageName 'sm.a'
+Invoke-Tests -csproj 'PublicApi/PublicApi/PublicApi.Application.Tests/PublicApi.Application.Tests.csproj' -includeAssembly 'PublicApi.Application' -coverageName 'p.a'
+Invoke-Tests -csproj 'PublicApi/PublicApi/PublicApi.Infrastructure.IntegrationTests/PublicApi.Infrastructure.IntegrationTests.csproj' -includeAssembly 'PublicApi.Infrastructure' -coverageName 'p.r'
+Invoke-Tests -csproj 'State/State/State.Application.Tests/State.Application.Tests.csproj' -includeAssembly 'State.Application' -coverageName 's.a'
+Invoke-Tests -csproj 'State/State/State.Infrastructure.IntegrationTests/State.Infrastructure.IntegrationTests.csproj' -includeAssembly 'State.Infrastructure' -coverageName 's.i'
+Invoke-Tests -csproj 'Geocoding/Geocoding/Geocoding.Application.Tests/Geocoding.Application.Tests.csproj' -includeAssembly 'Geocoding.Application' -coverageName 'g.a'
+Invoke-Tests -csproj 'Geocoding/Geocoding/Geocoding.Infrastructure.Tests/Geocoding.Infrastructure.Tests.csproj' -includeAssembly 'Geocoding.Infrastructure' -exclude '*.MapQuestModels.*' -coverageName 'g.e'
+Invoke-Tests -csproj 'Directions/Directions/Directions.Application.Tests/Directions.Application.Tests.csproj' -includeAssembly 'Directions.Application' -coverageName 'd.a'
+Invoke-Tests -csproj 'Directions/Directions/Directions.Infrastructure.Tests/Directions.Infrastructure.Tests.csproj' -includeAssembly 'Directions.Infrastructure' -exclude '*.MapQuestModels.*' -coverageName 'd.e'
+Invoke-Tests -csproj 'Weather/Weather/Weather.Application.Tests/Weather.Application.Tests.csproj' -includeAssembly 'Weather.Application' -coverageName 'w.a'
+Invoke-Tests -csproj 'Weather/Weather/Weather.Infrastructure.Tests/Weather.Infrastructure.Tests.csproj' -includeAssembly 'Weather.Infrastructure' -exclude '*.OpenMeteoModels.*' -coverageName 'w.e'
+Invoke-Tests -csproj 'Imaging/Imaging/Imaging.Application.Tests/Imaging.Application.Tests.csproj' -includeAssembly 'Imaging.Application' -coverageName 'i.a'
+Invoke-Tests -csproj 'Imaging/Imaging/Imaging.Infrastructure.Tests/Imaging.Infrastructure.Tests.csproj' -includeAssembly 'Imaging.Infrastructure' -exclude '*.BingModels.*' -coverageName 'i.e'
+Invoke-Tests -csproj 'Email/Email/Email.Application.Tests/Email.Application.Tests.csproj' -includeAssembly 'Email.Application' -coverageName 'e.a'
+Invoke-Tests -csproj 'Email/Email/Email.Infrastructure.IntegrationTests/Email.Infrastructure.IntegrationTests.csproj' -includeAssembly 'Email.Infrastructure' -coverageName 'e.ri'
+Invoke-Tests -csproj 'Email/Email/Email.Infrastructure.UnitTests/Email.Infrastructure.UnitTests.csproj' -includeAssembly 'Email.Infrastructure' -coverageName 'e.ru'
 
 Write-Host Removing local copy of httpstat.us
 docker rm -f http-status
@@ -71,7 +71,7 @@ dotnet tool list -g dotnet-reportgenerator-globaltool | Out-Null
 if ($LastExitCode -ne 0) {
     dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.1.26
 }
-reportgenerator -reports:'TestResults/ce.u.xml;TestResults/ce.i.xml;TestResults/cf.u.xml;TestResults/cf.i.xml;TestResults/cs.u.xml;TestResults/cs.i.xml;TestResults/mq.u.xml;TestResults/mq.i.xml;TestResults/sm.l.xml;TestResults/p.l.xml;TestResults/p.r.xml;TestResults/s.l.xml;TestResults/s.r.xml;TestResults/g.l.xml;TestResults/g.e.xml;TestResults/d.l.xml;TestResults/d.e.xml;TestResults/w.l.xml;TestResults/w.e.xml;TestResults/i.l.xml;TestResults/e.l.xml;TestResults/e.ri.xml;TestResults/e.ru.xml' -targetdir:TestResults/CoverageReport -reporttypes:"Html_Dark;TextSummary"
+reportgenerator -reports:'TestResults/ce.u.xml;TestResults/ce.i.xml;TestResults/cf.u.xml;TestResults/cf.i.xml;TestResults/cs.u.xml;TestResults/cs.i.xml;TestResults/mq.u.xml;TestResults/mq.i.xml;TestResults/sm.a.xml;TestResults/p.a.xml;TestResults/p.r.xml;TestResults/s.a.xml;TestResults/s.i.xml;TestResults/g.a.xml;TestResults/g.e.xml;TestResults/d.a.xml;TestResults/d.e.xml;TestResults/w.a.xml;TestResults/w.e.xml;TestResults/i.a.xml;TestResults/e.a.xml;TestResults/e.ri.xml;TestResults/e.ru.xml' -targetdir:TestResults/CoverageReport -reporttypes:"Html_Dark;TextSummary"
 if ($IsLinux) {
     $reportPath = Join-Path -Path $PSScriptRoot -ChildPath './TestResults/CoverageReport/index.html'
     Write-Host "HTML Coverage report: $reportPath"

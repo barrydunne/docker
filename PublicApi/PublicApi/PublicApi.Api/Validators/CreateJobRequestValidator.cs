@@ -1,36 +1,35 @@
 ﻿using FluentValidation;
 using PublicApi.Api.Models;
 
-namespace PublicApi.Api.Validators
+namespace PublicApi.Api.Validators;
+
+/// <summary>
+/// Validation rules for <see cref="CreateJobRequest"/>.
+/// </summary>
+internal class CreateJobRequestValidator : AbstractValidator<CreateJobRequest>
 {
     /// <summary>
-    /// Validation rules for <see cref="CreateJobRequest"/>.
+    /// Initializes a new instance of the <see cref="CreateJobRequestValidator"/> class.
     /// </summary>
-    internal class CreateJobRequestValidator : AbstractValidator<CreateJobRequest>
+    public CreateJobRequestValidator()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CreateJobRequestValidator"/> class.
-        /// </summary>
-        public CreateJobRequestValidator()
-        {
-            RuleFor(_ => _.StartingAddress)
-                .Cascade(CascadeMode.Stop) // If NotNull validator fails then do not run (and report) NotEmpty
-                .NotNull()
-                .NotEmpty()
-                .MaximumLength(128);
+        RuleFor(_ => _.StartingAddress)
+            .Cascade(CascadeMode.Stop)
+            .NotNull()
+            .NotEmpty()
+            .MaximumLength(128);
 
-            RuleFor(_ => _.DestinationAddress)
-                .Cascade(CascadeMode.Stop)
-                .NotNull()
-                .NotEmpty()
-                .MaximumLength(128);
+        RuleFor(_ => _.DestinationAddress)
+            .Cascade(CascadeMode.Stop)
+            .NotNull()
+            .NotEmpty()
+            .MaximumLength(128);
 
-            RuleFor(_ => _.Email)
-                .Cascade(CascadeMode.Stop)
-                .NotNull()
-                .NotEmpty()
-                .EmailAddress()
-                .MaximumLength(128);
-        }
+        RuleFor(_ => _.Email)
+            .Cascade(CascadeMode.Stop)
+            .NotNull()
+            .NotEmpty()
+            .EmailAddress()
+            .MaximumLength(128);
     }
 }

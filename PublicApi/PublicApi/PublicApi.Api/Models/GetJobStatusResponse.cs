@@ -1,20 +1,19 @@
 ﻿using Microservices.Shared.Events;
 
-namespace PublicApi.Api.Models
+namespace PublicApi.Api.Models;
+
+/// <summary>
+/// The response from a job status request.
+/// </summary>
+public class GetJobStatusResponse
 {
     /// <summary>
-    /// The response from a job status request.
+    /// Gets or sets the current status of this job.
     /// </summary>
-    public class GetJobStatusResponse
-    {
-        /// <summary>
-        /// Gets or sets the current status of this job.
-        /// </summary>
-        public JobStatus Status { get; set; }
+    public JobStatus Status { get; set; }
 
-        /// <summary>
-        /// Gets or sets any additional information about this job.
-        /// </summary>
-        public string? AdditionalInformation { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets any additional information about this job.
+    /// </summary>
+    public string? AdditionalInformation { get; set; }
 }

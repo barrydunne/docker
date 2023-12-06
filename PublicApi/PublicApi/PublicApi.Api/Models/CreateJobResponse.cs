@@ -1,13 +1,12 @@
-﻿namespace PublicApi.Api.Models
+﻿namespace PublicApi.Api.Models;
+
+/// <summary>
+/// The response from a new job request.
+/// </summary>
+public class CreateJobResponse
 {
     /// <summary>
-    /// The response from a new job request.
+    /// Gets or sets the new job id.
     /// </summary>
-    public class CreateJobResponse
-    {
-        /// <summary>
-        /// Gets or sets the new job id.
-        /// </summary>
-        public Guid JobId { get; set; }
-    }
+    public Guid JobId { get; set; }
 }

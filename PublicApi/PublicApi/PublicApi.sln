@@ -7,13 +7,13 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "..\Docker
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicApi.Api", "PublicApi.Api\PublicApi.Api.csproj", "{B10787D7-733F-43CA-BA1D-64CB4FBA33B2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicApi.Logic", "PublicApi.Logic\PublicApi.Logic.csproj", "{1EEB5711-4E4F-416E-95B9-DB9B238BB13D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicApi.Application", "PublicApi.Application\PublicApi.Application.csproj", "{1EEB5711-4E4F-416E-95B9-DB9B238BB13D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicApi.Repository", "PublicApi.Repository\PublicApi.Repository.csproj", "{37216353-7B7A-429D-98E4-42F35D077734}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicApi.Infrastructure", "PublicApi.Infrastructure\PublicApi.Infrastructure.csproj", "{37216353-7B7A-429D-98E4-42F35D077734}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicApi.Logic.Tests", "PublicApi.Logic.Tests\PublicApi.Logic.Tests.csproj", "{18B99A06-8B4B-4F85-A138-024E22274713}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicApi.Application.Tests", "PublicApi.Application.Tests\PublicApi.Application.Tests.csproj", "{18B99A06-8B4B-4F85-A138-024E22274713}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicApi.Repository.IntegrationTests", "PublicApi.Repository.IntegrationTests\PublicApi.Repository.IntegrationTests.csproj", "{AB16CEC4-4A64-452E-A4F6-20CB7F28AB75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicApi.Infrastructure.IntegrationTests", "PublicApi.Infrastructure.IntegrationTests\PublicApi.Infrastructure.IntegrationTests.csproj", "{AB16CEC4-4A64-452E-A4F6-20CB7F28AB75}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

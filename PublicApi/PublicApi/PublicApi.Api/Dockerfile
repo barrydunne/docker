@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 
 # Build from SDK image - This is the image that gets used when debugging from Visual Studio
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -15,16 +15,16 @@ RUN dotnet nuget add source /packages -n Microservices.SharedLibraries
 WORKDIR /src
 COPY ["PublicApi/PublicApi/PublicApi.Api/PublicApi.Api.csproj", "PublicApi.Api/"]
 RUN dotnet restore "PublicApi.Api/PublicApi.Api.csproj"
-COPY ["PublicApi/PublicApi/PublicApi.Logic/PublicApi.Logic.csproj", "PublicApi.Logic/"]
-RUN dotnet restore "PublicApi.Logic/PublicApi.Logic.csproj"
-COPY ["PublicApi/PublicApi/PublicApi.Repository/PublicApi.Repository.csproj", "PublicApi.Repository/"]
-RUN dotnet restore "PublicApi.Repository/PublicApi.Repository.csproj"
-COPY ["PublicApi/PublicApi/PublicApi.Logic.Tests/PublicApi.Logic.Tests.csproj", "PublicApi.Logic.Tests/"]
-RUN dotnet restore "PublicApi.Logic.Tests/PublicApi.Logic.Tests.csproj"
+COPY ["PublicApi/PublicApi/PublicApi.Application/PublicApi.Application.csproj", "PublicApi.Application/"]
+RUN dotnet restore "PublicApi.Application/PublicApi.Application.csproj"
+COPY ["PublicApi/PublicApi/PublicApi.Infrastructure/PublicApi.Infrastructure.csproj", "PublicApi.Infrastructure/"]
+RUN dotnet restore "PublicApi.Infrastructure/PublicApi.Infrastructure.csproj"
+COPY ["PublicApi/PublicApi/PublicApi.Application.Tests/PublicApi.Application.Tests.csproj", "PublicApi.Application.Tests/"]
+RUN dotnet restore "PublicApi.Application.Tests/PublicApi.Application.Tests.csproj"
 # Build and test the projects
 COPY PublicApi/PublicApi/ .
 RUN dotnet build "PublicApi.Api/PublicApi.Api.csproj" -c Release -o /app/build
-RUN dotnet test "PublicApi.Logic.Tests/PublicApi.Logic.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[PublicApi.Logic]* /p:Threshold=100
+RUN dotnet test "PublicApi.Application.Tests/PublicApi.Application.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[PublicApi.Application]* /p:Threshold=100
 
 # Publish the application - Skipped for Visual Studio debugging
 FROM build AS publish

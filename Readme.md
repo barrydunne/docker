@@ -26,7 +26,7 @@ To use real external services API keys are required and the services must be ena
   - Use the API at http://localhost:11080/ to post requests. (_An endpoint is available to generate authentication tokens required to make requests_)
   - Check the notification emails at http://localhost:17080 (_Emails are caught here and not sent publicly_)
   - View logs at http://localhost:10081/#/events?range=1d&signal=signal-17&tail
-  - View the metrics at http://localhost:10088/dashboards (admin / P@ssw0rd)
+  - View the metrics at http://localhost:10088/dashboards
 
 ## Sample
 
@@ -62,7 +62,7 @@ The example shown was captured when running with real external services.
     <a href="Screenshots/ContainersInfrastructure.png" target="_blank" style="display:inline-block;vertical-align:top;"><img src="Screenshots/ContainersInfrastructure.png" width="200px"/></a>
     <a href="Screenshots/ContainersServices.png" target="_blank" style="display:inline-block;vertical-align:top;"><img src="Screenshots/ContainersServices.png" width="200px"/></a>
 
-  - Fluent validation and guard clauses are used to protect against bad input.
+  - Fluent validation, MediatR pipeline validation, and guard clauses are used to protect against bad input.
 
     <a href="Screenshots/FluentValidation.png" target="_blank"><img src="Screenshots/FluentValidation.png" width="400px"/></a>
 
@@ -88,6 +88,7 @@ This codebase showcases the following technologies:
 • Guard clauses
 • Idempotency
 • IdentityServer4
+• Mapster (auto mapping)
 • Markdown
 • MediatR
 • Message queues
@@ -132,8 +133,8 @@ This codebase showcases the following technologies:
 ## Development requirements
 
   - All C# projects will use .net 8.
-  - All C# projects should build with no code warnings except "You are using a preview version of .NET".
-  - The service infrastructure (API/Message handling) must be separate and loosely coupled to the logic using MediatR.
+  - All C# projects should build with no code warnings.
+  - The services must follow clean architecture principles with API separate and loosely coupled to the application logic using MediatR.
   - All logic code must have tests that require 100% code coverage threshold for line, branch and method coverage.
   - All non-private production classes and methods must have XML documentation.
   - Tests and code coverage requirements must pass as part of building docker images.

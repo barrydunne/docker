@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 
 # Build from SDK image - This is the image that gets used when debugging from Visual Studio
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -15,19 +15,19 @@ RUN dotnet nuget add source /packages -n Microservices.SharedLibraries
 WORKDIR /src
 COPY ["Geocoding/Geocoding/Geocoding.Api/Geocoding.Api.csproj", "Geocoding.Api/"]
 RUN dotnet restore "Geocoding.Api/Geocoding.Api.csproj"
-COPY ["Geocoding/Geocoding/Geocoding.Logic/Geocoding.Logic.csproj", "Geocoding.Logic/"]
-RUN dotnet restore "Geocoding.Logic/Geocoding.Logic.csproj"
-COPY ["Geocoding/Geocoding/Geocoding.ExternalService/Geocoding.ExternalService.csproj", "Geocoding.ExternalService/"]
-RUN dotnet restore "Geocoding.ExternalService/Geocoding.ExternalService.csproj"
-COPY ["Geocoding/Geocoding/Geocoding.Logic.Tests/Geocoding.Logic.Tests.csproj", "Geocoding.Logic.Tests/"]
-RUN dotnet restore "Geocoding.Logic.Tests/Geocoding.Logic.Tests.csproj"
-COPY ["Geocoding/Geocoding/Geocoding.ExternalService.Tests/Geocoding.ExternalService.Tests.csproj", "Geocoding.ExternalService.Tests/"]
-RUN dotnet restore "Geocoding.ExternalService.Tests/Geocoding.ExternalService.Tests.csproj"
+COPY ["Geocoding/Geocoding/Geocoding.Application/Geocoding.Application.csproj", "Geocoding.Application/"]
+RUN dotnet restore "Geocoding.Application/Geocoding.Application.csproj"
+COPY ["Geocoding/Geocoding/Geocoding.Infrastructure/Geocoding.Infrastructure.csproj", "Geocoding.Infrastructure/"]
+RUN dotnet restore "Geocoding.Infrastructure/Geocoding.Infrastructure.csproj"
+COPY ["Geocoding/Geocoding/Geocoding.Application.Tests/Geocoding.Application.Tests.csproj", "Geocoding.Application.Tests/"]
+RUN dotnet restore "Geocoding.Application.Tests/Geocoding.Application.Tests.csproj"
+COPY ["Geocoding/Geocoding/Geocoding.Infrastructure.Tests/Geocoding.Infrastructure.Tests.csproj", "Geocoding.Infrastructure.Tests/"]
+RUN dotnet restore "Geocoding.Infrastructure.Tests/Geocoding.Infrastructure.Tests.csproj"
 # Build and test the projects
 COPY Geocoding/Geocoding/ .
 RUN dotnet build "Geocoding.Api/Geocoding.Api.csproj" -c Release -o /app/build
-RUN dotnet test "Geocoding.Logic.Tests/Geocoding.Logic.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"Logic.TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=Logic.TestResults/coverage /p:Include=[Geocoding.Logic]* /p:Threshold=100
-RUN dotnet test "Geocoding.ExternalService.Tests/Geocoding.ExternalService.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"ExternalService.TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=ExternalService.TestResults/coverage /p:Include=[Geocoding.ExternalService]* /p:Exclude=[Geocoding.ExternalService]*.MapQuestModels.* /p:Threshold=100
+RUN dotnet test "Geocoding.Application.Tests/Geocoding.Application.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"Logic.TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=Logic.TestResults/coverage /p:Include=[Geocoding.Application]* /p:Threshold=100
+RUN dotnet test "Geocoding.Infrastructure.Tests/Geocoding.Infrastructure.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"ExternalService.TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=ExternalService.TestResults/coverage /p:Include=[Geocoding.Infrastructure]* /p:Exclude=[Geocoding.Infrastructure]*.MapQuestModels.* /p:Threshold=100
 
 # Publish the application - Skipped for Visual Studio debugging
 FROM build AS publish

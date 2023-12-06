@@ -7,13 +7,13 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "..\Docker
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geocoding.Api", "Geocoding.Api\Geocoding.Api.csproj", "{BA38AF6E-7622-4363-AAED-F3AFB3031026}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geocoding.Logic", "Geocoding.Logic\Geocoding.Logic.csproj", "{0E56D497-CF6C-4DC1-959B-E9404D07ECD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geocoding.Application", "Geocoding.Application\Geocoding.Application.csproj", "{0E56D497-CF6C-4DC1-959B-E9404D07ECD0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geocoding.Logic.Tests", "Geocoding.Logic.Tests\Geocoding.Logic.Tests.csproj", "{337520E4-ABBE-42C2-B0A5-222129D94914}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geocoding.Application.Tests", "Geocoding.Application.Tests\Geocoding.Application.Tests.csproj", "{337520E4-ABBE-42C2-B0A5-222129D94914}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geocoding.ExternalService", "Geocoding.ExternalService\Geocoding.ExternalService.csproj", "{7F9942E5-9399-40E9-9CF5-FC38D24B0FA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geocoding.Infrastructure", "Geocoding.Infrastructure\Geocoding.Infrastructure.csproj", "{7F9942E5-9399-40E9-9CF5-FC38D24B0FA6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geocoding.ExternalService.Tests", "Geocoding.ExternalService.Tests\Geocoding.ExternalService.Tests.csproj", "{C34745C8-1118-4E62-977E-AD3C34E4434C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geocoding.Infrastructure.Tests", "Geocoding.Infrastructure.Tests\Geocoding.Infrastructure.Tests.csproj", "{C34745C8-1118-4E62-977E-AD3C34E4434C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

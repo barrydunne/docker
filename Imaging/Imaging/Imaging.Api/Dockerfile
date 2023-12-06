@@ -15,19 +15,19 @@ RUN dotnet nuget add source /packages -n Microservices.SharedLibraries
 WORKDIR /src
 COPY ["Imaging/Imaging/Imaging.Api/Imaging.Api.csproj", "Imaging.Api/"]
 RUN dotnet restore "Imaging.Api/Imaging.Api.csproj"
-COPY ["Imaging/Imaging/Imaging.Logic/Imaging.Logic.csproj", "Imaging.Logic/"]
-RUN dotnet restore "Imaging.Logic/Imaging.Logic.csproj"
-COPY ["Imaging/Imaging/Imaging.ExternalService/Imaging.ExternalService.csproj", "Imaging.ExternalService/"]
-RUN dotnet restore "Imaging.ExternalService/Imaging.ExternalService.csproj"
-COPY ["Imaging/Imaging/Imaging.Logic.Tests/Imaging.Logic.Tests.csproj", "Imaging.Logic.Tests/"]
-RUN dotnet restore "Imaging.Logic.Tests/Imaging.Logic.Tests.csproj"
-COPY ["Imaging/Imaging/Imaging.ExternalService.Tests/Imaging.ExternalService.Tests.csproj", "Imaging.ExternalService.Tests/"]
-RUN dotnet restore "Imaging.ExternalService.Tests/Imaging.ExternalService.Tests.csproj"
+COPY ["Imaging/Imaging/Imaging.Application/Imaging.Application.csproj", "Imaging.Application/"]
+RUN dotnet restore "Imaging.Application/Imaging.Application.csproj"
+COPY ["Imaging/Imaging/Imaging.Infrastructure/Imaging.Infrastructure.csproj", "Imaging.Infrastructure/"]
+RUN dotnet restore "Imaging.Infrastructure/Imaging.Infrastructure.csproj"
+COPY ["Imaging/Imaging/Imaging.Application.Tests/Imaging.Application.Tests.csproj", "Imaging.Application.Tests/"]
+RUN dotnet restore "Imaging.Application.Tests/Imaging.Application.Tests.csproj"
+COPY ["Imaging/Imaging/Imaging.Infrastructure.Tests/Imaging.Infrastructure.Tests.csproj", "Imaging.Infrastructure.Tests/"]
+RUN dotnet restore "Imaging.Infrastructure.Tests/Imaging.Infrastructure.Tests.csproj"
 # Build and test the projects
 COPY Imaging/Imaging/ .
 RUN dotnet build "Imaging.Api/Imaging.Api.csproj" -c Release -o /app/build
-RUN dotnet test "Imaging.Logic.Tests/Imaging.Logic.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Imaging.Logic]* /p:Threshold=100
-RUN dotnet test "Imaging.ExternalService.Tests/Imaging.ExternalService.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Imaging.ExternalService]* /p:Exclude=[Imaging.ExternalService]*.BingModels.* /p:Threshold=100
+RUN dotnet test "Imaging.Application.Tests/Imaging.Application.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Imaging.Application]* /p:Threshold=100
+RUN dotnet test "Imaging.Infrastructure.Tests/Imaging.Infrastructure.Tests.csproj" -c Release --framework net8.0 -l "console;verbosity=normal" --results-directory:"TestResults" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=TestResults/coverage /p:Include=[Imaging.Infrastructure]* /p:Exclude=[Imaging.Infrastructure]*.BingModels.* /p:Threshold=100
 
 # Publish the application - Skipped for Visual Studio debugging
 FROM build AS publish

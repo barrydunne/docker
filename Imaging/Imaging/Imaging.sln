@@ -7,13 +7,13 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "..\Docker
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imaging.Api", "Imaging.Api\Imaging.Api.csproj", "{818495D7-2FCF-45A9-81C7-82AFF07CDF3E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imaging.Logic", "Imaging.Logic\Imaging.Logic.csproj", "{1AD50F30-50AC-49F9-BA30-42441C2BCB45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imaging.Application", "Imaging.Application\Imaging.Application.csproj", "{1AD50F30-50AC-49F9-BA30-42441C2BCB45}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imaging.Logic.Tests", "Imaging.Logic.Tests\Imaging.Logic.Tests.csproj", "{6D0106B8-83ED-45C5-B5F9-27F8F68DFF36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imaging.Application.Tests", "Imaging.Application.Tests\Imaging.Application.Tests.csproj", "{6D0106B8-83ED-45C5-B5F9-27F8F68DFF36}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imaging.ExternalService", "Imaging.ExternalService\Imaging.ExternalService.csproj", "{F0D25A94-6535-4A51-88A6-34A2375D267D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imaging.Infrastructure", "Imaging.Infrastructure\Imaging.Infrastructure.csproj", "{F0D25A94-6535-4A51-88A6-34A2375D267D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imaging.ExternalService.Tests", "Imaging.ExternalService.Tests\Imaging.ExternalService.Tests.csproj", "{3F6A9EEF-60DA-40AE-8D92-7ABC49B5BC3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Imaging.Infrastructure.Tests", "Imaging.Infrastructure.Tests\Imaging.Infrastructure.Tests.csproj", "{3F6A9EEF-60DA-40AE-8D92-7ABC49B5BC3E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

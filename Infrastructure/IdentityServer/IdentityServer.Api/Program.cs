@@ -10,6 +10,6 @@ new ApiBuilder()
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients)
             .AddDeveloperSigningCredential())
-    .Build(args)
     .WithApplicationConfiguration(_ => _.UseIdentityServer())
+    .Build(args)
     .Run();
