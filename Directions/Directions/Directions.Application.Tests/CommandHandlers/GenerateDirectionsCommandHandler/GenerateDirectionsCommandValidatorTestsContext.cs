@@ -1,24 +1,26 @@
 ﻿using Directions.Application.Commands.GenerateDirections;
-using Microsoft.Extensions.Logging;
-using Moq;
+using Microservices.Shared.Mocks;
+using NSubstitute;
 
 namespace Directions.Application.Tests.CommandHandlers.GenerateDirectionsCommandHandler;
 
 internal class GenerateDirectionsCommandValidatorTestsContext
 {
-    private readonly Mock<IGenerateDirectionsCommandHandlerMetrics> _mockMetrics;
+    private readonly IGenerateDirectionsCommandHandlerMetrics _mockMetrics;
+    private readonly MockLogger<GenerateDirectionsCommandValidator> _mockLogger;
 
     internal GenerateDirectionsCommandValidator Sut { get; }
 
     public GenerateDirectionsCommandValidatorTestsContext()
     {
-        _mockMetrics = new();
-        Sut = new(_mockMetrics.Object, new Mock<ILogger<GenerateDirectionsCommandValidator>>().Object);
+        _mockMetrics = Substitute.For<IGenerateDirectionsCommandHandlerMetrics>();
+        _mockLogger = new();
+        Sut = new(_mockMetrics, _mockLogger);
     }
 
     internal GenerateDirectionsCommandValidatorTestsContext AssertMetricsGuardTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordGuardTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordGuardTime(Arg.Any<double>());
         return this;
     }
 }

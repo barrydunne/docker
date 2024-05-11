@@ -6,7 +6,7 @@ using Geocoding.Application.Commands.GeocodeAddresses;
 using Microservices.Shared.Events;
 using Microservices.Shared.Utilities;
 
-new ApiBuilder()
+await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
     .WithSwagger()
     .WithHealthHandler()
@@ -17,4 +17,4 @@ new ApiBuilder()
         .AddQueueToCommandProcessor<JobCreatedEvent, GeocodeAddressesCommand, Result, JobCreatedEventProcessor>())
     .WithMappings(Mappings.Map)
     .Build(args)
-    .Run();
+    .RunAsync();

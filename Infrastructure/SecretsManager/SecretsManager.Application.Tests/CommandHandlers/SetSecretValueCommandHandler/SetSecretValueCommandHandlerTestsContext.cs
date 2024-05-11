@@ -1,5 +1,6 @@
 ﻿using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 
@@ -7,7 +8,7 @@ namespace SecretsManager.Application.Tests.CommandHandlers.SetSecretValueCommand
 
 internal class SetSecretValueCommandHandlerTestsContext
 {
-    private readonly Mock<IRedisDatabase> _mockRedisDatabase;
+    private readonly IRedisDatabase _mockRedisDatabase;
     private readonly MockLogger<Commands.SetSecretValue.SetSecretValueCommandHandler> _mockLogger;
 
     internal Dictionary<string, Dictionary<string, string>> Vaults { get; }
@@ -16,16 +17,18 @@ internal class SetSecretValueCommandHandlerTestsContext
 
     public SetSecretValueCommandHandlerTestsContext()
     {
-        _mockRedisDatabase = new(MockBehavior.Strict);
-        _mockRedisDatabase.Setup(_ => _.GetAsync<Dictionary<string, string>?>(It.IsAny<string>(), It.IsAny<CommandFlags>()))
-            .ReturnsAsync((string key, CommandFlags _) => GetVault(key));
-        _mockRedisDatabase.Setup(_ => _.AddAsync<It.IsAnyType>(It.IsAny<string>(), It.IsAny<It.IsAnyType>(), It.IsAny<When>(), It.IsAny<CommandFlags>(), It.IsAny<HashSet<string>?>()))
-            .ReturnsAsync((string key, object value, When _, CommandFlags _, HashSet<string>? _) => SetValue(key, value));
+        _mockRedisDatabase = Substitute.For<IRedisDatabase>();
+        _mockRedisDatabase
+            .GetAsync<Dictionary<string, string>?>(Arg.Any<string>(), Arg.Any<CommandFlags>())
+            .Returns(callInfo => GetVault(callInfo.ArgAt<string>(0)));
+        _mockRedisDatabase
+            .AddAsync<Arg.AnyType>(Arg.Any<string>(), Arg.Any<Arg.AnyType>(), Arg.Any<When>(), Arg.Any<CommandFlags>(), Arg.Any<HashSet<string>?>())
+            .Returns(callInfo => SetValue(callInfo.ArgAt<string>(0), callInfo.ArgAt<object>(1)));
 
         _mockLogger = new();
 
         Vaults = new();
-        Sut = new(_mockRedisDatabase.Object, _mockLogger.Object);
+        Sut = new(_mockRedisDatabase, _mockLogger);
     }
 
     private bool SetValue(string key, object value)
@@ -44,8 +47,9 @@ internal class SetSecretValueCommandHandlerTestsContext
 
     internal SetSecretValueCommandHandlerTestsContext WithException()
     {
-        _mockRedisDatabase.Setup(_ => _.GetAsync<Dictionary<string, string>?>(It.IsAny<string>(), It.IsAny<CommandFlags>()))
-            .Throws(() => new ApplicationException());
+        _mockRedisDatabase
+            .GetAsync<Dictionary<string, string>?>(Arg.Any<string>(), Arg.Any<CommandFlags>())
+            .Throws(new ApplicationException());
         return this;
     }
 }

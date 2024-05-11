@@ -1,24 +1,23 @@
 ﻿using Microservices.Shared.CloudSecrets;
-using Moq;
 
 namespace Microservices.Shared.Mocks;
 
 /// <summary>
 /// Provides in-memory secrets manager with instance scope.
 /// </summary>
-public class MockCloudSecrets : Mock<ICloudSecrets>
+public class MockCloudSecrets : ICloudSecrets
 {
     private readonly Dictionary<string, Dictionary<string, string>> _vaults;
 
-    public MockCloudSecrets() : base(MockBehavior.Strict)
+    public MockCloudSecrets() => _vaults = new();
+
+    public Task<Dictionary<string, string>> GetSecretsAsync(string vault, CancellationToken cancellationToken = default)
+        => Task.FromResult(GetSecrets(vault));
+
+    public Task<string?> GetSecretValueAsync(string vault, string secret, CancellationToken cancellationToken = default)
     {
-        _vaults = new();
-
-        Setup(_ => _.GetSecretsAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string vault, CancellationToken _) => GetSecrets(vault));
-
-        Setup(_ => _.GetSecretValueAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string vault, string secret, CancellationToken _) => GetSecretVault(vault, secret));
+        var secrets = GetSecrets(vault);
+        return Task.FromResult(secrets.ContainsKey(secret) ? secrets[secret] : null);
     }
 
     public void WithSecretValue(string vault, string secret, string value)
@@ -38,12 +37,5 @@ public class MockCloudSecrets : Mock<ICloudSecrets>
         }
     }
 
-    public Dictionary<string, string> GetSecrets(string vault)
-        => _vaults.ContainsKey(vault) ? _vaults[vault] : new();
-
-    private string? GetSecretVault(string vault, string secret)
-    {
-        var secrets = GetSecrets(vault);
-        return secrets.ContainsKey(secret) ? secrets[secret] : null;
-    }
+    private Dictionary<string, string> GetSecrets(string vault) => _vaults.ContainsKey(vault) ? _vaults[vault] : new();
 }

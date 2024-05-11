@@ -1,5 +1,4 @@
-﻿using Microservices.Shared.Events;
-using Microservices.Shared.Mocks;
+﻿using Microservices.Shared.Mocks;
 using State.Application.Commands.UpdateDirectionsResult;
 using State.Application.Models;
 

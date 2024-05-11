@@ -1,12 +1,13 @@
 ﻿using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 
 namespace SecretsManager.Application.Tests.QueryHandlers.GetSecretVaultsQueryHandler;
 
 internal class GetSecretVaultsQueryHandlerTestsContext
 {
-    private readonly Mock<IRedisDatabase> _mockRedisDatabase;
+    private readonly IRedisDatabase _mockRedisDatabase;
     private readonly MockLogger<Queries.GetSecretVaults.GetSecretVaultsQueryHandler> _mockLogger;
 
     internal Dictionary<string, Dictionary<string, string>> Vaults { get; }
@@ -15,14 +16,15 @@ internal class GetSecretVaultsQueryHandlerTestsContext
 
     public GetSecretVaultsQueryHandlerTestsContext()
     {
-        _mockRedisDatabase = new(MockBehavior.Strict);
-        _mockRedisDatabase.Setup(_ => _.SearchKeysAsync("*".ToSecretVaultName()))
-            .ReturnsAsync((string key) => GetVaultNames());
+        _mockRedisDatabase = Substitute.For<IRedisDatabase>();
+        _mockRedisDatabase
+            .SearchKeysAsync("*".ToSecretVaultName())
+            .Returns(callInfo => GetVaultNames());
 
         _mockLogger = new();
 
         Vaults = new();
-        Sut = new(_mockRedisDatabase.Object, _mockLogger.Object);
+        Sut = new(_mockRedisDatabase, _mockLogger);
     }
 
     private IEnumerable<string> GetVaultNames() => Vaults.Keys.ToArray();
@@ -35,8 +37,9 @@ internal class GetSecretVaultsQueryHandlerTestsContext
 
     internal GetSecretVaultsQueryHandlerTestsContext WithException()
     {
-        _mockRedisDatabase.Setup(_ => _.SearchKeysAsync("*".ToSecretVaultName()))
-            .Throws(() => new ApplicationException());
+        _mockRedisDatabase
+            .SearchKeysAsync("*".ToSecretVaultName())
+            .Throws(new ApplicationException());
         return this;
     }
 }

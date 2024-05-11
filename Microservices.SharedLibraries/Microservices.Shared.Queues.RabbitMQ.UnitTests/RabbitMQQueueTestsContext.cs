@@ -2,7 +2,7 @@
 using Microservices.Shared.Queues.RabbitMQ.UnitTests.ApiModels;
 using Microservices.Shared.Queues.RabbitMQ.UnitTests.QueueModels;
 using Microsoft.Extensions.Options;
-using Moq;
+using NSubstitute;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Collections.Concurrent;
@@ -16,16 +16,16 @@ internal class RabbitMQQueueTestsContext
     private readonly Fixture _fixture;
     private readonly string _vHost;
     private readonly RabbitMQQueueOptions _options;
-    private readonly Mock<IOptions<RabbitMQQueueOptions>> _mockOptions;
+    private readonly IOptions<RabbitMQQueueOptions> _mockOptions;
     private readonly ConcurrentBag<QueueModel> _queues;
     private readonly ConcurrentBag<ExchangeModel> _exchanges;
     private readonly ConcurrentBag<PublishModel> _published;
     private readonly ConcurrentBag<BindingModel> _bindings;
     private readonly ConcurrentBag<IBasicConsumer> _consumers;
-    private readonly Mock<IBasicProperties> _mockBasicProperties;
-    private readonly Mock<IModel> _mockModel;
-    private readonly Mock<IConnection> _mockConnection;
-    private readonly Mock<IConnectionFactory> _mockConnectionFactory;
+    private readonly IBasicProperties _mockBasicProperties;
+    private readonly IModel _mockModel;
+    private readonly IConnection _mockConnection;
+    private readonly IConnectionFactory _mockConnectionFactory;
 
     internal string Suffix => _options.SubscriberSuffix;
     internal int RetryDelay => _options.RetryDelayMilliseconds;
@@ -36,8 +36,10 @@ internal class RabbitMQQueueTestsContext
         _vHost = _fixture.Create<string>();
 
         _options = _fixture.Create<RabbitMQQueueOptions>();
-        _mockOptions = new(MockBehavior.Strict);
-        _mockOptions.Setup(_ => _.Value).Returns(_options);
+        _mockOptions = Substitute.For<IOptions<RabbitMQQueueOptions>>();
+        _mockOptions
+            .Value
+            .Returns(callInfo => _options);
 
         _queues = new();
         _exchanges = new();
@@ -45,62 +47,92 @@ internal class RabbitMQQueueTestsContext
         _bindings = new();
         _consumers = new();
 
-        _mockBasicProperties = new();
-        _mockBasicProperties.SetupSet(_ => _.Persistent = It.IsAny<bool>()).Verifiable();
+        _mockBasicProperties = Substitute.For<IBasicProperties>();
 
-        _mockModel = new(MockBehavior.Strict);
-        _mockModel.Setup(_ => _.QueueDeclare(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<Dictionary<string, object>>()))
-            .Callback((string queue, bool durable, bool exclusive, bool autoDelete, IDictionary<string, object>? arguments) => _queues.Add(new(queue, durable, exclusive, autoDelete, arguments)))
-            .Returns((string queue, bool _, bool _, bool _, IDictionary<string, object> _) => new QueueDeclareOk(queue, 0, 0));
-        _mockModel.Setup(_ => _.ExchangeDeclare(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<Dictionary<string, object>>()))
-            .Callback((string exchange, string type, bool durable, bool autoDelete, IDictionary<string, object> arguments) => _exchanges.Add(new(exchange, type, durable, autoDelete, arguments)));
-        _mockModel.Setup(_ => _.CreateBasicProperties()).Returns(() => _mockBasicProperties.Object);
-        _mockModel.Setup(_ => _.BasicQos(It.IsAny<uint>(), It.IsAny<ushort>(), It.IsAny<bool>())).Verifiable();
-        _mockModel.Setup(_ => _.ConfirmSelect()).Verifiable();
-        _mockModel.Setup(_ => _.BasicPublish(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<IBasicProperties>(), It.IsAny<ReadOnlyMemory<byte>>()))
-            .Callback((string exchange, string routingKey, bool mandatory, IBasicProperties basicProperties, ReadOnlyMemory<byte> body) =>
+        _mockModel = Substitute.For<IModel>();
+        _mockModel
+            .QueueDeclare(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<bool>(), Arg.Any<bool>(), Arg.Any<IDictionary<string, object>>())
+            .Returns(callInfo =>
             {
+                var queue = callInfo.Arg<string>();
+                return new QueueDeclareOk(queue, 0, 0);
+            })
+            .AndDoes(callInfo => 
+            {
+                var queue = callInfo.ArgAt<string>(0);
+                var durable = callInfo.ArgAt<bool>(1);
+                var exclusive = callInfo.ArgAt<bool>(2);
+                var autoDelete = callInfo.ArgAt<bool>(3);
+                var arguments = callInfo.ArgAt<IDictionary<string, object>>(4);
+                _queues.Add(new(queue, durable, exclusive, autoDelete, arguments));
+            });
+        _mockModel
+            .When(_ => _.ExchangeDeclare(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<bool>(), Arg.Any<IDictionary<string, object>>()))
+            .Do(callInfo =>
+            {
+                var exchange = callInfo.ArgAt<string>(0);
+                var type = callInfo.ArgAt<string>(1);
+                var durable = callInfo.ArgAt<bool>(2);
+                var autoDelete = callInfo.ArgAt<bool>(3);
+                var arguments = callInfo.ArgAt<IDictionary<string, object>>(4);
+
+                _exchanges.Add(new(exchange, type, durable, autoDelete, arguments));
+            });
+        _mockModel
+            .CreateBasicProperties()
+            .Returns(callInfo => _mockBasicProperties);
+        _mockModel
+            .When(_ => _.BasicPublish(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<IBasicProperties>(), Arg.Any<ReadOnlyMemory<byte>>()))
+            .Do(callInfo => 
+            {
+                var exchange = callInfo.ArgAt<string>(0);
+                var routingKey = callInfo.ArgAt<string>(1);
+                var mandatory = callInfo.ArgAt<bool>(2);
+                var basicProperties = callInfo.ArgAt<IBasicProperties>(3);
+                var body = callInfo.ArgAt<ReadOnlyMemory<byte>>(4);
+
                 _published.Add(new(exchange, routingKey, mandatory, basicProperties, body));
+
                 foreach (var consumer in _consumers)
                     (consumer as EventingBasicConsumer)?.HandleBasicDeliver(_fixture.Create<string>(), _fixture.Create<ulong>(), false, exchange, routingKey, basicProperties, body);
             });
-        _mockModel.Setup(_ => _.WaitForConfirmsOrDie(It.IsAny<TimeSpan>())).Verifiable();
-        _mockModel.Setup(_ => _.BasicConsume(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<Dictionary<string, object>>(), It.IsAny<IBasicConsumer>()))
-            .Callback((string _, bool _, string _, bool _, bool _, IDictionary<string, object> _, IBasicConsumer consumer) => _consumers.Add(consumer))
-            .Returns(() => _fixture.Create<string>());
-        _mockModel.Setup(_ => _.QueueBind(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IDictionary<string, object>>()))
-            .Callback((string queue, string exchange, string routingKey, IDictionary<string, object> _) => _bindings.Add(new(queue, exchange, routingKey)));
-        _mockModel.Setup(_ => _.BasicAck(It.IsAny<ulong>(), It.IsAny<bool>())).Verifiable();
-        _mockModel.Setup(_ => _.BasicNack(It.IsAny<ulong>(), It.IsAny<bool>(), It.IsAny<bool>())).Verifiable();
-        _mockModel.Setup(_ => _.BasicCancel(It.IsAny<string>())).Verifiable();
-        _mockModel.Setup(_ => _.Close()).Verifiable();
-        _mockModel.Setup(_ => _.Dispose()).Verifiable();
+        _mockModel
+            .BasicConsume(Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<bool>(), Arg.Any<IDictionary<string, object>>(), Arg.Do<IBasicConsumer>(consumer => _consumers.Add(consumer)))
+            .Returns(callInfo => _fixture.Create<string>());
+        _mockModel
+            .When(_ => _.QueueBind(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<IDictionary<string, object>>()))
+            .Do(callInfo => 
+            {
+                var queue = callInfo.ArgAt<string>(0);
+                var exchange = callInfo.ArgAt<string>(1);
+                var routingKey = callInfo.ArgAt<string>(2);
 
-        _mockConnection = new(MockBehavior.Strict);
-        _mockConnection.Setup(_ => _.CreateModel()).Returns(_mockModel.Object);
-        _mockConnection.Setup(_ => _.Close(It.IsAny<TimeSpan>())).Verifiable();
-        _mockConnection.Setup(_ => _.Dispose()).Verifiable();
+                _bindings.Add(new(queue, exchange, routingKey));
+            });
 
-        _mockConnectionFactory = new(MockBehavior.Strict);
-        _mockConnectionFactory.SetupSet(_ => _.Uri = It.IsAny<Uri>()).Verifiable();
-        _mockConnectionFactory.SetupSet(_ => _.UserName = It.IsAny<string>()).Verifiable();
-        _mockConnectionFactory.SetupSet(_ => _.Password = It.IsAny<string>()).Verifiable();
-        _mockConnectionFactory.SetupSet(_ => _.VirtualHost = It.IsAny<string>()).Verifiable();
-        _mockConnectionFactory.Setup(_ => _.CreateConnection(It.IsAny<List<AmqpTcpEndpoint>>())).Returns(_mockConnection.Object);
+        _mockConnection = Substitute.For<IConnection>();
+        _mockConnection
+            .CreateModel()
+            .Returns(callInfo => _mockModel);
+
+        _mockConnectionFactory = Substitute.For<IConnectionFactory>();
+        _mockConnectionFactory
+            .CreateConnection(Arg.Any<List<AmqpTcpEndpoint>>())
+            .Returns(callInfo => _mockConnection);
     }
 
-    internal RabbitMQQueue<TMessage> Sut<TMessage>() => new(_mockOptions.Object, _mockConnectionFactory.Object, new MockLogger<RabbitMQQueue<TMessage>>().Object);
+    internal RabbitMQQueue<TMessage> Sut<TMessage>() => new(_mockOptions, _mockConnectionFactory, new MockLogger<RabbitMQQueue<TMessage>>());
 
     internal void SendInvalidMessage()
     {
         foreach (var consumer in _consumers)
-            (consumer as EventingBasicConsumer)?.HandleBasicDeliver(_fixture.Create<string>(), _fixture.Create<ulong>(), false, _fixture.Create<string>(), _fixture.Create<string>(), _mockBasicProperties.Object, Encoding.UTF8.GetBytes("INVALID"));
+            (consumer as EventingBasicConsumer)?.HandleBasicDeliver(_fixture.Create<string>(), _fixture.Create<ulong>(), false, _fixture.Create<string>(), _fixture.Create<string>(), _mockBasicProperties, Encoding.UTF8.GetBytes("INVALID"));
     }
 
     internal void SendWrongMessage()
     {
         foreach (var consumer in _consumers)
-            (consumer as EventingBasicConsumer)?.HandleBasicDeliver(_fixture.Create<string>(), _fixture.Create<ulong>(), false, _fixture.Create<string>(), _fixture.Create<string>(), _mockBasicProperties.Object, Encoding.UTF8.GetBytes("""{"UnexpectedType":1}"""));
+            (consumer as EventingBasicConsumer)?.HandleBasicDeliver(_fixture.Create<string>(), _fixture.Create<ulong>(), false, _fixture.Create<string>(), _fixture.Create<string>(), _mockBasicProperties, Encoding.UTF8.GetBytes("""{"UnexpectedType":1}"""));
     }
 
     internal RabbitMQQueueTestsContext WithoutRetryDelay()
@@ -118,19 +150,19 @@ internal class RabbitMQQueueTestsContext
 
     internal RabbitMQQueueTestsContext AssertUsernameIsSet()
     {
-        _mockConnectionFactory.VerifySet(_ => _.UserName = _options.User, Times.Once);
+        _mockConnectionFactory.Received(1).UserName = _options.User;
         return this;
     }
 
     internal RabbitMQQueueTestsContext AssertPasswordIsSet()
     {
-        _mockConnectionFactory.VerifySet(_ => _.Password = _options.Password, Times.Once);
+        _mockConnectionFactory.Received(1).Password = _options.Password;
         return this;
     }
 
     internal RabbitMQQueueTestsContext AssertVirtualHostIsSet()
     {
-        _mockConnectionFactory.VerifySet(_ => _.VirtualHost = _options.VirtualHost, Times.Once);
+        _mockConnectionFactory.Received(1).VirtualHost = _options.VirtualHost;
         return this;
     }
 
@@ -154,19 +186,19 @@ internal class RabbitMQQueueTestsContext
 
     internal RabbitMQQueueTestsContext AssertConsumingQueue(string queue)
     {
-        _mockModel.Verify(_ => _.BasicConsume(queue, It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<Dictionary<string, object>>(), It.IsAny<IBasicConsumer>()), Times.Once);
+        _mockModel.Received(1).BasicConsume(queue, Arg.Any<bool>(), Arg.Any<string>(), Arg.Any<bool>(), Arg.Any<bool>(), Arg.Any<Dictionary<string, object>>(), Arg.Any<IBasicConsumer>());
         return this;
     }
 
     internal RabbitMQQueueTestsContext AssertMessageAckd()
     {
-        _mockModel.Verify(_ => _.BasicAck(It.IsAny<ulong>(), false), Times.Once);
+        _mockModel.Received(1).BasicAck(Arg.Any<ulong>(), false);
         return this;
     }
 
     internal RabbitMQQueueTestsContext AssertMessageNackd(bool requeue)
     {
-        _mockModel.Verify(_ => _.BasicNack(It.IsAny<ulong>(), false, requeue), Times.Once);
+        _mockModel.Received(1).BasicNack(Arg.Any<ulong>(), false, requeue);
         return this;
     }
 
@@ -211,7 +243,7 @@ internal class RabbitMQQueueTestsContext
 
     internal RabbitMQQueueTestsContext AssertChannelCancelled()
     {
-        _mockModel.Verify(_ => _.BasicCancel(It.IsAny<string>()), Times.Once);
+        _mockModel.Received(1).BasicCancel(Arg.Any<string>());
         return this;
     }
 }

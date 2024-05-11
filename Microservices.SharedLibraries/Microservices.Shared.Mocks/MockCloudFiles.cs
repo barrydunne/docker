@@ -1,37 +1,43 @@
 ﻿using FluentFTP;
 using Microservices.Shared.CloudFiles;
-using Moq;
+using NSubstitute;
 
 namespace Microservices.Shared.Mocks;
 
-public class MockCloudFiles : Mock<ICloudFiles>
+public class MockCloudFiles : ICloudFiles
 {
-    private readonly Mock<IProgress<FtpProgress>> _mockProgress;
+    private readonly IProgress<FtpProgress> _mockProgress;
     private readonly MockAsyncFtpClient _client;
 
-    public MockCloudFiles() : base(MockBehavior.Strict)
+    public MockCloudFiles()
     {
-        _mockProgress = new();
+        _mockProgress = Substitute.For<IProgress<FtpProgress>>();
         _client = new();
+    }
 
-        Setup(_ => _.UploadFileAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
-            .Callback((string container, string name, Stream content, CancellationToken token) => _client.Object.UploadStream(content, GetPath(container, name), FtpRemoteExists.NoCheck, false, _mockProgress.Object, token))
-            .ReturnsAsync(() => true);
+    public async Task<bool> DeleteFileAsync(string container, string name, CancellationToken cancellationToken = default)
+    {
+        await _client.DeleteFile(GetPath(container, name));
+        return true;
+    }
 
-        Setup(_ => _.DownloadFileAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
-            .Callback((string container, string name, Stream content, CancellationToken token) => _client.Object.DownloadStream(content, GetPath(container, name), 0, _mockProgress.Object, token, 0))
-            .ReturnsAsync(() => true);
+    public async Task<bool> DownloadFileAsync(string container, string name, Stream content, CancellationToken cancellationToken = default)
+    {
+        await _client.DownloadStream(content, GetPath(container, name), 0, _mockProgress, cancellationToken, 0);
+        return true;
+    }
 
-        Setup(_ => _.FileExistsAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .Returns((string container, string name, CancellationToken token) => _client.Object.FileExists(GetPath(container, name), token));
+    public async Task<bool> FileExistsAsync(string container, string name, CancellationToken cancellationToken = default)
+        => await _client.FileExists(GetPath(container, name), cancellationToken);
 
-        Setup(_ => _.DeleteFileAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .Callback((string container, string name, CancellationToken _) => _client.Object.DeleteFile(GetPath(container, name)))
-            .ReturnsAsync(() => true);
+    public async Task<bool> UploadFileAsync(string container, string name, Stream content, CancellationToken cancellationToken = default)
+    {
+        await _client.UploadStream(content, GetPath(container, name), FtpRemoteExists.NoCheck, false, _mockProgress, cancellationToken);
+        return true;
     }
 
     public void AddFile(string container, string name, Stream content)
-        => _client.Object.UploadStream(content, GetPath(container, name), FtpRemoteExists.NoCheck, true, _mockProgress.Object, CancellationToken.None).Wait();
+        => _client.UploadStream(content, GetPath(container, name), FtpRemoteExists.NoCheck, true, _mockProgress, CancellationToken.None).Wait();
 
     private static string GetPath(string container, string name) => $"{container}/{name}";
 }

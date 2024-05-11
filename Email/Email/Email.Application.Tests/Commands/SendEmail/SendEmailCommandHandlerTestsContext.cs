@@ -3,7 +3,7 @@ using Email.Application.Templates;
 using Email.Application.Tests.Mocks;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
 
 namespace Email.Application.Tests.Commands.SendEmail;
 
@@ -13,8 +13,8 @@ internal class SendEmailCommandHandlerTestsContext
     private readonly MockCloudEmail _mockCloudEmail;
     private readonly MockCloudFiles _mockCloudFiles;
     private readonly MockEmailRepository _mockEmailRepository;
-    private readonly Mock<ITemplateEngine> _mockTemplateEngine;
-    private readonly Mock<ISendEmailCommandHandlerMetrics> _mockMetrics;
+    private readonly ITemplateEngine _mockTemplateEngine;
+    private readonly ISendEmailCommandHandlerMetrics _mockMetrics;
     private readonly MockLogger<SendEmailCommandHandler> _mockLogger;
 
     internal SendEmailCommandHandler Sut { get; }
@@ -25,11 +25,11 @@ internal class SendEmailCommandHandlerTestsContext
         _mockCloudEmail = new();
         _mockCloudFiles = new();
         _mockEmailRepository = new();
-        _mockTemplateEngine = new();
-        _mockMetrics = new();
+        _mockTemplateEngine = Substitute.For<ITemplateEngine>();
+        _mockMetrics = Substitute.For<ISendEmailCommandHandlerMetrics>();
         _mockLogger = new();
 
-        Sut = new(_mockCloudEmail.Object, _mockCloudFiles.Object, _mockEmailRepository.Object, _mockTemplateEngine.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockCloudEmail, _mockCloudFiles, _mockEmailRepository, _mockTemplateEngine, _mockMetrics, _mockLogger);
     }
 
     internal SendEmailCommandHandlerTestsContext WithImage(string path)
@@ -42,52 +42,50 @@ internal class SendEmailCommandHandlerTestsContext
 
     internal SendEmailCommandHandlerTestsContext WithSendFailure()
     {
-        _mockCloudEmail.Setup(_ => _.SendEmailAsync(It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string[]>(), It.IsAny<string[]?>(), It.IsAny<string[]?>(), It.IsAny<(string Cid, Stream Stream, string ContentType)[]>()))
-            .ReturnsAsync(() => false);
+        _mockCloudEmail.WithSendFailure();
         return this;
     }
 
     internal SendEmailCommandHandlerTestsContext WithSendException()
     {
-        _mockCloudEmail.Setup(_ => _.SendEmailAsync(It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string[]>(), It.IsAny<string[]?>(), It.IsAny<string[]?>(), It.IsAny<(string Cid, Stream Stream, string ContentType)[]>()))
-            .Throws<InvalidOperationException>();
+        _mockCloudEmail.WithSendException();
         return this;
     }
 
     internal SendEmailCommandHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal SendEmailCommandHandlerTestsContext AssertMetricsImageTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordImageTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordImageTime(Arg.Any<double>());
         return this;
     }
 
     internal SendEmailCommandHandlerTestsContext AssertMetricsGenerateTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordGenerateTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordGenerateTime(Arg.Any<double>());
         return this;
     }
 
     internal SendEmailCommandHandlerTestsContext AssertMetricsEmailTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordEmailTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordEmailTime(Arg.Any<double>());
         return this;
     }
 
     internal SendEmailCommandHandlerTestsContext AssertHtmlGeneratedWithoutImage()
     {
-        _mockTemplateEngine.Verify(_ => _.GenerateHtml(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Directions>(), It.IsAny<WeatherForecast>(), null), Times.Once);
+        _mockTemplateEngine.Received(1).GenerateHtml(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<Directions>(), Arg.Any<WeatherForecast>(), Arg.Is((string?)null));
         return this;
     }
 
     internal SendEmailCommandHandlerTestsContext AssertHtmlGeneratedWithImage()
     {
-        _mockTemplateEngine.Verify(_ => _.GenerateHtml(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Directions>(), It.IsAny<WeatherForecast>(), null), Times.Never);
-        _mockTemplateEngine.Verify(_ => _.GenerateHtml(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Directions>(), It.IsAny<WeatherForecast>(), It.IsAny<string>()), Times.Once);
+        _mockTemplateEngine.Received(0).GenerateHtml(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<Directions>(), Arg.Any<WeatherForecast>(), Arg.Is((string?)null));
+        _mockTemplateEngine.Received(1).GenerateHtml(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<Directions>(), Arg.Any<WeatherForecast>(), Arg.Any<string>());
         return this;
     }
 

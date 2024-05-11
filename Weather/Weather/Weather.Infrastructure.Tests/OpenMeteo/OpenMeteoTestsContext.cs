@@ -52,7 +52,7 @@ internal class OpenMeteoTestsContext
         _withNoResults = false;
         _withExceptionMessage = null;
 
-        Sut = new(_mockFileSystem, _mockRestSharpFactory.Object, _mockLogger.Object);
+        Sut = new(_mockFileSystem, _mockRestSharpFactory, _mockLogger);
     }
 
     private (HttpStatusCode StatusCode, string? Content, string? ContentType) ExecuteRequest(RestRequest request)

@@ -1,24 +1,26 @@
 ﻿using Geocoding.Application.Queries.GetAddressCoordinates;
-using Microsoft.Extensions.Logging;
-using Moq;
+using Microservices.Shared.Mocks;
+using NSubstitute;
 
 namespace Geocoding.Application.Tests.Queries.GetAddressCoordinates;
 
 internal class GetAddressCoordinatesQueryValidatorTestsContext
 {
-    private readonly Mock<IGetAddressCoordinatesQueryHandlerMetrics> _mockMetrics;
+    private readonly IGetAddressCoordinatesQueryHandlerMetrics _mockMetrics;
+    private readonly MockLogger<GetAddressCoordinatesQueryValidator> _mockLogger;
 
     internal GetAddressCoordinatesQueryValidator Sut { get; }
 
     public GetAddressCoordinatesQueryValidatorTestsContext()
     {
-        _mockMetrics = new();
-        Sut = new(_mockMetrics.Object, new Mock<ILogger<GetAddressCoordinatesQueryValidator>>().Object);
+        _mockMetrics = Substitute.For<IGetAddressCoordinatesQueryHandlerMetrics>();
+        _mockLogger = new();
+        Sut = new(_mockMetrics, _mockLogger);
     }
 
     internal GetAddressCoordinatesQueryValidatorTestsContext AssertMetricsGuardTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordGuardTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordGuardTime(Arg.Any<double>());
         return this;
     }
 }

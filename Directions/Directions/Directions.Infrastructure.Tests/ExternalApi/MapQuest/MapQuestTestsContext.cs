@@ -45,7 +45,7 @@ internal class MapQuestTestsContext
         _withNoManeuvers = false;
         _withExceptionMessage = null;
 
-        Sut = new(_mockCloudSecrets.Object, _mockRestSharpFactory.Object, _mockLogger.Object);
+        Sut = new(_mockCloudSecrets, _mockRestSharpFactory, _mockLogger);
     }
 
     private (HttpStatusCode StatusCode, string? Content, string? ContentType) ExecuteRequest(RestRequest request)

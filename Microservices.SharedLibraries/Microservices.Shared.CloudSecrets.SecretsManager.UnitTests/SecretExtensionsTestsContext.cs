@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Moq;
+using NSubstitute;
 
 namespace Microservices.Shared.CloudSecrets.SecretsManager.UnitTests;
 
@@ -10,15 +10,15 @@ internal class SecretExtensionsTestsContext
 {
     private readonly Fixture _fixture;
     private readonly List<ServiceDescriptor> _serviceDescriptors;
-    private readonly Mock<IServiceCollection> _mockServices;
+    private readonly IServiceCollection _mockServices;
     private readonly MockCloudSecrets _mockCloudSecrets;
-    private readonly Mock<IConfigurationSection> _mockSecretConfigurationSection;
-    private readonly Mock<IConfigurationSection> _mockConfigurationSection;
-    private readonly Mock<IConfigurationManager> _mockConfigurationManager;
-    private readonly Mock<IHostApplicationBuilder> _mockHostApplicationBuilder;
+    private readonly IConfigurationSection _mockSecretConfigurationSection;
+    private readonly IConfigurationSection _mockConfigurationSection;
+    private readonly IConfigurationManager _mockConfigurationManager;
+    private readonly IHostApplicationBuilder _mockHostApplicationBuilder;
 
-    internal IConfigurationSection ConfigurationSection => _mockConfigurationSection.Object;
-    internal IHostApplicationBuilder Builder => _mockHostApplicationBuilder.Object;
+    internal IConfigurationSection ConfigurationSection => _mockConfigurationSection;
+    internal IHostApplicationBuilder Builder => _mockHostApplicationBuilder;
 
     internal string Vault { get; }
     internal string Secret { get; }
@@ -35,29 +35,43 @@ internal class SecretExtensionsTestsContext
 
         _serviceDescriptors = new();
 
-        _mockServices = new(MockBehavior.Loose);
-        _mockServices.Setup(_ => _.Add(It.IsAny<ServiceDescriptor>())).Callback((ServiceDescriptor serviceDescriptor) => _serviceDescriptors.Add(serviceDescriptor));
-        _mockServices.Setup(_ => _.Count).Returns(() => _serviceDescriptors.Count);
-        _mockServices.Setup(_ => _.CopyTo(It.IsAny<ServiceDescriptor[]>(), It.IsAny<int>())).Callback((ServiceDescriptor[] array, int index) => CopyServiceDescriptors(array, index));
-        _mockServices.Setup(_ => _[It.IsAny<int>()]).Returns((int index) => _serviceDescriptors[index]);
+        _mockServices = Substitute.For<IServiceCollection>();
+        _mockServices
+            .When(_ => _.Add(Arg.Any<ServiceDescriptor>()))
+            .Do(callInfo => _serviceDescriptors.Add(callInfo.ArgAt<ServiceDescriptor>(0)));
+        _mockServices
+            .Count
+            .Returns(callInfo => _serviceDescriptors.Count);
+        _mockServices
+            .When(_ => _.CopyTo(Arg.Any<ServiceDescriptor[]>(), Arg.Any<int>()))
+            .Do(callInfo => CopyServiceDescriptors(callInfo.ArgAt<ServiceDescriptor[]>(0), callInfo.ArgAt<int>(1)));
+        _mockServices
+            [Arg.Any<int>()]
+            .Returns(callInfo => _serviceDescriptors[callInfo.ArgAt<int>(0)]);
 
         _mockCloudSecrets = new();
         _mockCloudSecrets.WithSecretValue(Vault, Secret, SecretValue);
-        _mockServices.Object.AddSingleton(typeof(ICloudSecrets), _mockCloudSecrets.Object);
+        _mockServices.AddSingleton(typeof(ICloudSecrets), _mockCloudSecrets);
 
-        _mockSecretConfigurationSection = new(MockBehavior.Loose);
-        _mockSecretConfigurationSection.Setup(_ => _.Value).Verifiable();
+        _mockSecretConfigurationSection = Substitute.For<IConfigurationSection>();
 
-        _mockConfigurationSection = new(MockBehavior.Loose);
-        _mockConfigurationSection.Setup(_ => _.GetSection(ConfigurationKey))
-            .Returns(() => _mockSecretConfigurationSection.Object);
+        _mockConfigurationSection = Substitute.For<IConfigurationSection>();
+        _mockConfigurationSection
+            .GetSection(ConfigurationKey)
+            .Returns(callInfo => _mockSecretConfigurationSection);
 
-        _mockConfigurationManager = new(MockBehavior.Loose);
-        _mockConfigurationManager.Setup(_ => _.GetSection("SecretsManagerOptions")).Returns(_mockConfigurationSection.Object);
+        _mockConfigurationManager = Substitute.For<IConfigurationManager>();
+        _mockConfigurationManager
+            .GetSection("SecretsManagerOptions")
+            .Returns(callInfo => _mockConfigurationSection);
 
-        _mockHostApplicationBuilder = new();
-        _mockHostApplicationBuilder.Setup(_ => _.Services).Returns(_mockServices.Object);
-        _mockHostApplicationBuilder.Setup(_ => _.Configuration).Returns(_mockConfigurationManager.Object);
+        _mockHostApplicationBuilder = Substitute.For<IHostApplicationBuilder>();
+        _mockHostApplicationBuilder
+            .Services
+            .Returns(callInfo => _mockServices);
+        _mockHostApplicationBuilder
+            .Configuration
+            .Returns(callInfo => _mockConfigurationManager);
     }
 
     private void CopyServiceDescriptors(ServiceDescriptor[] array, int index)
@@ -80,7 +94,7 @@ internal class SecretExtensionsTestsContext
 
     internal SecretExtensionsTestsContext AssertConfigurationSectionHasSecretValue()
     {
-        _mockSecretConfigurationSection.VerifySet(_ => _.Value = SecretValue, Times.Once);
+        _mockSecretConfigurationSection.Received(1).Value = SecretValue;
         return this;
     }
 }

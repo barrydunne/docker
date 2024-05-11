@@ -1,24 +1,26 @@
 ﻿using Imaging.Application.Commands.SaveImage;
-using Microsoft.Extensions.Logging;
-using Moq;
+using Microservices.Shared.Mocks;
+using NSubstitute;
 
 namespace Imaging.Application.Tests.Commands.SaveImage;
 
 internal class SaveImageCommandValidatorTestsContext
 {
-    private readonly Mock<ISaveImageCommandHandlerMetrics> _mockMetrics;
+    private readonly ISaveImageCommandHandlerMetrics _mockMetrics;
+    private readonly MockLogger<SaveImageCommandValidator> _mockLogger;
 
     internal SaveImageCommandValidator Sut { get; }
 
     public SaveImageCommandValidatorTestsContext()
     {
-        _mockMetrics = new();
-        Sut = new(_mockMetrics.Object, new Mock<ILogger<SaveImageCommandValidator>>().Object);
+        _mockMetrics = Substitute.For<ISaveImageCommandHandlerMetrics>();
+        _mockLogger = new();
+        Sut = new(_mockMetrics, _mockLogger);
     }
 
     internal SaveImageCommandValidatorTestsContext AssertMetricsGuardTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordGuardTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordGuardTime(Arg.Any<double>());
         return this;
     }
 }

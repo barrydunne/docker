@@ -10,7 +10,7 @@ using State.Application.Commands.UpdateGeocodingResult;
 using State.Application.Commands.UpdateImagingResult;
 using State.Application.Commands.UpdateWeatherResult;
 
-new ApiBuilder()
+await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
     .WithSwagger()
     .WithHealthHandler()
@@ -25,4 +25,4 @@ new ApiBuilder()
         .AddQueueToCommandProcessor<ImagingCompleteEvent, UpdateImagingResultCommand, Result, ImagingCompleteEventProcessor>())
     .WithMappings(Mappings.Map)
     .Build(args)
-    .Run();
+    .RunAsync();

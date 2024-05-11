@@ -1,7 +1,7 @@
 ﻿using Microservices.Shared.Mocks;
 using Microservices.Shared.Queues.RabbitMQ.IntegrationTests.ApiModels;
 using Microsoft.Extensions.Options;
-using Moq;
+using NSubstitute;
 using RabbitMQ.Client;
 using System.Diagnostics;
 using System.Net.Http.Headers;
@@ -19,7 +19,7 @@ internal class RabbitMQQueueTestsContext : IDisposable
     private readonly Fixture _fixture;
     private readonly string _vHost;
     private readonly RabbitMQQueueOptions _options;
-    private readonly Mock<IOptions<RabbitMQQueueOptions>> _mockOptions;
+    private readonly IOptions<RabbitMQQueueOptions> _mockOptions;
     private readonly HttpClient _httpClient;
 
     private bool _disposedValue;
@@ -43,8 +43,10 @@ internal class RabbitMQQueueTestsContext : IDisposable
         Suffix = _fixture.Create<string>();
 
         _options = new RabbitMQQueueOptions { Nodes = new[] { "localhost:10572", "localhost:10573" }, User = "integration.tests", Password = "password", VirtualHost = _vHost, SubscriberSuffix = Suffix, RetryDelayMilliseconds = 0 };
-        _mockOptions = new(MockBehavior.Strict);
-        _mockOptions.Setup(_ => _.Value).Returns(_options);
+        _mockOptions = Substitute.For<IOptions<RabbitMQQueueOptions>>();
+        _mockOptions
+            .Value
+            .Returns(callInfo => _options);
 
         _httpClient = new();
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", _auth);
@@ -52,7 +54,7 @@ internal class RabbitMQQueueTestsContext : IDisposable
         CreateVHostAsync().Wait();
     }
 
-    internal RabbitMQQueue<TMessage> Sut<TMessage>() => new(_mockOptions.Object, new ConnectionFactory(), new MockLogger<RabbitMQQueue<TMessage>>().Object);
+    internal RabbitMQQueue<TMessage> Sut<TMessage>() => new(_mockOptions, new ConnectionFactory(), new MockLogger<RabbitMQQueue<TMessage>>());
 
     internal async Task<string?> GetQueueBoundToExchangeAsync(string exchangeName)
     {

@@ -2,7 +2,8 @@
 using MediatR;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using State.Application.Commands.CreateJob;
 using State.Application.Commands.NotifyJobStatusUpdate;
 using State.Application.Commands.NotifyProcessingComplete;
@@ -16,8 +17,8 @@ namespace State.Application.Tests.Commands.UpdateImagingResult;
 internal class UpdateImagingResultCommandHandlerTestsContext
 {
     private readonly MockJobRepository _mockJobRepository;
-    private readonly Mock<ISender> _mockMediator;
-    private readonly Mock<IUpdateImagingResultCommandHandlerMetrics> _mockMetrics;
+    private readonly ISender _mockMediator;
+    private readonly IUpdateImagingResultCommandHandlerMetrics _mockMetrics;
     private readonly MockLogger<UpdateImagingResultCommandHandler> _mockLogger;
     private readonly ConcurrentBag<NotifyJobStatusUpdateCommand> _notifyJobStatusUpdateCommands;
     private readonly ConcurrentBag<NotifyProcessingCompleteCommand> _notifyProcessingCompleteCommands;
@@ -29,22 +30,24 @@ internal class UpdateImagingResultCommandHandlerTestsContext
     public UpdateImagingResultCommandHandlerTestsContext()
     {
         _mockJobRepository = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<IUpdateImagingResultCommandHandlerMetrics>();
         _mockLogger = new();
         _notifyJobStatusUpdateCommands = new();
         _notifyProcessingCompleteCommands = new();
         _invalidJobIds = new();
         _exceptionJobIds = new();
 
-        _mockMediator = new();
-        _mockMediator.Setup(_ => _.Send(It.IsAny<NotifyJobStatusUpdateCommand>(), It.IsAny<CancellationToken>()))
-            .Callback((IRequest<Result> command, CancellationToken _) => _notifyJobStatusUpdateCommands.Add((NotifyJobStatusUpdateCommand)command))
-            .Returns((IRequest<Result> command, CancellationToken _) => NotifyJobStatusUpdate((NotifyJobStatusUpdateCommand)command));
-        _mockMediator.Setup(_ => _.Send(It.IsAny<NotifyProcessingCompleteCommand>(), It.IsAny<CancellationToken>()))
-            .Callback((IRequest<Result> command, CancellationToken _) => _notifyProcessingCompleteCommands.Add((NotifyProcessingCompleteCommand)command))
-            .ReturnsAsync((IRequest<Result> command, CancellationToken _) => Result.Success());
+        _mockMediator = Substitute.For<ISender>();
+        _mockMediator
+            .Send(Arg.Any<NotifyJobStatusUpdateCommand>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => NotifyJobStatusUpdate((NotifyJobStatusUpdateCommand)callInfo.ArgAt<IRequest<Result>>(0)))
+            .AndDoes(callInfo => _notifyJobStatusUpdateCommands.Add((NotifyJobStatusUpdateCommand)callInfo.ArgAt<IRequest<Result>>(0)));
+        _mockMediator
+            .Send(Arg.Any<NotifyProcessingCompleteCommand>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => Result.Success())
+            .AndDoes(callInfo => _notifyProcessingCompleteCommands.Add((NotifyProcessingCompleteCommand)callInfo.ArgAt<IRequest<Result>>(0)));
 
-        Sut = new(_mockJobRepository.Object, _mockMediator.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockJobRepository, _mockMediator, _mockMetrics, _mockLogger);
     }
 
     private Task<Result> NotifyJobStatusUpdate(NotifyJobStatusUpdateCommand command) => Task.Run(() =>
@@ -69,7 +72,7 @@ internal class UpdateImagingResultCommandHandlerTestsContext
 
     internal UpdateImagingResultCommandHandlerTestsContext WithJobRepositoryException()
     {
-        _mockJobRepository.Setup(_ => _.UpdateJobStatusAsync(It.IsAny<Guid>(), It.IsAny<bool>(), It.IsAny<ImagingResult>(), It.IsAny<CancellationToken>())).Throws<InvalidOperationException>();
+        _mockJobRepository.WithWriteException();
         return this;
     }
 
@@ -87,19 +90,19 @@ internal class UpdateImagingResultCommandHandlerTestsContext
 
     internal UpdateImagingResultCommandHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal UpdateImagingResultCommandHandlerTestsContext AssertMetricsPublishTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordPublishTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordPublishTime(Arg.Any<double>());
         return this;
     }
 
     internal UpdateImagingResultCommandHandlerTestsContext AssertMetricsPublishTimeNotRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordPublishTime(It.IsAny<double>()), Times.Never);
+        _mockMetrics.Received(0).RecordPublishTime(Arg.Any<double>());
         return this;
     }
 

@@ -10,7 +10,7 @@ using PublicApi.Api.Validators;
 using PublicApi.Application.Commands.UpdateStatus;
 using System.Text.Json.Serialization;
 
-new ApiBuilder()
+await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
     .WithSwagger(useBearerToken: true)
     .WithHealthHandler()
@@ -40,4 +40,4 @@ new ApiBuilder()
         }))
     .WithMappings(Mappings.Map)
     .Build(args)
-    .Run();
+    .RunAsync();

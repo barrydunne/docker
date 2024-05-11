@@ -21,19 +21,19 @@ else {
 
 
 Write-Host Creating api.keys/geocoding.mapquest secret
-Invoke-RestMethod -Uri http://localhost:10083/secrets/vaults/api.keys/geocoding.mapquest -Method Post -Body $mapQuestApiKey -Headers @{ "Content-Type" = "text/plain" }
+Invoke-RestMethod -Uri http://localhost:10083/secrets/vaults/api.keys/geocoding.mapquest -Method Post -Body $mapQuestApiKey -ContentType 'text/plain'
 
 
 Write-Host Creating api.keys/directions.mapquest secret
-Invoke-RestMethod -Uri http://localhost:10083/secrets/vaults/api.keys/directions.mapquest -Method Post -Body $mapQuestApiKey -Headers @{ "Content-Type" = "text/plain" }
+Invoke-RestMethod -Uri http://localhost:10083/secrets/vaults/api.keys/directions.mapquest -Method Post -Body $mapQuestApiKey -ContentType 'text/plain'
 
 
 Write-Host Creating api.keys/imaging.bing secret
-Invoke-RestMethod -Uri http://localhost:10083/secrets/vaults/api.keys/imaging.bing -Method Post -Body $bingApiKey -Headers @{ "Content-Type" = "text/plain" }
+Invoke-RestMethod -Uri http://localhost:10083/secrets/vaults/api.keys/imaging.bing -Method Post -Body $bingApiKey -ContentType 'text/plain'
 
 
 Write-Host Creating integration.tests user in RabbitMQ
-Invoke-RestMethod -Uri 'http://localhost:10672/api/users/integration.tests' -Method Put -Body '{"username":"integration.tests","password":"password","tags":"integration.tests administrator"}' -Headers @{ Authorization = 'Basic YWRtaW46UEBzc3cwcmQ=' }
+Invoke-RestMethod -Uri 'http://localhost:10672/api/users/integration.tests' -Method Put -Body '{"username":"integration.tests","password":"password","tags":"integration.tests administrator"}' -Headers @{ Authorization = 'Basic YWRtaW46UEBzc3cwcmQ=' } -ContentType 'application/json'
 
 
 # Mongo DB user creation
@@ -114,8 +114,8 @@ $csproj = @'
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.0-beta.1" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0-rc.1.23419.4"/>
+        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1"/>
     </ItemGroup>
 </Project>
 '@

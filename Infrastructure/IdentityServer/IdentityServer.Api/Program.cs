@@ -2,7 +2,7 @@ using AspNet.KickStarter;
 using IdentityServer.Api;
 using IdentityServer4.Configuration;
 
-new ApiBuilder()
+await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
     .WithAdditionalConfiguration(_ => _.Services
         .Configure<IdentityServerOptions>(_ => _.IssuerUri = "http://ids.microservices-infrastructure:8080")
@@ -12,4 +12,4 @@ new ApiBuilder()
             .AddDeveloperSigningCredential())
     .WithApplicationConfiguration(_ => _.UseIdentityServer())
     .Build(args)
-    .Run();
+    .RunAsync();

@@ -1,16 +1,16 @@
 ﻿using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using Moq;
 using Imaging.Application.ExternalApi;
 using Imaging.Application.Queries.GetImageUrl;
+using NSubstitute;
 
 namespace Imaging.Application.Tests.QueryHandlers.GetImageUrl;
 
 internal class GetImageUrlQueryHandlerTestsContext
 {
     private readonly Fixture _fixture;
-    private readonly Mock<IExternalApi> _mockExternalService;
-    private readonly Mock<IGetImageUrlQueryHandlerMetrics> _mockMetrics;
+    private readonly IExternalApi _mockExternalService;
+    private readonly IGetImageUrlQueryHandlerMetrics _mockMetrics;
     private readonly MockLogger<GetImageUrlQueryHandler> _mockLogger;
 
     private string? _imageUrl;
@@ -21,17 +21,18 @@ internal class GetImageUrlQueryHandlerTestsContext
     public GetImageUrlQueryHandlerTestsContext()
     {
         _fixture = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<IGetImageUrlQueryHandlerMetrics>();
         _mockLogger = new();
 
         _imageUrl = null;
         _withExceptionMessage = null;
 
-        _mockExternalService = new();
-        _mockExternalService.Setup(_ => _.GetImageUrlAsync(It.IsAny<string>(), It.IsAny<Coordinates>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(() => GetImageUrl());
+        _mockExternalService = Substitute.For<IExternalApi>();
+        _mockExternalService
+            .GetImageUrlAsync(Arg.Any<string>(), Arg.Any<Coordinates>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => GetImageUrl());
 
-        Sut = new(_mockExternalService.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockExternalService, _mockMetrics, _mockLogger);
     }
 
     private string? GetImageUrl()
@@ -55,13 +56,13 @@ internal class GetImageUrlQueryHandlerTestsContext
 
     internal GetImageUrlQueryHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal GetImageUrlQueryHandlerTestsContext AssertMetricsExternalTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordExternalTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordExternalTime(Arg.Any<double>());
         return this;
     }
 }

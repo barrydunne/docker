@@ -1,6 +1,6 @@
 ﻿using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
 using PublicApi.Application.Commands.CreateJob;
 using PublicApi.Application.Models;
 using PublicApi.Application.Tests.Mocks;
@@ -11,7 +11,7 @@ internal class CreateJobCommandHandlerTestsContext
 {
     private readonly MockQueue<JobCreatedEvent> _mockQueue;
     private readonly MockJobRepository _mockJobRepository;
-    private readonly Mock<ICreateJobCommandHandlerMetrics> _mockMetrics;
+    private readonly ICreateJobCommandHandlerMetrics _mockMetrics;
     private readonly MockLogger<CreateJobCommandHandler> _mockLogger;
 
     internal CreateJobCommandHandler Sut { get; }
@@ -20,10 +20,10 @@ internal class CreateJobCommandHandlerTestsContext
     {
         _mockQueue = new();
         _mockJobRepository = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<ICreateJobCommandHandlerMetrics>();
         _mockLogger = new();
 
-        Sut = new(_mockQueue.Object, _mockJobRepository.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockQueue, _mockJobRepository, _mockMetrics, _mockLogger);
     }
 
     internal CreateJobCommandHandlerTestsContext WithExistingJob(Job job)
@@ -34,25 +34,25 @@ internal class CreateJobCommandHandlerTestsContext
 
     internal CreateJobCommandHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal CreateJobCommandHandlerTestsContext AssertMetricsIdempotencyTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordIdempotencyTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordIdempotencyTime(Arg.Any<double>());
         return this;
     }
 
     internal CreateJobCommandHandlerTestsContext AssertMetricsSaveTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordSaveTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordSaveTime(Arg.Any<double>());
         return this;
     }
 
     internal CreateJobCommandHandlerTestsContext AssertMetricsPublishTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordPublishTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordPublishTime(Arg.Any<double>());
         return this;
     }
 

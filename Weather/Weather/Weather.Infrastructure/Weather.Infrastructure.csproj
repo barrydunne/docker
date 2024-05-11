@@ -25,7 +25,7 @@
     <PackageReference Include="Microservices.Shared.Events" Version="8.0.0" />
     <PackageReference Include="Microservices.Shared.Utilities" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.14.0.81108">
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.25.0.90414">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -33,7 +33,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" Version="19.2.87" />
+    <PackageReference Include="TestableIO.System.IO.Abstractions.Wrappers" Version="21.0.2" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Options;
-using Moq;
+using NSubstitute;
 
 namespace Microservices.Shared.CloudFiles.Ftp.UnitTests;
 
@@ -8,18 +8,20 @@ internal class FtpFilesTestsContext
 {
     private readonly Fixture _fixture;
     private readonly FtpFilesOptions _options;
-    private readonly Mock<IOptions<FtpFilesOptions>> _mockOptions;
+    private readonly IOptions<FtpFilesOptions> _mockOptions;
     private readonly MockAsyncFtpClient _mockAsyncFtpClient;
     private readonly MockLogger<FtpFiles> _mockLogger;
 
-    internal FtpFiles Sut => new(_mockOptions.Object, _mockAsyncFtpClient.Object, _mockLogger.Object);
+    internal FtpFiles Sut => new(_mockOptions, _mockAsyncFtpClient, _mockLogger);
 
     internal FtpFilesTestsContext()
     {
         _fixture = new();
         _options = _fixture.Create<FtpFilesOptions>();
-        _mockOptions = new(MockBehavior.Strict);
-        _mockOptions.Setup(_ => _.Value).Returns(_options);
+        _mockOptions = Substitute.For<IOptions<FtpFilesOptions>>();
+        _mockOptions
+            .Value
+            .Returns(callInfo => _options);
         _mockAsyncFtpClient = new();
         _mockLogger = new();
     }
@@ -85,13 +87,13 @@ internal class FtpFilesTestsContext
         return this;
     }
 
-    internal FtpFilesTestsContext AssertDirectoryCreated(string container) => AssertDirectoryCreated(container, Times.Once());
+    internal FtpFilesTestsContext AssertDirectoryCreated(string container) => AssertDirectoryCreated(container, 1);
 
-    internal FtpFilesTestsContext AssertDirectoryNotCreated(string container) => AssertDirectoryCreated(container, Times.Never());
+    internal FtpFilesTestsContext AssertDirectoryNotCreated(string container) => AssertDirectoryCreated(container, 0);
 
-    internal FtpFilesTestsContext AssertDirectoryCreated(string container, Times times)
+    internal FtpFilesTestsContext AssertDirectoryCreated(string container, int times)
     {
-        _mockAsyncFtpClient.Verify(_ => _.CreateDirectory($"{_options.BaseDir}/{container}", It.IsAny<CancellationToken>()), times);
+        _mockAsyncFtpClient.AssertDirectoryCreated($"{_options.BaseDir}/{container}", times);
         return this;
     }
 
@@ -104,7 +106,7 @@ internal class FtpFilesTestsContext
 
     internal FtpFilesTestsContext AssertFileDeleted(string container, string name)
     {
-        _mockAsyncFtpClient.Verify(_ => _.DeleteFile($"{_options.BaseDir}/{container}/{name}", It.IsAny<CancellationToken>()));
+        _mockAsyncFtpClient.AssertFileDeleted($"{_options.BaseDir}/{container}/{name}", 1);
         return this;
     }
 }

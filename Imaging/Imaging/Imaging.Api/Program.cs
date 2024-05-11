@@ -6,7 +6,7 @@ using Imaging.Application.Commands.SaveImage;
 using Microservices.Shared.Events;
 using Microservices.Shared.Utilities;
 
-new ApiBuilder()
+await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
     .WithSwagger()
     .WithHealthHandler()
@@ -18,4 +18,4 @@ new ApiBuilder()
         .AddQueueToCommandProcessor<LocationsReadyEvent, SaveImageCommand, Result, LocationsReadyEventProcessor>())
     .WithMappings(Mappings.Map)
     .Build(args)
-    .Run();
+    .RunAsync();

@@ -4,7 +4,7 @@ using Directions.Application.Queries.GetDirections;
 using MediatR;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
 using System.Collections.Concurrent;
 
 using EventDirections = Microservices.Shared.Events.Directions;
@@ -15,8 +15,8 @@ internal class GenerateDirectionsCommandHandlerTestsContext
 {
     private readonly Fixture _fixture;
     private readonly MockQueue<DirectionsCompleteEvent> _mockQueue;
-    private readonly Mock<ISender> _mockMediator;
-    private readonly Mock<IGenerateDirectionsCommandHandlerMetrics> _mockMetrics;
+    private readonly ISender _mockMediator;
+    private readonly IGenerateDirectionsCommandHandlerMetrics _mockMetrics;
     private readonly MockLogger<Commands.GenerateDirections.GenerateDirectionsCommandHandler> _mockLogger;
     private readonly ConcurrentBag<string> _invalidCoordinates;
     private readonly ConcurrentBag<string> _exceptionCoordinates;
@@ -31,7 +31,7 @@ internal class GenerateDirectionsCommandHandlerTestsContext
     {
         _fixture = new();
         _mockQueue = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<IGenerateDirectionsCommandHandlerMetrics>();
         _mockLogger = new();
         _directions = new();
         _invalidCoordinates = new();
@@ -40,12 +40,13 @@ internal class GenerateDirectionsCommandHandlerTestsContext
         _withExceptionMessage = null;
         _validCoordinates = true;
 
-        _mockMediator = new();
-        _mockMediator.Setup(_ => _.Send(It.IsAny<GetDirectionsQuery>(), It.IsAny<CancellationToken>()))
-            .Callback((IRequest<Result<EventDirections>> query, CancellationToken _) => _directions[GetKey((GetDirectionsQuery)query)] = _fixture.Build<EventDirections>().With(_ => _.IsSuccessful, true).With(_ => _.Error, (string?)null).Create())
-            .Returns((IRequest<Result<EventDirections>> query, CancellationToken _) => (_withExceptionMessage is not null) ? throw new InvalidOperationException(_withExceptionMessage) : GetDirections((GetDirectionsQuery)query));
+        _mockMediator = Substitute.For<ISender>();
+        _mockMediator
+            .Send(Arg.Any<GetDirectionsQuery>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => (_withExceptionMessage is not null) ? throw new InvalidOperationException(_withExceptionMessage) : GetDirections((GetDirectionsQuery)callInfo.ArgAt<IRequest<Result<EventDirections>>>(0)))
+            .AndDoes(callInfo => _directions[GetKey((GetDirectionsQuery)callInfo.ArgAt<IRequest<Result<EventDirections>>>(0))] = _fixture.Build<EventDirections>().With(_ => _.IsSuccessful, true).With(_ => _.Error, (string?)null).Create());
 
-        Sut = new(_mockQueue.Object, _mockMediator.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockQueue, _mockMediator, _mockMetrics, _mockLogger);
     }
 
     private Task<Result<EventDirections>> GetDirections(GetDirectionsQuery query) => Task.Run(() =>
@@ -89,19 +90,19 @@ internal class GenerateDirectionsCommandHandlerTestsContext
 
     internal GenerateDirectionsCommandHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal GenerateDirectionsCommandHandlerTestsContext AssertMetricsDirectionsTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordDirectionsTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordDirectionsTime(Arg.Any<double>());
         return this;
     }
 
     internal GenerateDirectionsCommandHandlerTestsContext AssertMetricsPublishTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordPublishTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordPublishTime(Arg.Any<double>());
         return this;
     }
 

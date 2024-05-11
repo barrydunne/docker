@@ -29,7 +29,7 @@ public class SearchHandler
     internal async Task<IResult> GetEmailsSentToRecipientAsync(GetEmailsSentToRecipientRequest request, IValidator<GetEmailsSentToRecipientRequest> validator)
     {
         // Input validation
-        var validationResult = validator.Validate(request);
+        var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid)
             return Results.ValidationProblem(validationResult.ToDictionary());
 
@@ -48,7 +48,7 @@ public class SearchHandler
     internal async Task<IResult> GetEmailsSentBetweenTimesAsync(GetEmailsSentBetweenTimesRequest request, IValidator<GetEmailsSentBetweenTimesRequest> validator)
     {
         // Input validation
-        var validationResult = validator.Validate(request);
+        var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid)
             return Results.ValidationProblem(validationResult.ToDictionary());
 

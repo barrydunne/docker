@@ -15,10 +15,10 @@
   <ItemGroup>
     <PackageReference Include="AspNet.KickStarter" Version="1.1.0" />
     <PackageReference Include="Mapster" Version="7.4.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
-    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
-    <PackageReference Include="Serilog.Sinks.Seq" Version="6.0.0" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.14.0.81108">
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="7.0.1" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.25.0.90414">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

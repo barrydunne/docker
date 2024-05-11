@@ -1,24 +1,26 @@
 ﻿using Geocoding.Application.Commands.GeocodeAddresses;
-using Microsoft.Extensions.Logging;
-using Moq;
+using Microservices.Shared.Mocks;
+using NSubstitute;
 
 namespace Geocoding.Application.Tests.Commands.GeocodeAddresses;
 
 internal class GeocodeAddressesCommandValidatorTestsContext
 {
-    private readonly Mock<IGeocodeAddressesCommandHandlerMetrics> _mockMetrics;
+    private readonly IGeocodeAddressesCommandHandlerMetrics _mockMetrics;
+    private readonly MockLogger<GeocodeAddressesCommandValidator> _mockLogger;
 
     internal GeocodeAddressesCommandValidator Sut { get; }
 
     public GeocodeAddressesCommandValidatorTestsContext()
     {
-        _mockMetrics = new();
-        Sut = new(_mockMetrics.Object, new Mock<ILogger<GeocodeAddressesCommandValidator>>().Object);
+        _mockMetrics = Substitute.For<IGeocodeAddressesCommandHandlerMetrics>();
+        _mockLogger = new();
+        Sut = new(_mockMetrics, _mockLogger);
     }
 
     internal GeocodeAddressesCommandValidatorTestsContext AssertMetricsGuardTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordGuardTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordGuardTime(Arg.Any<double>());
         return this;
     }
 }

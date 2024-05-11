@@ -1,24 +1,26 @@
-﻿using Microsoft.Extensions.Logging;
-using Moq;
+﻿using Microservices.Shared.Mocks;
+using NSubstitute;
 using State.Application.Commands.NotifyJobStatusUpdate;
 
 namespace State.Application.Tests.Commands.NotifyJobStatusUpdate;
 
 internal class NotifyJobStatusUpdateCommandValidatorTestsContext
 {
-    private readonly Mock<INotifyJobStatusUpdateCommandHandlerMetrics> _mockMetrics;
+    private readonly INotifyJobStatusUpdateCommandHandlerMetrics _mockMetrics;
+    private readonly MockLogger<NotifyJobStatusUpdateCommandValidator> _mockLogger;
 
     internal NotifyJobStatusUpdateCommandValidator Sut { get; }
 
     public NotifyJobStatusUpdateCommandValidatorTestsContext()
     {
-        _mockMetrics = new();
-        Sut = new(_mockMetrics.Object, new Mock<ILogger<NotifyJobStatusUpdateCommandValidator>>().Object);
+        _mockMetrics = Substitute.For<INotifyJobStatusUpdateCommandHandlerMetrics>();
+        _mockLogger = new();
+        Sut = new(_mockMetrics, _mockLogger);
     }
 
     internal NotifyJobStatusUpdateCommandValidatorTestsContext AssertMetricsGuardTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordGuardTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordGuardTime(Arg.Any<double>());
         return this;
     }
 }

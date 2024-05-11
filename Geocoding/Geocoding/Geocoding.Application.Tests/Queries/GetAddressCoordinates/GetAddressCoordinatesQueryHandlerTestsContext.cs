@@ -1,20 +1,20 @@
 ﻿using Geocoding.Application.Caching;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using Moq;
 using System.Collections.Concurrent;
 using Geocoding.Application.ExternalApi;
 using Geocoding.Application.Queries.GetAddressCoordinates;
+using NSubstitute;
 
 namespace Geocoding.Application.Tests.Queries.GetAddressCoordinates;
 
 internal class GetAddressCoordinatesQueryHandlerTestsContext
 {
     private readonly Fixture _fixture;
-    private readonly Mock<IExternalApi> _mockExternalService;
+    private readonly IExternalApi _mockExternalService;
     private readonly ConcurrentDictionary<string, Coordinates> _cache;
-    private readonly Mock<IGeocodingCache> _mockGeocodingCache;
-    private readonly Mock<IGetAddressCoordinatesQueryHandlerMetrics> _mockMetrics;
+    private readonly IGeocodingCache _mockGeocodingCache;
+    private readonly IGetAddressCoordinatesQueryHandlerMetrics _mockMetrics;
     private readonly MockLogger<GetAddressCoordinatesQueryHandler> _mockLogger;
 
     private Coordinates? _coordinates;
@@ -26,23 +26,26 @@ internal class GetAddressCoordinatesQueryHandlerTestsContext
     {
         _fixture = new();
         _cache = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<IGetAddressCoordinatesQueryHandlerMetrics>();
         _mockLogger = new();
 
         _coordinates = null;
         _withExceptionMessage = null;
 
-        _mockGeocodingCache = new();
-        _mockGeocodingCache.Setup(_ => _.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string address, CancellationToken _) => _cache.TryGetValue(address, out var coordinates) ? coordinates : null);
-        _mockGeocodingCache.Setup(_ => _.SetAsync(It.IsAny<string>(), It.IsAny<Coordinates>(), It.IsAny<TimeSpan>(), It.IsAny<CancellationToken>()))
-            .Callback((string address, Coordinates coordinates, TimeSpan _, CancellationToken _) => _cache[address] = coordinates);
+        _mockGeocodingCache = Substitute.For<IGeocodingCache>();
+        _mockGeocodingCache
+            .GetAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => _cache.TryGetValue(callInfo.ArgAt<string>(0), out var coordinates) ? coordinates : null);
+        _mockGeocodingCache
+            .When(_ => _.SetAsync(Arg.Any<string>(), Arg.Any<Coordinates>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()))
+            .Do(callInfo => _cache[callInfo.ArgAt<string>(0)] = callInfo.ArgAt<Coordinates>(1));
 
-        _mockExternalService = new();
-        _mockExternalService.Setup(_ => _.GetCoordinatesAsync(It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(() => GetCoordinates());
+        _mockExternalService = Substitute.For<IExternalApi>();
+        _mockExternalService
+            .GetCoordinatesAsync(Arg.Any<string>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => GetCoordinates());
 
-        Sut = new(_mockExternalService.Object, _mockGeocodingCache.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockExternalService, _mockGeocodingCache, _mockMetrics, _mockLogger);
     }
 
     private Coordinates GetCoordinates()
@@ -72,37 +75,37 @@ internal class GetAddressCoordinatesQueryHandlerTestsContext
 
     internal GetAddressCoordinatesQueryHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal GetAddressCoordinatesQueryHandlerTestsContext AssertMetricsCacheGetTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordCacheGetTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordCacheGetTime(Arg.Any<double>());
         return this;
     }
 
     internal GetAddressCoordinatesQueryHandlerTestsContext AssertMetricsExternalTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordExternalTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordExternalTime(Arg.Any<double>());
         return this;
     }
 
     internal GetAddressCoordinatesQueryHandlerTestsContext AssertMetricsCacheSetTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordCacheSetTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordCacheSetTime(Arg.Any<double>());
         return this;
     }
 
     internal GetAddressCoordinatesQueryHandlerTestsContext AssertExternalServiceNotUsed(string address)
-        => AssertExternalServiceUsed(address, Times.Never());
+        => AssertExternalServiceUsed(address, 0);
 
     internal GetAddressCoordinatesQueryHandlerTestsContext AssertExternalServiceUsed(string address)
-        => AssertExternalServiceUsed(address, Times.Once());
+        => AssertExternalServiceUsed(address, 1);
 
-    private GetAddressCoordinatesQueryHandlerTestsContext AssertExternalServiceUsed(string address, Times times)
+    private GetAddressCoordinatesQueryHandlerTestsContext AssertExternalServiceUsed(string address, int count)
     {
-        _mockExternalService.Verify(_ => _.GetCoordinatesAsync(address, It.IsAny<Guid>(), It.IsAny<CancellationToken>()), times);
+        _mockExternalService.Received(count).GetCoordinatesAsync(address, Arg.Any<Guid>(), Arg.Any<CancellationToken>());
         return this;
     }
 

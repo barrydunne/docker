@@ -1,23 +1,34 @@
-﻿using Moq;
-using RestSharp;
+﻿using RestSharp;
 using RestSharp.Serializers;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Mime;
 
 namespace Microservices.Shared.Mocks;
 
-public class MockRestClient : Mock<IRestClient>
+public class MockRestClient : IRestClient
 {
+
     private readonly ReadOnlyRestClientOptions _options;
     private readonly DefaultParameters _defaultParameters;
     private readonly RestSerializers _serializers;
+    private readonly ConcurrentBag<RestRequest> _requests;
+
     private HttpStatusCode? _nextStatus;
     private bool _unknownHost;
 
-    public static readonly (HttpStatusCode StatusCode, string? Content, string? ContentType) NotFoundResponse = new (HttpStatusCode.NotFound, null, MediaTypeNames.Application.Json);
+    public ReadOnlyRestClientOptions Options => _options;
+
+    public RestSerializers Serializers => _serializers;
+
+    public DefaultParameters DefaultParameters => _defaultParameters;
+
+    public IReadOnlyCollection<RestRequest> Requests => _requests;
+
+    public static readonly (HttpStatusCode StatusCode, string? Content, string? ContentType) NotFoundResponse = new(HttpStatusCode.NotFound, null, MediaTypeNames.Application.Json);
     public Func<RestRequest, (HttpStatusCode StatusCode, string? Content, string? ContentType)> ExecuteRequest { get; set; } = (_) => NotFoundResponse;
 
-    public MockRestClient(MockBehavior behavior = MockBehavior.Strict) : base(behavior)
+    public MockRestClient()
     {
         _options = new ReadOnlyRestClientOptions(new RestClientOptions());
         _defaultParameters = new(_options);
@@ -25,26 +36,19 @@ public class MockRestClient : Mock<IRestClient>
         var serializerConfig = new SerializerConfig();
         serializerConfig.UseDefaultSerializers();
         _serializers = new RestSerializers(serializerConfig);
+        _requests = new();
 
         _nextStatus = null;
         _unknownHost = false;
 
-        Setup(_ => _.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((RestRequest request, CancellationToken _) => GetResponse(request));
-
-        Setup(_ => _.DefaultParameters)
-            .Returns(() => _defaultParameters);
-
-        Setup(_ => _.Options)
-            .Returns(() => _options);
-
-        Setup(_ => _.Serializers)
-            .Returns(() => _serializers);
-
-        Setup(_ => _.Dispose()).Verifiable();
     }
 
-    public DefaultParameters DefaultParameters => _defaultParameters;
+    public Task<Stream?> DownloadStreamAsync(RestRequest request, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+    
+    public Task<RestResponse> ExecuteAsync(RestRequest request, CancellationToken cancellationToken = default)
+         => Task.FromResult(GetResponse(request));
+
+    public void Dispose() { }
 
     public void WithNextResponse(HttpStatusCode status) => _nextStatus = status;
 
@@ -52,6 +56,8 @@ public class MockRestClient : Mock<IRestClient>
 
     private RestResponse GetResponse(RestRequest request)
     {
+        _requests.Add(request);
+
         if (_unknownHost)
             return new RestResponse(request) { ResponseStatus = ResponseStatus.Error, ErrorMessage = "No such host is known", ErrorException = new HttpRequestException("No such host is known") };
 

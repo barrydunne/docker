@@ -2,7 +2,7 @@
 using MediatR;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
 using System.Collections.Concurrent;
 using Weather.Application.Commands.GenerateWeather;
 using Weather.Application.Queries.GetWeather;
@@ -13,8 +13,8 @@ internal class GenerateWeatherCommandHandlerTestsContext
 {
     private readonly Fixture _fixture;
     private readonly MockQueue<WeatherCompleteEvent> _mockQueue;
-    private readonly Mock<ISender> _mockMediator;
-    private readonly Mock<IGenerateWeatherCommandHandlerMetrics> _mockMetrics;
+    private readonly ISender _mockMediator;
+    private readonly IGenerateWeatherCommandHandlerMetrics _mockMetrics;
     private readonly MockLogger<GenerateWeatherCommandHandler> _mockLogger;
     private readonly ConcurrentBag<Coordinates> _invalidCoordinates;
     private readonly ConcurrentBag<Coordinates> _exceptionCoordinates;
@@ -29,7 +29,7 @@ internal class GenerateWeatherCommandHandlerTestsContext
     {
         _fixture = new();
         _mockQueue = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<IGenerateWeatherCommandHandlerMetrics>();
         _mockLogger = new();
         _weather = new();
         _invalidCoordinates = new();
@@ -38,12 +38,13 @@ internal class GenerateWeatherCommandHandlerTestsContext
         _withExceptionMessage = null;
         _validCoordinates = true;
 
-        _mockMediator = new();
-        _mockMediator.Setup(_ => _.Send(It.IsAny<GetWeatherQuery>(), It.IsAny<CancellationToken>()))
-            .Callback((IRequest<Result<WeatherForecast>> query, CancellationToken _) => _weather[((GetWeatherQuery)query).Coordinates] = CreateWeatherForecast())
-            .Returns((IRequest<Result<WeatherForecast>> query, CancellationToken _) => _withExceptionMessage is not null ? throw new InvalidOperationException(_withExceptionMessage) : GetWeather((GetWeatherQuery)query));
+        _mockMediator = Substitute.For<ISender>();
+        _mockMediator
+            .Send(Arg.Any<GetWeatherQuery>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => _withExceptionMessage is not null ? throw new InvalidOperationException(_withExceptionMessage) : GetWeather((GetWeatherQuery)callInfo.ArgAt<IRequest<Result<WeatherForecast>>>(0)))
+            .AndDoes(callInfo => _weather[((GetWeatherQuery)callInfo.ArgAt<IRequest<Result<WeatherForecast>>>(0)).Coordinates] = CreateWeatherForecast());
 
-        Sut = new(_mockQueue.Object, _mockMediator.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockQueue, _mockMediator, _mockMetrics, _mockLogger);
     }
 
     private WeatherForecast CreateWeatherForecast() => new(true, Enumerable.Range(0, 7).Select(day => new WeatherForecastItem(DateTimeOffset.Now.AddDays(day).ToUnixTimeSeconds(), (int)DateTimeOffset.Now.Offset.TotalSeconds, _fixture.Create<int>(), _fixture.Create<string>(), _fixture.Create<string>(), _fixture.Create<double>(), _fixture.Create<double>(), _fixture.Create<int>())).ToArray(), null);
@@ -84,19 +85,19 @@ internal class GenerateWeatherCommandHandlerTestsContext
 
     internal GenerateWeatherCommandHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal GenerateWeatherCommandHandlerTestsContext AssertMetricsWeatherTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordWeatherTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordWeatherTime(Arg.Any<double>());
         return this;
     }
 
     internal GenerateWeatherCommandHandlerTestsContext AssertMetricsPublishTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordPublishTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordPublishTime(Arg.Any<double>());
         return this;
     }
 

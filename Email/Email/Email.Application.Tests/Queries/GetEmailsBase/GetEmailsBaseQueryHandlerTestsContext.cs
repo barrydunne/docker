@@ -2,14 +2,15 @@
 using Email.Application.Queries.GetEmailsSentToRecipient;
 using Email.Application.Tests.Mocks;
 using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 namespace Email.Application.Tests.Queries.GetEmailsBase;
 
 internal class GetEmailsBaseQueryHandlerTestsContext
 {
     private readonly MockEmailRepository _mockEmailRepository;
-    private readonly Mock<IGetEmailsSentToRecipientQueryHandlerMetrics> _mockMetrics;
+    private readonly IGetEmailsSentToRecipientQueryHandlerMetrics _mockMetrics;
     private readonly MockLogger<GetEmailsSentToRecipientQueryHandler> _mockLogger;
 
     internal GetEmailsSentToRecipientQueryHandler Sut { get; }
@@ -17,10 +18,10 @@ internal class GetEmailsBaseQueryHandlerTestsContext
     public GetEmailsBaseQueryHandlerTestsContext()
     {
         _mockEmailRepository = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<IGetEmailsSentToRecipientQueryHandlerMetrics>();
         _mockLogger = new();
 
-        Sut = new(_mockEmailRepository.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockEmailRepository, _mockMetrics, _mockLogger);
     }
 
     internal GetEmailsBaseQueryHandlerTestsContext WithData(IEnumerable<SentEmail> data)
@@ -32,19 +33,19 @@ internal class GetEmailsBaseQueryHandlerTestsContext
 
     internal GetEmailsBaseQueryHandlerTestsContext WithException()
     {
-        _mockEmailRepository.Setup(_ => _.GetEmailsSentToRecipientAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).Throws<InvalidOperationException>();
+        _mockEmailRepository.WithGetEmailsException();
         return this;
     }
 
     internal GetEmailsBaseQueryHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal GetEmailsBaseQueryHandlerTestsContext AssertMetricsLoadTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordLoadTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordLoadTime(Arg.Any<double>());
         return this;
     }
 }

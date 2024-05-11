@@ -9,7 +9,7 @@ using Microservices.Shared.Events;
 using Microservices.Shared.Utilities;
 using IoC = Email.Api.IoC;
 
-new ApiBuilder()
+await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
     .WithSwagger()
     .WithHealthHandler()
@@ -23,4 +23,4 @@ new ApiBuilder()
     .Build(args)
     .WaitForDb()
     .EnsureDbCreated()
-    .Run();
+    .RunAsync();

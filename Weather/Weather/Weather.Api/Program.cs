@@ -6,7 +6,7 @@ using Weather.Api;
 using Weather.Api.BackgroundServices;
 using Weather.Application.Commands.GenerateWeather;
 
-new ApiBuilder()
+await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
     .WithSwagger()
     .WithHealthHandler()
@@ -17,4 +17,4 @@ new ApiBuilder()
         .AddQueueToCommandProcessor<LocationsReadyEvent, GenerateWeatherCommand, Result, LocationsReadyEventProcessor>())
     .WithMappings(Mappings.Map)
     .Build(args)
-    .Run();
+    .RunAsync();

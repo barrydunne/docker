@@ -1,6 +1,7 @@
 ﻿using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Options;
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using System.Collections.Concurrent;
 using System.Net.Mail;
 
@@ -10,8 +11,8 @@ internal class SmtpEmailTestsContext
 {
     private readonly Fixture _fixture;
     private readonly SmtpEmailOptions _options;
-    private readonly Mock<IOptions<SmtpEmailOptions>> _mockOptions;
-    private readonly Mock<ISmtpClient> _mockSmtpClient;
+    private readonly IOptions<SmtpEmailOptions> _mockOptions;
+    private readonly ISmtpClient _mockSmtpClient;
     private readonly MockLogger<SmtpEmail> _mockLogger;
     private readonly ConcurrentBag<MailMessage> _mails;
 
@@ -21,34 +22,40 @@ internal class SmtpEmailTestsContext
     {
         _fixture = new();
         _options = _fixture.Build<SmtpEmailOptions>().With(_ => _.From, _fixture.Create<MailAddress>().Address).Create();
-        _mockOptions = new(MockBehavior.Strict);
-        _mockOptions.Setup(_ => _.Value).Returns(_options);
+
+        _mockOptions = Substitute.For<IOptions<SmtpEmailOptions>>();
+        _mockOptions
+            .Value
+            .Returns(callInfo => _options);
+        
         _mails = new();
         _mockLogger = new();
 
-        _mockSmtpClient = new();
-        _mockSmtpClient.Setup(_ => _.SendMailAsync(It.IsAny<MailMessage>()))
-            .Callback((MailMessage message) => _mails.Add(message))
-            .Returns(Task.CompletedTask);
+        _mockSmtpClient = Substitute.For<ISmtpClient>();
+        _mockSmtpClient
+            .When(_ => _.SendMailAsync(Arg.Any<MailMessage>()))
+            .Do(callInfo => _mails.Add(callInfo.ArgAt<MailMessage>(0)));
 
-        Sut = new(_mockOptions.Object, _mockSmtpClient.Object, _mockLogger.Object);
+        Sut = new(_mockOptions, _mockSmtpClient, _mockLogger);
     }
 
     internal SmtpEmailTestsContext WithSendException()
     {
-        _mockSmtpClient.Setup(_ => _.SendMailAsync(It.IsAny<MailMessage>())).Throws<InvalidOperationException>();
+        _mockSmtpClient
+            .SendMailAsync(Arg.Any<MailMessage>())
+            .Throws<InvalidOperationException>();
         return this;
     }
 
     internal SmtpEmailTestsContext AssertHostSet()
     {
-        _mockSmtpClient.VerifySet(_ => _.Host = _options.Host);
+        _mockSmtpClient.Received(1).Host = _options.Host;
         return this;
     }
 
     internal SmtpEmailTestsContext AssertPortSet()
     {
-        _mockSmtpClient.VerifySet(_ => _.Port = _options.Port);
+        _mockSmtpClient.Received(1).Port = _options.Port;
         return this;
     }
 

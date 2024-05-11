@@ -1,24 +1,26 @@
-﻿using Microsoft.Extensions.Logging;
-using Moq;
+﻿using Microservices.Shared.Mocks;
+using NSubstitute;
 using State.Application.Commands.CreateJob;
 
 namespace State.Application.Tests.Commands.CreateJob;
 
 internal class CreateJobCommandValidatorTestsContext
 {
-    private readonly Mock<ICreateJobCommandHandlerMetrics> _mockMetrics;
+    private readonly ICreateJobCommandHandlerMetrics _mockMetrics;
+    private readonly MockLogger<CreateJobCommandValidator> _mockLogger;
 
     internal CreateJobCommandValidator Sut { get; }
 
     public CreateJobCommandValidatorTestsContext()
     {
-        _mockMetrics = new();
-        Sut = new(_mockMetrics.Object, new Mock<ILogger<CreateJobCommandValidator>>().Object);
+        _mockMetrics = Substitute.For<ICreateJobCommandHandlerMetrics>();
+        _mockLogger = new();
+        Sut = new(_mockMetrics, _mockLogger);
     }
 
     internal CreateJobCommandValidatorTestsContext AssertMetricsGuardTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordGuardTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordGuardTime(Arg.Any<double>());
         return this;
     }
 }

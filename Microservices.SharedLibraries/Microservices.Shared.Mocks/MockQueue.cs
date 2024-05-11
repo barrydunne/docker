@@ -1,5 +1,4 @@
 ﻿using Microservices.Shared.Queues;
-using Moq;
 using System.Collections.Concurrent;
 
 namespace Microservices.Shared.Mocks;
@@ -10,36 +9,39 @@ namespace Microservices.Shared.Mocks;
 /// Transient subscription type is ignored.
 /// </summary>
 /// <typeparam name="TMessage">The type of message for this queue.</typeparam>
-public class MockQueue<TMessage> : Mock<IQueue<TMessage>>
+public class MockQueue<TMessage> : IQueue<TMessage>
 {
     public ConcurrentBag<TMessage> Messages { get; }
 
     private readonly List<Func<TMessage, Task<bool>>> _consumers;
+    private Exception? _publishException;
 
-    public MockQueue() : base(MockBehavior.Strict)
+    public MockQueue()
     {
         Messages = new();
         _consumers = new();
-
-        Setup(_ => _.SendAsync(It.IsAny<TMessage>(), It.IsAny<CancellationToken>()))
-            .Callback((TMessage message, CancellationToken _) => PostMessage(message))
-            .Returns(Task.CompletedTask);
-
-        Setup(_ => _.PublishAsync(It.IsAny<TMessage>(), It.IsAny<CancellationToken>()))
-            .Callback((TMessage message, CancellationToken _) => PostMessage(message))
-            .Returns(Task.CompletedTask);
-
-        Setup(_ => _.StartReceiving(It.IsAny<Func<TMessage, Task<bool>>>()))
-            .Callback((Func<TMessage, Task<bool>> handler) => _consumers.Add(handler));
-
-        Setup(_ => _.StartSubscribing(It.IsAny<bool>(), It.IsAny<Func<TMessage, Task<bool>>>()))
-            .Callback((bool _, Func<TMessage, Task<bool>> handler) => _consumers.Add(handler));
     }
 
-    private void PostMessage(TMessage message)
+    public void WithPublishException(Exception? exception = null) => _publishException = exception ?? new InvalidOperationException();
+
+    public Task PublishAsync(TMessage message, CancellationToken cancellationToken = default)
+        => PostMessage(message);
+    public Task SendAsync(TMessage message, CancellationToken cancellationToken = default)
+        => PostMessage(message);
+    public void StartReceiving(Func<TMessage, Task<bool>> handler)
+        => _consumers.Add(handler);
+    public void StartSubscribing(bool transientSubscription, Func<TMessage, Task<bool>> handler)
+        => _consumers.Add(handler);
+    public void Stop() { }
+
+    private Task PostMessage(TMessage message)
     {
+        if (_publishException is not null)
+            throw _publishException;
+
         Messages.Add(message);
-        foreach (var consumer in  _consumers)
+        foreach (var consumer in _consumers)
             consumer.Invoke(message);
+        return Task.CompletedTask;
     }
 }

@@ -14,7 +14,7 @@ internal class DummyApiTestsContext
     {
         _mockLogger = new();
 
-        Sut = new(_mockLogger.Object);
+        Sut = new(_mockLogger);
     }
 
     internal DummyApiTestsContext WithDirections(Coordinates startingCoordinates, Coordinates destinationCoordinates, Microservices.Shared.Events.Directions directions)

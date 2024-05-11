@@ -2,14 +2,14 @@
 using Email.Application.Queries.GetEmailsSentToRecipient;
 using Email.Application.Tests.Mocks;
 using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
 
 namespace Email.Application.Tests.Queries.GetEmailsSentToRecipient;
 
 internal class GetEmailsSentToRecipientQueryHandlerTestsContext
 {
     private readonly MockEmailRepository _mockEmailRepository;
-    private readonly Mock<IGetEmailsSentToRecipientQueryHandlerMetrics> _mockMetrics;
+    private readonly IGetEmailsSentToRecipientQueryHandlerMetrics _mockMetrics;
     private readonly MockLogger<GetEmailsSentToRecipientQueryHandler> _mockLogger;
 
     internal GetEmailsSentToRecipientQueryHandler Sut { get; }
@@ -17,10 +17,10 @@ internal class GetEmailsSentToRecipientQueryHandlerTestsContext
     public GetEmailsSentToRecipientQueryHandlerTestsContext()
     {
         _mockEmailRepository = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<IGetEmailsSentToRecipientQueryHandlerMetrics>();
         _mockLogger = new();
 
-        Sut = new(_mockEmailRepository.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockEmailRepository, _mockMetrics, _mockLogger);
     }
 
     internal GetEmailsSentToRecipientQueryHandlerTestsContext WithData(IEnumerable<SentEmail> data)

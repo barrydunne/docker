@@ -1,12 +1,12 @@
 ﻿using AspNet.KickStarter.CQRS;
 using Imaging.Application.Commands.SaveImage;
 using Imaging.Application.Queries.GetImageUrl;
+using Imaging.Application.Tests.Mocks;
 using MediatR;
 using Microservices.Shared.CloudFiles;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using Moq;
-using Moq.Protected;
+using NSubstitute;
 using NUnit.Framework.Constraints;
 using System.Collections.Concurrent;
 using System.Net;
@@ -19,11 +19,11 @@ internal class SaveImageCommandHandlerTestsContext
 {
     private readonly Fixture _fixture;
     private readonly MockQueue<ImagingCompleteEvent> _mockQueue;
-    private readonly Mock<ISender> _mockMediator;
-    private readonly Mock<ICloudFiles> _mockCloudFiles;
-    private readonly Mock<HttpMessageHandler> _mockHttpMessageHandler;
-    private readonly Mock<IHttpClientFactory> _mockHttpClientFactory;
-    private readonly Mock<ISaveImageCommandHandlerMetrics> _mockMetrics;
+    private readonly ISender _mockMediator;
+    private readonly ICloudFiles _mockCloudFiles;
+    private readonly MockHttpMessageHandler _mockHttpMessageHandler;
+    private readonly IHttpClientFactory _mockHttpClientFactory;
+    private readonly ISaveImageCommandHandlerMetrics _mockMetrics;
     private readonly MockLogger<SaveImageCommandHandler> _mockLogger;
     private readonly ConcurrentBag<Coordinates> _invalidCoordinates;
     private readonly ConcurrentBag<Coordinates> _exceptionCoordinates;
@@ -43,19 +43,28 @@ internal class SaveImageCommandHandlerTestsContext
         _fixture = new();
         _mockQueue = new();
 
-        _mockCloudFiles = new(MockBehavior.Strict);
-        _mockCloudFiles.Setup(_ => _.UploadFileAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
-            .Callback((string container, string name, Stream content, CancellationToken _) => Upload(container, name, content))
-            .ReturnsAsync(() => !_withUploadFailure);
+        _mockCloudFiles = Substitute.For<ICloudFiles>();
+        _mockCloudFiles
+            .UploadFileAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<Stream>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => !_withUploadFailure)
+            .AndDoes(callInfo =>
+            {
+                var container = callInfo.ArgAt<string>(0);
+                var name = callInfo.ArgAt<string>(1);
+                var content = callInfo.ArgAt<Stream>(2);
+                Upload(container, name, content);
+            });
 
-        _mockHttpMessageHandler = new(MockBehavior.Loose);
-        _mockHttpMessageHandler.Protected().Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
-            .ReturnsAsync((HttpRequestMessage request, CancellationToken _) => GetImageResponse(request));
+        _mockHttpMessageHandler = Substitute.ForPartsOf<MockHttpMessageHandler>();
+        _mockHttpMessageHandler.MockSend(Arg.Any<HttpRequestMessage>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => GetImageResponse(callInfo.ArgAt<HttpRequestMessage>(0)));
 
-        _mockHttpClientFactory = new(MockBehavior.Strict);
-        _mockHttpClientFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(() => new HttpClient(_mockHttpMessageHandler.Object));
+        _mockHttpClientFactory = Substitute.For<IHttpClientFactory>();
+        _mockHttpClientFactory
+            .CreateClient(Arg.Any<string>())
+            .Returns(callInfo => new HttpClient(_mockHttpMessageHandler));
 
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<ISaveImageCommandHandlerMetrics>();
         _mockLogger = new();
         _imageUrls = new();
         _invalidCoordinates = new();
@@ -66,15 +75,16 @@ internal class SaveImageCommandHandlerTestsContext
         _withUploadFailure = false;
         _validCoordinates = true;
 
-        _mockMediator = new();
-        _mockMediator.Setup(_ => _.Send(It.IsAny<GetImageUrlQuery>(), It.IsAny<CancellationToken>()))
-            .Callback((IRequest<Result<string?>> query, CancellationToken _) => _imageUrls[((GetImageUrlQuery)query).Coordinates] = $"http://{_fixture.Create<string>()}")
-            .Returns((IRequest<Result<string?>> query, CancellationToken _) => _withExceptionMessage is not null ? throw new InvalidOperationException(_withExceptionMessage) : GetImageUrl((GetImageUrlQuery)query));
+        _mockMediator = Substitute.For<ISender>();
+        _mockMediator
+            .Send(Arg.Any<GetImageUrlQuery>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => _withExceptionMessage is not null ? throw new InvalidOperationException(_withExceptionMessage) : GetImageUrl((GetImageUrlQuery)callInfo.ArgAt<IRequest<Result<string?>>>(0)))
+            .AndDoes(callInfo => _imageUrls[((GetImageUrlQuery)callInfo.ArgAt<IRequest<Result<string?>>>(0)).Coordinates] = $"http://{_fixture.Create<string>()}");
 
         _uploaded = new();
         _imageBytes = _fixture.Create<byte[]>();
 
-        Sut = new(_mockQueue.Object, _mockMediator.Object, _mockCloudFiles.Object, _mockHttpClientFactory.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockQueue, _mockMediator, _mockCloudFiles, _mockHttpClientFactory, _mockMetrics, _mockLogger);
     }
 
     private void Upload(string container, string name, Stream content)
@@ -143,31 +153,31 @@ internal class SaveImageCommandHandlerTestsContext
 
     internal SaveImageCommandHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal SaveImageCommandHandlerTestsContext AssertMetricsImagingTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordImagingTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordImagingTime(Arg.Any<double>());
         return this;
     }
 
     internal SaveImageCommandHandlerTestsContext AssertMetricsDownloadTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordDownloadTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordDownloadTime(Arg.Any<double>());
         return this;
     }
 
     internal SaveImageCommandHandlerTestsContext AssertMetricsUploadTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordUploadTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordUploadTime(Arg.Any<double>());
         return this;
     }
 
     internal SaveImageCommandHandlerTestsContext AssertMetricsPublishTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordPublishTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordPublishTime(Arg.Any<double>());
         return this;
     }
 

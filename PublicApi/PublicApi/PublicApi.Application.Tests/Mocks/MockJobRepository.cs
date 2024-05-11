@@ -1,36 +1,44 @@
 ﻿using Microservices.Shared.Events;
-using Moq;
 using PublicApi.Application.Models;
 using PublicApi.Application.Repositories;
 using System.Collections.Concurrent;
 
 namespace PublicApi.Application.Tests.Mocks;
 
-internal class MockJobRepository : Mock<IJobRepository>
+internal class MockJobRepository : IJobRepository
 {
     internal const string FailingIdempotencyKey = "FailingIdempotencyKey";
     internal static Guid FailingJobId => Guid.Parse("aaaaaBAD-DA7A-aaaa-aaaa-aaaaaaaaaaaa");
     internal const string FailingJobIdError = "FailingJobIdError";
 
+    private readonly ConcurrentBag<Guid> _getJobRequests;
+
     internal ConcurrentBag<Job> Jobs { get; }
 
-    internal MockJobRepository() : base(MockBehavior.Strict)
+    internal IReadOnlyCollection<Guid> JobRequests => _getJobRequests;
+
+    internal MockJobRepository()
     {
         Jobs = new();
+        _getJobRequests = new();
+    }
 
-        Setup(_ => _.InsertAsync(It.IsAny<Job>(), It.IsAny<CancellationToken>()))
-            .Callback((Job job, CancellationToken _) => AddJob(job))
-            .Returns(Task.CompletedTask);
+    public Task<Job?> GetJobByIdAsync(Guid jobId, CancellationToken cancellationToken = default)
+        => Task.FromResult(GetJob(jobId));
 
-        Setup(_ => _.GetJobByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Guid jobId, CancellationToken _) => GetJob(jobId));
+    public Task<Guid?> GetJobIdByIdempotencyKeyAsync(string idempotencyKey, CancellationToken cancellationToken = default)
+        => Task.FromResult(GetJobId(idempotencyKey));
 
-        Setup(_ => _.GetJobIdByIdempotencyKeyAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string idempotencyKey, CancellationToken _) => GetJobId(idempotencyKey));
+    public Task InsertAsync(Job job, CancellationToken cancellationToken = default)
+    {
+        AddJob(job);
+        return Task.CompletedTask;
+    }
 
-        Setup(_ => _.UpdateJobStatusAsync(It.IsAny<Guid>(), It.IsAny<JobStatus>(), It.IsAny<string?>(), It.IsAny<CancellationToken>()))
-            .Callback((Guid jobId, JobStatus status, string? additionalInformation, CancellationToken _) => UpdateJob(jobId, status, additionalInformation))
-            .Returns(Task.CompletedTask);
+    public Task UpdateJobStatusAsync(Guid jobId, JobStatus status, string? additionalInformation, CancellationToken cancellationToken = default)
+    {
+        UpdateJob(jobId, status, additionalInformation);
+        return Task.CompletedTask;
     }
 
     internal void AddJob(Job job)
@@ -42,6 +50,7 @@ internal class MockJobRepository : Mock<IJobRepository>
 
     internal Job? GetJob(Guid jobId)
     {
+        _getJobRequests.Add(jobId);
         if (jobId == FailingJobId)
             throw new InvalidOperationException(FailingJobIdError);
         return Jobs.FirstOrDefault(_ => _.JobId == jobId);

@@ -4,7 +4,7 @@ using Geocoding.Application.Queries.GetAddressCoordinates;
 using MediatR;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
 using System.Collections.Concurrent;
 
 namespace Geocoding.Application.Tests.Commands.GeocodeAddresses;
@@ -13,8 +13,8 @@ internal class GeocodeAddressesCommandHandlerTestsContext
 {
     private readonly Fixture _fixture;
     private readonly MockQueue<GeocodingCompleteEvent> _mockQueue;
-    private readonly Mock<ISender> _mockMediator;
-    private readonly Mock<IGeocodeAddressesCommandHandlerMetrics> _mockMetrics;
+    private readonly ISender _mockMediator;
+    private readonly IGeocodeAddressesCommandHandlerMetrics _mockMetrics;
     private readonly MockLogger<GeocodeAddressesCommandHandler> _mockLogger;
     private readonly ConcurrentBag<string> _invalidAddresses;
     private readonly ConcurrentBag<string> _exceptionAddresses;
@@ -30,7 +30,7 @@ internal class GeocodeAddressesCommandHandlerTestsContext
     {
         _fixture = new();
         _mockQueue = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<IGeocodeAddressesCommandHandlerMetrics>();
         _mockLogger = new();
         _geocodedAddresses = new();
         _invalidAddresses = new();
@@ -40,12 +40,13 @@ internal class GeocodeAddressesCommandHandlerTestsContext
         _validStartingAddress = true;
         _validDestinationAddress = true;
 
-        _mockMediator = new();
-        _mockMediator.Setup(_ => _.Send(It.IsAny<GetAddressCoordinatesQuery>(), It.IsAny<CancellationToken>()))
-            .Callback((IRequest<Result<Coordinates>> query, CancellationToken _) => _geocodedAddresses[((GetAddressCoordinatesQuery)query).Address] = _fixture.Create<Coordinates>())
-            .Returns((IRequest<Result<Coordinates>> query, CancellationToken _) => _withExceptionMessage is not null ? throw new InvalidOperationException(_withExceptionMessage) : GeocodeAddress((GetAddressCoordinatesQuery)query));
+        _mockMediator = Substitute.For<ISender>();
+        _mockMediator
+            .Send(Arg.Any<GetAddressCoordinatesQuery>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => _withExceptionMessage is not null ? throw new InvalidOperationException(_withExceptionMessage) : GeocodeAddress((GetAddressCoordinatesQuery)callInfo.ArgAt<IRequest<Result<Coordinates>>>(0)))
+            .AndDoes(callInfo => _geocodedAddresses[((GetAddressCoordinatesQuery)callInfo.ArgAt<IRequest<Result<Coordinates>>>(0)).Address] = _fixture.Create<Coordinates>());
 
-        Sut = new(_mockQueue.Object, _mockMediator.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockQueue, _mockMediator, _mockMetrics, _mockLogger);
     }
 
     private Task<Result<Coordinates>> GeocodeAddress(GetAddressCoordinatesQuery query) => Task.Run(() =>
@@ -96,19 +97,19 @@ internal class GeocodeAddressesCommandHandlerTestsContext
 
     internal GeocodeAddressesCommandHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal GeocodeAddressesCommandHandlerTestsContext AssertMetricsGeocodeTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordGeocodeTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordGeocodeTime(Arg.Any<double>());
         return this;
     }
 
     internal GeocodeAddressesCommandHandlerTestsContext AssertMetricsPublishTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordPublishTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordPublishTime(Arg.Any<double>());
         return this;
     }
 

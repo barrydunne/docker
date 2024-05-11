@@ -1,6 +1,6 @@
 ﻿using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
 using State.Application.Commands.NotifyProcessingComplete;
 
 namespace State.Application.Tests.Commands.NotifyProcessingComplete;
@@ -8,7 +8,7 @@ namespace State.Application.Tests.Commands.NotifyProcessingComplete;
 internal class NotifyProcessingCompleteCommandHandlerTestsContext
 {
     private readonly MockQueue<ProcessingCompleteEvent> _mockQueue;
-    private readonly Mock<INotifyProcessingCompleteCommandHandlerMetrics> _mockMetrics;
+    private readonly INotifyProcessingCompleteCommandHandlerMetrics _mockMetrics;
     private readonly MockLogger<NotifyProcessingCompleteCommandHandler> _mockLogger;
 
     internal NotifyProcessingCompleteCommandHandler Sut { get; }
@@ -16,27 +16,27 @@ internal class NotifyProcessingCompleteCommandHandlerTestsContext
     public NotifyProcessingCompleteCommandHandlerTestsContext()
     {
         _mockQueue = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<INotifyProcessingCompleteCommandHandlerMetrics>();
         _mockLogger = new();
 
-        Sut = new(_mockQueue.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockQueue, _mockMetrics, _mockLogger);
     }
 
     internal NotifyProcessingCompleteCommandHandlerTestsContext WithPublishException()
     {
-        _mockQueue.Setup(_ => _.PublishAsync(It.IsAny<ProcessingCompleteEvent>(), It.IsAny<CancellationToken>())).Throws<InvalidOperationException>();
+        _mockQueue.WithPublishException();
         return this;
     }
 
     internal NotifyProcessingCompleteCommandHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal NotifyProcessingCompleteCommandHandlerTestsContext AssertMetricsPublishTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordPublishTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordPublishTime(Arg.Any<double>());
         return this;
     }
 

@@ -1,6 +1,6 @@
 ﻿using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
 using State.Application.Commands.NotifyJobStatusUpdate;
 
 namespace State.Application.Tests.Commands.NotifyJobStatusUpdate;
@@ -8,7 +8,7 @@ namespace State.Application.Tests.Commands.NotifyJobStatusUpdate;
 internal class NotifyJobStatusUpdateCommandHandlerTestsContext
 {
     private readonly MockQueue<JobStatusUpdateEvent> _mockQueue;
-    private readonly Mock<INotifyJobStatusUpdateCommandHandlerMetrics> _mockMetrics;
+    private readonly INotifyJobStatusUpdateCommandHandlerMetrics _mockMetrics;
     private readonly MockLogger<NotifyJobStatusUpdateCommandHandler> _mockLogger;
 
     internal NotifyJobStatusUpdateCommandHandler Sut { get; }
@@ -16,27 +16,27 @@ internal class NotifyJobStatusUpdateCommandHandlerTestsContext
     public NotifyJobStatusUpdateCommandHandlerTestsContext()
     {
         _mockQueue = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<INotifyJobStatusUpdateCommandHandlerMetrics>();
         _mockLogger = new();
 
-        Sut = new(_mockQueue.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockQueue, _mockMetrics, _mockLogger);
     }
 
     internal NotifyJobStatusUpdateCommandHandlerTestsContext WithPublishException()
     {
-        _mockQueue.Setup(_ => _.PublishAsync(It.IsAny<JobStatusUpdateEvent>(), It.IsAny<CancellationToken>())).Throws<InvalidOperationException>();
+        _mockQueue.WithPublishException();
         return this;
     }
 
     internal NotifyJobStatusUpdateCommandHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal NotifyJobStatusUpdateCommandHandlerTestsContext AssertMetricsPublishTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordPublishTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordPublishTime(Arg.Any<double>());
         return this;
     }
 

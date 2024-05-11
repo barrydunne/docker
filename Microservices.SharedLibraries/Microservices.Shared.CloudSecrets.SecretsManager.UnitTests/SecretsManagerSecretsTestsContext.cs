@@ -1,7 +1,7 @@
 ﻿using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Moq;
+using NSubstitute;
 using RestSharp;
 using System.Net;
 using System.Net.Mime;
@@ -12,19 +12,21 @@ namespace Microservices.Shared.CloudSecrets.SecretsManager.UnitTests;
 
 internal class SecretsManagerSecretsTestsContext
 {
-    private readonly Mock<IOptions<SecretsManagerOptions>> _mockOptions;
+    private readonly IOptions<SecretsManagerOptions> _mockOptions;
     private readonly MockRestSharpFactory _mockRestSharpFactory;
     private readonly MockLogger<SecretsManagerSecrets> _mockLogger;
     private readonly Dictionary<string, Dictionary<string, string>> _vaults;
 
     private string? _withExceptionMessage;
 
-    internal SecretsManagerSecrets Sut => new(_mockOptions.Object, _mockRestSharpFactory.Object, _mockLogger.Object);
+    internal SecretsManagerSecrets Sut => new(_mockOptions, _mockRestSharpFactory, _mockLogger);
 
     internal SecretsManagerSecretsTestsContext()
     {
-        _mockOptions = new(MockBehavior.Strict);
-        _mockOptions.Setup(_ => _.Value).Returns(new SecretsManagerOptions { BaseUrl = "http://localhost" });
+        _mockOptions = Substitute.For<IOptions<SecretsManagerOptions>>();
+        _mockOptions
+            .Value
+            .Returns(new SecretsManagerOptions { BaseUrl = "http://localhost" });
         _mockRestSharpFactory = new();
         _mockRestSharpFactory.MockRestClient.ExecuteRequest = ExecuteRequest;
         _mockLogger = new();
@@ -80,13 +82,13 @@ internal class SecretsManagerSecretsTestsContext
 
     internal SecretsManagerSecretsTestsContext AssertThatSecretsApiCalledOnce()
     {
-        _mockRestSharpFactory.MockRestClient.Verify(_ => _.ExecuteAsync(It.IsAny<RestRequest>(), It.IsAny<CancellationToken>()), Times.Once());
+        Assert.That(_mockRestSharpFactory.MockRestClient.Requests, Has.Exactly(1).Items);
         return this;
     }
 
     internal SecretsManagerSecretsTestsContext AssertWarningLogged(string message)
     {
-        Assert.That(_mockLogger.Log, Does.Contain($"[{LogLevel.Warning}] {message}"));
+        Assert.That(_mockLogger.Messages, Does.Contain($"[{LogLevel.Warning}] {message}"));
         return this;
     }
 }

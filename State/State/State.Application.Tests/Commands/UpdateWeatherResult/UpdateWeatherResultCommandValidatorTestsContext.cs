@@ -1,24 +1,26 @@
-﻿using Microsoft.Extensions.Logging;
-using Moq;
+﻿using Microservices.Shared.Mocks;
+using NSubstitute;
 using State.Application.Commands.UpdateWeatherResult;
 
 namespace State.Application.Tests.Commands.UpdateWeatherResult;
 
 internal class UpdateWeatherResultCommandValidatorTestsContext
 {
-    private readonly Mock<IUpdateWeatherResultCommandHandlerMetrics> _mockMetrics;
+    private readonly IUpdateWeatherResultCommandHandlerMetrics _mockMetrics;
+    private readonly MockLogger<UpdateWeatherResultCommandValidator> _mockLogger;
 
     internal UpdateWeatherResultCommandValidator Sut { get; }
 
     public UpdateWeatherResultCommandValidatorTestsContext()
     {
-        _mockMetrics = new();
-        Sut = new(_mockMetrics.Object, new Mock<ILogger<UpdateWeatherResultCommandValidator>>().Object);
+        _mockMetrics = Substitute.For<IUpdateWeatherResultCommandHandlerMetrics>();
+        _mockLogger = new();
+        Sut = new(_mockMetrics, _mockLogger);
     }
 
     internal UpdateWeatherResultCommandValidatorTestsContext AssertMetricsGuardTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordGuardTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordGuardTime(Arg.Any<double>());
         return this;
     }
 }

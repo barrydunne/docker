@@ -1,6 +1,6 @@
 ﻿using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
 using Weather.Application.ExternalApi;
 using Weather.Application.Queries.GetWeather;
 
@@ -9,8 +9,8 @@ namespace Weather.Application.Tests.Queries.GetWeather;
 internal class GetWeatherQueryHandlerTestsContext
 {
     private readonly Fixture _fixture;
-    private readonly Mock<IExternalApi> _mockExternalService;
-    private readonly Mock<IGetWeatherQueryHandlerMetrics> _mockMetrics;
+    private readonly IExternalApi _mockExternalService;
+    private readonly IGetWeatherQueryHandlerMetrics _mockMetrics;
     private readonly MockLogger<GetWeatherQueryHandler> _mockLogger;
 
     private WeatherForecast? _weather;
@@ -21,17 +21,18 @@ internal class GetWeatherQueryHandlerTestsContext
     public GetWeatherQueryHandlerTestsContext()
     {
         _fixture = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<IGetWeatherQueryHandlerMetrics>();
         _mockLogger = new();
 
         _weather = null;
         _withExceptionMessage = null;
 
-        _mockExternalService = new();
-        _mockExternalService.Setup(_ => _.GetWeatherAsync(It.IsAny<Coordinates>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(() => GetWeather());
+        _mockExternalService = Substitute.For<IExternalApi>();
+        _mockExternalService
+            .GetWeatherAsync(Arg.Any<Coordinates>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => GetWeather());
 
-        Sut = new(_mockExternalService.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockExternalService, _mockMetrics, _mockLogger);
     }
 
     private WeatherForecast GetWeather()
@@ -56,13 +57,13 @@ internal class GetWeatherQueryHandlerTestsContext
 
     internal GetWeatherQueryHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal GetWeatherQueryHandlerTestsContext AssertMetricsExternalTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordExternalTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordExternalTime(Arg.Any<double>());
         return this;
     }
 }

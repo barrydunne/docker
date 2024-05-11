@@ -1,36 +1,19 @@
 ﻿using Microservices.Shared.RestSharpFactory;
-using Moq;
 using RestSharp;
 
 namespace Microservices.Shared.Mocks;
 
-public class MockRestSharpFactory : Mock<IRestSharpClientFactory>
+public class MockRestSharpFactory : IRestSharpClientFactory
 {
     public MockRestClient MockRestClient { get; }
 
-    public MockRestSharpFactory(MockBehavior behavior = MockBehavior.Strict) : base(behavior)
-    {
-        MockRestClient = new();
+    public MockRestSharpFactory() => MockRestClient = new();
 
-        Setup(_ => _.CreateRestClient(It.IsAny<RestClientOptions>(), It.IsAny<ConfigureHeaders?>(), It.IsAny<ConfigureSerialization?>(), It.IsAny<bool>()))
-            .Returns(MockRestClient.Object);
-
-        Setup(_ => _.CreateRestClient(It.IsAny<ConfigureRestClient?>(), It.IsAny<ConfigureHeaders?>(), It.IsAny<ConfigureSerialization?>(), It.IsAny<bool>()))
-            .Returns(MockRestClient.Object);
-
-        Setup(_ => _.CreateRestClient(It.IsAny<Uri>(), It.IsAny<ConfigureRestClient?>(), It.IsAny<ConfigureHeaders?>(), It.IsAny<ConfigureSerialization>(), It.IsAny<bool>()))
-            .Returns(MockRestClient.Object);
-
-        Setup(_ => _.CreateRestClient(It.IsAny<string>(), It.IsAny<ConfigureRestClient?>(), It.IsAny<ConfigureHeaders?>(), It.IsAny<ConfigureSerialization?>()))
-            .Returns(MockRestClient.Object);
-
-        Setup(_ => _.CreateRestClient(It.IsAny<HttpClient>(), It.IsAny<RestClientOptions?>(), It.IsAny<bool>(), It.IsAny<ConfigureSerialization?>()))
-            .Returns(MockRestClient.Object);
-
-        Setup(_ => _.CreateRestClient(It.IsAny<HttpClient>(), It.IsAny<bool>(), It.IsAny<ConfigureRestClient?>(), It.IsAny<ConfigureSerialization?>()))
-            .Returns(MockRestClient.Object);
-
-        Setup(_ => _.CreateRestClient(It.IsAny<HttpMessageHandler>(), It.IsAny<bool>(), It.IsAny<ConfigureRestClient?>(), It.IsAny<ConfigureSerialization?>()))
-            .Returns(MockRestClient.Object);
-    }
+    public IRestClient CreateRestClient(RestClientOptions options, ConfigureHeaders? configureDefaultHeaders = null, ConfigureSerialization? configureSerialization = null, bool useClientFactory = false) => MockRestClient;
+    public IRestClient CreateRestClient(ConfigureRestClient? configureRestClient = null, ConfigureHeaders? configureDefaultHeaders = null, ConfigureSerialization? configureSerialization = null, bool useClientFactory = false) => MockRestClient;
+    public IRestClient CreateRestClient(Uri baseUrl, ConfigureRestClient? configureRestClient = null, ConfigureHeaders? configureDefaultHeaders = null, ConfigureSerialization? configureSerialization = null, bool useClientFactory = false) => MockRestClient;
+    public IRestClient CreateRestClient(string baseUrl, ConfigureRestClient? configureRestClient = null, ConfigureHeaders? configureDefaultHeaders = null, ConfigureSerialization? configureSerialization = null) => MockRestClient;
+    public IRestClient CreateRestClient(HttpClient httpClient, RestClientOptions? options, bool disposeHttpClient = false, ConfigureSerialization? configureSerialization = null) => MockRestClient;
+    public IRestClient CreateRestClient(HttpClient httpClient, bool disposeHttpClient = false, ConfigureRestClient? configureRestClient = null, ConfigureSerialization? configureSerialization = null) => MockRestClient;
+    public IRestClient CreateRestClient(HttpMessageHandler handler, bool disposeHandler = true, ConfigureRestClient? configureRestClient = null, ConfigureSerialization? configureSerialization = null) => MockRestClient;
 }

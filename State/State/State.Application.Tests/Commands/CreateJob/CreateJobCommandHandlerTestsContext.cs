@@ -1,7 +1,7 @@
 ﻿using AspNet.KickStarter.CQRS;
 using MediatR;
 using Microservices.Shared.Mocks;
-using Moq;
+using NSubstitute;
 using State.Application.Commands.CreateJob;
 using State.Application.Commands.NotifyJobStatusUpdate;
 using State.Application.Tests.Mocks;
@@ -12,8 +12,8 @@ namespace State.Application.Tests.Commands.CreateJob;
 internal class CreateJobCommandHandlerTestsContext
 {
     private readonly MockJobRepository _mockJobRepository;
-    private readonly Mock<ISender> _mockMediator;
-    private readonly Mock<ICreateJobCommandHandlerMetrics> _mockMetrics;
+    private readonly ISender _mockMediator;
+    private readonly ICreateJobCommandHandlerMetrics _mockMetrics;
     private readonly MockLogger<CreateJobCommandHandler> _mockLogger;
     private readonly ConcurrentBag<NotifyJobStatusUpdateCommand> _notifyJobStatusUpdateCommands;
     private readonly ConcurrentBag<Guid> _invalidJobIds;
@@ -24,18 +24,19 @@ internal class CreateJobCommandHandlerTestsContext
     public CreateJobCommandHandlerTestsContext()
     {
         _mockJobRepository = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<ICreateJobCommandHandlerMetrics>();
         _mockLogger = new();
         _notifyJobStatusUpdateCommands = new();
         _invalidJobIds = new();
         _exceptionJobIds = new();
 
-        _mockMediator = new();
-        _mockMediator.Setup(_ => _.Send(It.IsAny<NotifyJobStatusUpdateCommand>(), It.IsAny<CancellationToken>()))
-            .Callback((IRequest<Result> command, CancellationToken _) => _notifyJobStatusUpdateCommands.Add((NotifyJobStatusUpdateCommand)command))
-            .Returns((IRequest<Result> command, CancellationToken _) => NotifyJobStatusUpdate((NotifyJobStatusUpdateCommand)command));
+        _mockMediator = Substitute.For<ISender>();
+        _mockMediator
+            .Send(Arg.Any<NotifyJobStatusUpdateCommand>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => NotifyJobStatusUpdate((NotifyJobStatusUpdateCommand)callInfo.ArgAt<IRequest<Result>>(0)))
+            .AndDoes(callInfo => _notifyJobStatusUpdateCommands.Add((NotifyJobStatusUpdateCommand)callInfo.ArgAt<IRequest<Result>>(0)));
 
-        Sut = new(_mockJobRepository.Object, _mockMediator.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockJobRepository, _mockMediator, _mockMetrics, _mockLogger);
     }
 
     private Task<Result> NotifyJobStatusUpdate(NotifyJobStatusUpdateCommand command) => Task.Run(() =>
@@ -64,19 +65,19 @@ internal class CreateJobCommandHandlerTestsContext
 
     internal CreateJobCommandHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal CreateJobCommandHandlerTestsContext AssertMetricsSaveTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordSaveTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordSaveTime(Arg.Any<double>());
         return this;
     }
 
     internal CreateJobCommandHandlerTestsContext AssertMetricsPublishTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordPublishTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordPublishTime(Arg.Any<double>());
         return this;
     }
 

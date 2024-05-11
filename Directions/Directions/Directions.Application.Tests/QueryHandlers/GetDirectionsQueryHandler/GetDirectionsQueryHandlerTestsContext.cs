@@ -1,18 +1,18 @@
 ﻿using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using Moq;
-
-using EventDirections = Microservices.Shared.Events.Directions;
 using Directions.Application.ExternalApi;
 using Directions.Application.Queries.GetDirections;
+using NSubstitute;
+
+using EventDirections = Microservices.Shared.Events.Directions;
 
 namespace Directions.Application.Tests.QueryHandlers.GetDirectionsQueryHandler;
 
 internal class GetDirectionsQueryHandlerTestsContext
 {
     private readonly Fixture _fixture;
-    private readonly Mock<IExternalApi> _mockExternalService;
-    private readonly Mock<IGetDirectionsQueryHandlerMetrics> _mockMetrics;
+    private readonly IExternalApi _mockExternalService;
+    private readonly IGetDirectionsQueryHandlerMetrics _mockMetrics;
     private readonly MockLogger<Queries.GetDirections.GetDirectionsQueryHandler> _mockLogger;
 
     private EventDirections? _directions;
@@ -23,17 +23,18 @@ internal class GetDirectionsQueryHandlerTestsContext
     public GetDirectionsQueryHandlerTestsContext()
     {
         _fixture = new();
-        _mockMetrics = new();
+        _mockMetrics = Substitute.For<IGetDirectionsQueryHandlerMetrics>();
         _mockLogger = new();
 
         _directions = null;
         _withExceptionMessage = null;
 
-        _mockExternalService = new();
-        _mockExternalService.Setup(_ => _.GetDirectionsAsync(It.IsAny<Coordinates>(), It.IsAny<Coordinates>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(() => GetDirections());
+        _mockExternalService = Substitute.For<IExternalApi>();
+        _mockExternalService
+            .GetDirectionsAsync(Arg.Any<Coordinates>(), Arg.Any<Coordinates>(), Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+            .Returns(callInfo => GetDirections());
 
-        Sut = new(_mockExternalService.Object, _mockMetrics.Object, _mockLogger.Object);
+        Sut = new(_mockExternalService, _mockMetrics, _mockLogger);
     }
 
     private EventDirections GetDirections()
@@ -57,13 +58,13 @@ internal class GetDirectionsQueryHandlerTestsContext
 
     internal GetDirectionsQueryHandlerTestsContext AssertMetricsCountIncremented()
     {
-        _mockMetrics.Verify(_ => _.IncrementCount(), Times.Once);
+        _mockMetrics.Received(1).IncrementCount();
         return this;
     }
 
     internal GetDirectionsQueryHandlerTestsContext AssertMetricsExternalTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordExternalTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordExternalTime(Arg.Any<double>());
         return this;
     }
 }

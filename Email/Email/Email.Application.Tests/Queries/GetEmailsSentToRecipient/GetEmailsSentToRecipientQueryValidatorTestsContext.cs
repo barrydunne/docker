@@ -1,24 +1,26 @@
 ﻿using Email.Application.Queries.GetEmailsSentToRecipient;
-using Microsoft.Extensions.Logging;
-using Moq;
+using Microservices.Shared.Mocks;
+using NSubstitute;
 
 namespace Email.Application.Tests.Queries.GetEmailsSentToRecipient;
 
 internal class GetEmailsSentToRecipientQueryValidatorTestsContext
 {
-    private readonly Mock<IGetEmailsSentToRecipientQueryHandlerMetrics> _mockMetrics;
+    private readonly IGetEmailsSentToRecipientQueryHandlerMetrics _mockMetrics;
+    private readonly MockLogger<GetEmailsSentToRecipientQueryValidator> _mockLogger;
 
     internal GetEmailsSentToRecipientQueryValidator Sut { get; }
 
     public GetEmailsSentToRecipientQueryValidatorTestsContext()
     {
-        _mockMetrics = new();
-        Sut = new(_mockMetrics.Object, new Mock<ILogger<GetEmailsSentToRecipientQueryValidator>>().Object);
+        _mockMetrics = Substitute.For<IGetEmailsSentToRecipientQueryHandlerMetrics>();
+        _mockLogger = new();
+        Sut = new(_mockMetrics, _mockLogger);
     }
 
     internal GetEmailsSentToRecipientQueryValidatorTestsContext AssertMetricsGuardTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordGuardTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordGuardTime(Arg.Any<double>());
         return this;
     }
 }

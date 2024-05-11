@@ -35,7 +35,7 @@ internal class JobRepositoryTestsContext
         _databaseName = _fixture.Create<string>();
         _collectionName = _fixture.Create<string>();
 
-        Sut = new(_mockCloudSecrets.Object, _mockLogger.Object)
+        Sut = new(_mockCloudSecrets, _mockLogger)
         {
             DatabaseName = _databaseName,
             CollectionName = _collectionName

@@ -1,24 +1,26 @@
 ﻿using Imaging.Application.Queries.GetImageUrl;
-using Microsoft.Extensions.Logging;
-using Moq;
+using Microservices.Shared.Mocks;
+using NSubstitute;
 
 namespace Imaging.Application.Tests.QueryHandlers.GetImageUrl;
 
 internal class GetImageUrlQueryValidatorTestsContext
 {
-    private readonly Mock<IGetImageUrlQueryHandlerMetrics> _mockMetrics;
+    private readonly IGetImageUrlQueryHandlerMetrics _mockMetrics;
+    private readonly MockLogger<GetImageUrlQueryValidator> _mockLogger;
 
     internal GetImageUrlQueryValidator Sut { get; }
 
     public GetImageUrlQueryValidatorTestsContext()
     {
-        _mockMetrics = new();
-        Sut = new(_mockMetrics.Object, new Mock<ILogger<GetImageUrlQueryValidator>>().Object);
+        _mockMetrics = Substitute.For<IGetImageUrlQueryHandlerMetrics>();
+        _mockLogger = new();
+        Sut = new(_mockMetrics, _mockLogger);
     }
 
     internal GetImageUrlQueryValidatorTestsContext AssertMetricsGuardTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordGuardTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordGuardTime(Arg.Any<double>());
         return this;
     }
 }

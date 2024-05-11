@@ -1,24 +1,24 @@
-﻿using Microsoft.Extensions.Logging;
-using Moq;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute;
 using PublicApi.Application.Commands.CreateJob;
 
 namespace PublicApi.Application.Tests.Commands.CreateJob;
 
 internal class CreateJobCommandValidatorTestsContext
 {
-    private readonly Mock<ICreateJobCommandHandlerMetrics> _mockMetrics;
+    private readonly ICreateJobCommandHandlerMetrics _mockMetrics;
 
     internal CreateJobCommandValidator Sut { get; }
 
     public CreateJobCommandValidatorTestsContext()
     {
-        _mockMetrics = new();
-        Sut = new(_mockMetrics.Object, new Mock<ILogger<CreateJobCommandValidator>>().Object);
+        _mockMetrics = Substitute.For<ICreateJobCommandHandlerMetrics>();
+        Sut = new(_mockMetrics, new NullLogger<CreateJobCommandValidator>());
     }
 
     internal CreateJobCommandValidatorTestsContext AssertMetricsGuardTimeRecorded()
     {
-        _mockMetrics.Verify(_ => _.RecordGuardTime(It.IsAny<double>()), Times.Once);
+        _mockMetrics.Received(1).RecordGuardTime(Arg.Any<double>());
         return this;
     }
 }

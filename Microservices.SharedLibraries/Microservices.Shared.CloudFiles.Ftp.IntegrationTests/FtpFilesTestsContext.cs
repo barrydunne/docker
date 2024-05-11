@@ -1,25 +1,25 @@
 ﻿using FluentFTP;
 using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Options;
-using Moq;
+using NSubstitute;
 
 namespace Microservices.Shared.CloudFiles.Ftp.IntegrationTests;
 
 internal class FtpFilesTestsContext : IDisposable
 {
     private readonly FtpFilesOptions _options;
-    private readonly Mock<IOptions<FtpFilesOptions>> _mockOptions;
+    private readonly IOptions<FtpFilesOptions> _mockOptions;
     private readonly AsyncFtpClient _asyncFtpClient;
     private readonly MockLogger<FtpFiles> _mockLogger;
     private bool _disposedValue;
 
-    internal FtpFiles Sut => new(_mockOptions.Object, _asyncFtpClient, _mockLogger.Object);
+    internal FtpFiles Sut => new(_mockOptions, _asyncFtpClient, _mockLogger);
 
     internal FtpFilesTestsContext()
     {
         _options = new() { Host = "localhost", Port = 10021, BaseDir = "/files" };
-        _mockOptions = new(MockBehavior.Strict);
-        _mockOptions.Setup(_ => _.Value).Returns(_options);
+        _mockOptions = Substitute.For<IOptions<FtpFilesOptions>>();
+        _mockOptions.Value.Returns(_options);
         _asyncFtpClient = new();
         _mockLogger = new();
     }

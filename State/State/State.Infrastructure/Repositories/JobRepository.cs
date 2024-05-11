@@ -84,9 +84,11 @@ public class JobRepository : IJobRepository
                                       .Include(_ => _.WeatherSuccessful)
                                       .Include(_ => _.ImagingSuccessful);
 
+#pragma warning disable S6966 // Awaitable method should be used
         var result = await collection.Find(filter)
                                      .Project<Job?>(projection)
                                      .FirstOrDefaultAsync();
+#pragma warning restore S6966 // Awaitable method should be used
 
         _logger.LogDebug("Current job status: Directions:{DirectionsSuccessful} Weather:{WeatherSuccessful} Imaging:{ImagingSuccessful}. [{CorrelationId}]", result?.DirectionsSuccessful, result?.WeatherSuccessful, result?.ImagingSuccessful, jobId);
         return result?.DirectionsSuccessful is null || result.WeatherSuccessful is null || result.ImagingSuccessful is null
