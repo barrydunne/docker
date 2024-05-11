@@ -44,11 +44,14 @@ internal class GetAddressCoordinatesQueryHandler : IQueryHandler<GetAddressCoord
         try
         {
             var coordinates = await _geocodingCache.GetAsync(query.Address, cancellationToken);
+            _metrics.RecordCacheGetTime(stopwatch.GetElapsedAndRestart().TotalMilliseconds);
             if (coordinates is null)
             {
                 coordinates = await _externalService.GetCoordinatesAsync(query.Address, query.JobId, cancellationToken);
-                await _geocodingCache.SetAsync(query.Address, coordinates, TimeSpan.FromDays(7), cancellationToken);
                 _metrics.RecordExternalTime(stopwatch.GetElapsedAndRestart().TotalMilliseconds);
+
+                await _geocodingCache.SetAsync(query.Address, coordinates, TimeSpan.FromDays(7), cancellationToken);
+                _metrics.RecordCacheSetTime(stopwatch.GetElapsedAndRestart().TotalMilliseconds);
             }
             _logger.LogDebug("Coordinates for {Address} are {Latitude},{Longitude}. [{CorrelationId}]", query.Address, coordinates.Latitude, coordinates.Longitude, query.JobId);
             return coordinates;

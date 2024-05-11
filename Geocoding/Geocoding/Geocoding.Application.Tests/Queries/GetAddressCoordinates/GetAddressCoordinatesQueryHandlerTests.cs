@@ -20,11 +20,27 @@ internal class GetAddressCoordinatesQueryHandlerTests
     }
 
     [Test]
+    public async Task GeocodeAddressesCommandHandler_metrics_records_cache_get_time()
+    {
+        var query = _fixture.Create<GetAddressCoordinatesQuery>();
+        await _context.Sut.Handle(query, CancellationToken.None);
+        _context.AssertMetricsCacheGetTimeRecorded();
+    }
+
+    [Test]
     public async Task GeocodeAddressesCommandHandler_metrics_records_external_time()
     {
         var query = _fixture.Create<GetAddressCoordinatesQuery>();
         await _context.Sut.Handle(query, CancellationToken.None);
         _context.AssertMetricsExternalTimeRecorded();
+    }
+
+    [Test]
+    public async Task GeocodeAddressesCommandHandler_metrics_records_cache_set_time()
+    {
+        var query = _fixture.Create<GetAddressCoordinatesQuery>();
+        await _context.Sut.Handle(query, CancellationToken.None);
+        _context.AssertMetricsCacheSetTimeRecorded();
     }
 
     [Test]

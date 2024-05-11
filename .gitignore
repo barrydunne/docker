@@ -5,6 +5,7 @@ obj
 .vscodecounter
 *.coverage
 *.log
+*.psd
 *.user
 TestResults
 /Microservices.SharedLibraries/Packages

@@ -76,9 +76,21 @@ internal class GetAddressCoordinatesQueryHandlerTestsContext
         return this;
     }
 
+    internal GetAddressCoordinatesQueryHandlerTestsContext AssertMetricsCacheGetTimeRecorded()
+    {
+        _mockMetrics.Verify(_ => _.RecordCacheGetTime(It.IsAny<double>()), Times.Once);
+        return this;
+    }
+
     internal GetAddressCoordinatesQueryHandlerTestsContext AssertMetricsExternalTimeRecorded()
     {
         _mockMetrics.Verify(_ => _.RecordExternalTime(It.IsAny<double>()), Times.Once);
+        return this;
+    }
+
+    internal GetAddressCoordinatesQueryHandlerTestsContext AssertMetricsCacheSetTimeRecorded()
+    {
+        _mockMetrics.Verify(_ => _.RecordCacheSetTime(It.IsAny<double>()), Times.Once);
         return this;
     }
 
