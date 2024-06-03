@@ -27,51 +27,23 @@
         "uid": "DS_PROMETHEUS"
       },
       "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "green",
-            "mode": "fixed"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 7,
-        "w": 2,
+        "w": 4,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
         },
-        "textMode": "auto"
+        "content": "# State Manager\n\nMonitors and maintains the state of the job, triggering the notification when complete.",
+        "mode": "markdown"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -80,7 +52,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "system_net_http_requests_started{job=\"state\"}",
+          "expr": "process_start_time_seconds{job=\"public-api\"}\r\n",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -90,81 +62,8 @@
           "useBackend": false
         }
       ],
-      "title": "Total HTTP Requests",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DS_PROMETHEUS"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 2,
-        "x": 2,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.1.5",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DS_PROMETHEUS"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "system_net_http_requests_failed{job=\"state\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Failed HTTP Requests",
-      "type": "stat"
-    },
-    {
+      "type": "text"
+    },    {
       "datasource": {
         "type": "prometheus",
         "uid": "DS_PROMETHEUS"
@@ -257,7 +156,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "dotnet_total_memory_bytes{job=\"state\"} / 1024 / 1024",
+          "expr": "process_memory_usage_bytes{job=\"state\"} / 1024 / 1024",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -365,7 +264,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "process_num_threads{job=\"state\"}",
+          "expr": "process_threads{job=\"state\"}",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -441,7 +340,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
+        "w": 12,
         "x": 12,
         "y": 0
       },
@@ -472,232 +371,18 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "system_runtime_cpu_usage{job=\"state\"}",
+          "expr": "process_cpu_time_seconds_total{job=\"state\"}",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "intervalFactor": 1,
-          "legendFormat": "{{job}}",
+          "legendFormat": "{{state}}",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "CPU Percentage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DS_PROMETHEUS"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 16,
-        "y": 0
-      },
-      "id": 6,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.1.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DS_PROMETHEUS"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "system_net_sockets_bytes_sent{job=\"state\"} / 1024 / 1024",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "intervalFactor": 1,
-          "legendFormat": "{{job}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Network MB Sent",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DS_PROMETHEUS"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 20,
-        "y": 0
-      },
-      "id": 7,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.1.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DS_PROMETHEUS"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "system_net_sockets_bytes_received{job=\"state\"} / 1024 / 1024",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "intervalFactor": 1,
-          "legendFormat": "{{job}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Network MB Received",
+      "title": "CPU Time (seconds)",
       "type": "timeseries"
     },
     {
@@ -759,7 +444,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_createjob_handled_count{job=\"state\"}",
+          "expr": "state_api_createjobcommand_handled_count_total{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -988,7 +673,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_createjob_guard_bucket{job=\"state\"}",
+          "expr": "state_api_createjobcommand_guard_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1219,7 +904,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_createjob_save_bucket{job=\"state\"}",
+          "expr": "state_api_createjobcommand_save_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1450,7 +1135,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_createjob_publish_bucket{job=\"state\"}",
+          "expr": "state_api_createjobcommand_publish_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1524,7 +1209,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updategeocodingresult_handled_count{job=\"state\"}",
+          "expr": "state_api_updategeocodingresultcommand_handled_count_total{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1753,7 +1438,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updategeocodingresult_guard_bucket{job=\"state\"}",
+          "expr": "state_api_updategeocodingresultcommand_guard_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1984,7 +1669,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updategeocodingresult_update_bucket{job=\"state\"}",
+          "expr": "state_api_updategeocodingresultcommand_update_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2215,7 +1900,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updategeocodingresult_publish_bucket{job=\"state\"}",
+          "expr": "state_api_updategeocodingresultcommand_publish_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2289,7 +1974,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updatedirectionsresult_handled_count{job=\"state\"}",
+          "expr": "state_api_updatedirectionsresultcommand_handled_count_total{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2518,7 +2203,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updatedirectionsresult_guard_bucket{job=\"state\"}",
+          "expr": "state_api_updatedirectionsresultcommand_guard_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2749,7 +2434,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updatedirectionsresult_update_bucket{job=\"state\"}",
+          "expr": "state_api_updatedirectionsresultcommand_update_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2980,7 +2665,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updatedirectionsresult_publish_bucket{job=\"state\"}",
+          "expr": "state_api_updatedirectionsresultcommand_publish_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -3054,7 +2739,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updateweatherresult_handled_count{job=\"state\"}",
+          "expr": "state_api_updateweatherresultcommand_handled_count_total{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -3283,7 +2968,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updateweatherresult_guard_bucket{job=\"state\"}",
+          "expr": "state_api_updateweatherresultcommand_guard_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -3514,7 +3199,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updateweatherresult_update_bucket{job=\"state\"}",
+          "expr": "state_api_updateweatherresultcommand_update_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -3745,7 +3430,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updateweatherresult_publish_bucket{job=\"state\"}",
+          "expr": "state_api_updateweatherresultcommand_publish_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -3819,7 +3504,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updateimagingresult_handled_count{job=\"state\"}",
+          "expr": "state_api_updateimagingresultcommand_handled_count_total{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -4048,7 +3733,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updateimagingresult_guard_bucket{job=\"state\"}",
+          "expr": "state_api_updateimagingresultcommand_guard_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -4279,7 +3964,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updateimagingresult_update_bucket{job=\"state\"}",
+          "expr": "state_api_updateimagingresultcommand_update_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -4510,7 +4195,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_updateimagingresult_publish_bucket{job=\"state\"}",
+          "expr": "state_api_updateimagingresultcommand_publish_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -4584,7 +4269,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_notifyjobstatusupdate_handled_count{job=\"state\"}",
+          "expr": "state_api_notifyjobstatusupdatecommand_handled_count_total{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -4813,7 +4498,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_notifyjobstatusupdate_guard_bucket{job=\"state\"}",
+          "expr": "state_api_notifyjobstatusupdatecommand_guard_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -5044,7 +4729,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_notifyjobstatusupdate_publish_bucket{job=\"state\"}",
+          "expr": "state_api_notifyjobstatusupdatecommand_publish_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -5118,7 +4803,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_notifyprocessingcomplete_handled_count{job=\"state\"}",
+          "expr": "state_api_notifyprocessingcompletecommand_handled_count_total{job=\"state\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -5347,7 +5032,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_notifyprocessingcomplete_guard_bucket{job=\"state\"}",
+          "expr": "state_api_notifyprocessingcompletecommand_guard_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -5578,7 +5263,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "state_application_notifyprocessingcomplete_publish_bucket{job=\"state\"}",
+          "expr": "state_api_notifyprocessingcompletecommand_publish_milliseconds_bucket{job=\"state\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,

@@ -282,3 +282,15 @@ services:
         ipv4_address: 172.30.0.14
     ports:
       - 10004:8080 # HTTP
+
+  aspire.dashboard.microservices-infrastructure:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard
+    container_name: aspire.dashboard.microservices-infrastructure
+    environment:
+      - DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
+    restart: no
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.15
+    ports:
+      - 10089:18888 # Dashboard

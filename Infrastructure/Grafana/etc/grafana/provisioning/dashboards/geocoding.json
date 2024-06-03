@@ -27,50 +27,21 @@
         "uid": "DS_PROMETHEUS"
       },
       "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "green",
-            "mode": "fixed"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 7,
-        "w": 2,
+        "w": 4,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
         },
-        "textMode": "auto",
-        "wideLayout": true
+        "content": "# Geocoding\n\nThe service to geocode addresses into coordinates.",
+        "mode": "markdown"
       },
       "pluginVersion": "10.2.2",
       "targets": [
@@ -81,7 +52,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "system_net_http_requests_started{job=\"geocoding\"}",
+          "expr": "process_start_time_seconds{job=\"public-api\"}\r\n",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -91,80 +62,7 @@
           "useBackend": false
         }
       ],
-      "title": "Total HTTP Requests",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DS_PROMETHEUS"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 2,
-        "x": 2,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.2.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DS_PROMETHEUS"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "system_net_http_requests_failed{job=\"geocoding\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Failed HTTP Requests",
-      "type": "stat"
+      "type": "text"
     },
     {
       "datasource": {
@@ -260,7 +158,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "dotnet_total_memory_bytes{job=\"geocoding\"} / 1024 / 1024",
+          "expr": "process_memory_usage_bytes{job=\"geocoding\"} / 1024 / 1024",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -369,7 +267,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "process_num_threads{job=\"geocoding\"}",
+          "expr": "process_threads{job=\"geocoding\"}",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -446,7 +344,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
+        "w": 12,
         "x": 12,
         "y": 0
       },
@@ -477,234 +375,18 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "system_runtime_cpu_usage{job=\"geocoding\"}",
+          "expr": "process_cpu_time_seconds_total{job=\"geocoding\"}",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "intervalFactor": 1,
-          "legendFormat": "{{job}}",
+          "legendFormat": "{{state}}",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "CPU Percentage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DS_PROMETHEUS"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 16,
-        "y": 0
-      },
-      "id": 6,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.1.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DS_PROMETHEUS"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "system_net_sockets_bytes_sent{job=\"geocoding\"} / 1024 / 1024",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "intervalFactor": 1,
-          "legendFormat": "{{job}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Network MB Sent",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DS_PROMETHEUS"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 20,
-        "y": 0
-      },
-      "id": 7,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.1.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DS_PROMETHEUS"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "system_net_sockets_bytes_received{job=\"geocoding\"} / 1024 / 1024",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "intervalFactor": 1,
-          "legendFormat": "{{job}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Network MB Received",
+      "title": "CPU Time (seconds)",
       "type": "timeseries"
     },
     {
@@ -767,7 +449,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "geocoding_application_getaddresscoordinates_handled_count{job=\"geocoding\"}",
+          "expr": "geocoding_api_getaddresscoordinatesquery_handled_count_total{job=\"geocoding\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -997,7 +679,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "geocoding_application_getaddresscoordinates_guard_bucket{job=\"geocoding\"}",
+          "expr": "geocoding_api_getaddresscoordinatesquery_guard_milliseconds_bucket{job=\"geocoding\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1229,7 +911,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "geocoding_application_getaddresscoordinates_cacheget_bucket{job=\"geocoding\"}",
+          "expr": "geocoding_api_getaddresscoordinatesquery_cache_get_milliseconds_bucket{job=\"geocoding\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1461,7 +1143,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "geocoding_application_getaddresscoordinates_external_bucket{job=\"geocoding\"}",
+          "expr": "geocoding_api_getaddresscoordinatesquery_external_milliseconds_bucket{job=\"geocoding\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1693,7 +1375,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "geocoding_application_getaddresscoordinates_cacheset_bucket{job=\"geocoding\"}",
+          "expr": "geocoding_api_getaddresscoordinatesquery_cache_set_milliseconds_bucket{job=\"geocoding\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1768,7 +1450,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "geocoding_application_geocodeaddresses_handled_count{job=\"geocoding\"}",
+          "expr": "geocoding_api_geocodeaddressescommand_handled_count_total{job=\"geocoding\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1998,7 +1680,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "geocoding_application_geocodeaddresses_guard_bucket{job=\"geocoding\"}",
+          "expr": "geocoding_api_geocodeaddressescommand_guard_milliseconds_bucket{job=\"geocoding\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2230,7 +1912,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "geocoding_application_geocodeaddresses_geocode_bucket{job=\"geocoding\"}",
+          "expr": "geocoding_api_geocodeaddressescommand_geocode_milliseconds_bucket{job=\"geocoding\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2462,7 +2144,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "geocoding_application_geocodeaddresses_publish_bucket{job=\"geocoding\"}",
+          "expr": "geocoding_api_geocodeaddressescommand_publish_milliseconds_bucket{job=\"geocoding\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,

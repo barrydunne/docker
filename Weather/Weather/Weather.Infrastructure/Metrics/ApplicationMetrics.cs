@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Metrics;
 using Microsoft.Extensions.DependencyInjection;
 using Weather.Application.Commands.GenerateWeather;
 using Weather.Application.Queries.GetWeather;
@@ -12,13 +11,6 @@ namespace Weather.Infrastructure.Metrics;
 [ExcludeFromCodeCoverage]
 public static class ApplicationMetrics
 {
-    static ApplicationMetrics() => Meter = new("Weather.Application");
-
-    /// <summary>
-    /// Gets the shared metrics Meter.
-    /// </summary>
-    internal static Meter Meter { get; }
-
     /// <summary>
     /// Register the required metrics providers.
     /// </summary>
@@ -27,7 +19,7 @@ public static class ApplicationMetrics
     public static IServiceCollection RegisterMetrics(this IServiceCollection services)
     {
         return services
-            .AddTransient<IGenerateWeatherCommandHandlerMetrics, GenerateWeatherCommandHandlerMetrics>()
-            .AddTransient<IGetWeatherQueryHandlerMetrics, GetWeatherQueryHandlerMetrics>();
+            .AddSingleton<IGenerateWeatherCommandHandlerMetrics, GenerateWeatherCommandHandlerMetrics>()
+            .AddSingleton<IGetWeatherQueryHandlerMetrics, GetWeatherQueryHandlerMetrics>();
     }
 }

@@ -7,7 +7,6 @@ using State.Application.Commands.UpdateGeocodingResult;
 using State.Application.Commands.UpdateImagingResult;
 using State.Application.Commands.UpdateWeatherResult;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Metrics;
 
 namespace State.Infrastructure.Metrics;
 
@@ -17,13 +16,6 @@ namespace State.Infrastructure.Metrics;
 [ExcludeFromCodeCoverage]
 public static class ApplicationMetrics
 {
-    static ApplicationMetrics() => Meter = new("State.Application");
-
-    /// <summary>
-    /// Gets the shared metrics Meter.
-    /// </summary>
-    internal static Meter Meter { get; }
-
     /// <summary>
     /// Register the required metrics providers.
     /// </summary>
@@ -32,12 +24,12 @@ public static class ApplicationMetrics
     public static IServiceCollection RegisterMetrics(this IServiceCollection services)
     {
         return services
-            .AddTransient<ICreateJobCommandHandlerMetrics, CreateJobCommandHandlerMetrics>()
-            .AddTransient<INotifyJobStatusUpdateCommandHandlerMetrics, NotifyJobStatusUpdateCommandHandlerMetrics>()
-            .AddTransient<IUpdateGeocodingResultCommandHandlerMetrics, UpdateGeocodingResultCommandHandlerMetrics>()
-            .AddTransient<IUpdateWeatherResultCommandHandlerMetrics, UpdateWeatherResultCommandHandlerMetrics>()
-            .AddTransient<IUpdateDirectionsResultCommandHandlerMetrics, UpdateDirectionsResultCommandHandlerMetrics>()
-            .AddTransient<IUpdateImagingResultCommandHandlerMetrics, UpdateImagingResultCommandHandlerMetrics>()
-            .AddTransient<INotifyProcessingCompleteCommandHandlerMetrics, NotifyProcessingCompleteCommandHandlerMetrics>();
+            .AddSingleton<ICreateJobCommandHandlerMetrics, CreateJobCommandHandlerMetrics>()
+            .AddSingleton<INotifyJobStatusUpdateCommandHandlerMetrics, NotifyJobStatusUpdateCommandHandlerMetrics>()
+            .AddSingleton<IUpdateGeocodingResultCommandHandlerMetrics, UpdateGeocodingResultCommandHandlerMetrics>()
+            .AddSingleton<IUpdateWeatherResultCommandHandlerMetrics, UpdateWeatherResultCommandHandlerMetrics>()
+            .AddSingleton<IUpdateDirectionsResultCommandHandlerMetrics, UpdateDirectionsResultCommandHandlerMetrics>()
+            .AddSingleton<IUpdateImagingResultCommandHandlerMetrics, UpdateImagingResultCommandHandlerMetrics>()
+            .AddSingleton<INotifyProcessingCompleteCommandHandlerMetrics, NotifyProcessingCompleteCommandHandlerMetrics>();
     }
 }

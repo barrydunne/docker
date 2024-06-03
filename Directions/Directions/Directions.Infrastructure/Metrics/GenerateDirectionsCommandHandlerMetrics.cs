@@ -1,4 +1,5 @@
-﻿using Directions.Application.Commands.GenerateDirections;
+﻿using AspNet.KickStarter;
+using Directions.Application.Commands.GenerateDirections;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Metrics;
 
@@ -8,10 +9,25 @@ namespace Directions.Infrastructure.Metrics;
 [ExcludeFromCodeCoverage]
 internal class GenerateDirectionsCommandHandlerMetrics : IGenerateDirectionsCommandHandlerMetrics
 {
-    private static readonly Counter<long> _count = ApplicationMetrics.Meter.CreateCounter<long>("GenerateDirections.Handled.Count", null, "The number of commands handled.");
-    private static readonly Histogram<double> _guardTime = ApplicationMetrics.Meter.CreateHistogram<double>("GenerateDirections.Guard", unit: "ms", "Time taken to process input guards.");
-    private static readonly Histogram<double> _directionsTime = ApplicationMetrics.Meter.CreateHistogram<double>("GenerateDirections.Directions", unit: "ms", "Time taken to generate directions.");
-    private static readonly Histogram<double> _publishTime = ApplicationMetrics.Meter.CreateHistogram<double>("GenerateDirections.Publish", unit: "ms", "Time taken to publish the event.");
+    private readonly Counter<long> _count;
+    private readonly Histogram<double> _guardTime;
+    private readonly Histogram<double> _directionsTime;
+    private readonly Histogram<double> _publishTime;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GenerateDirectionsCommandHandlerMetrics"/> class.
+    /// </summary>
+    /// <param name="meterFactory">The factory to supply the <see cref="Meter"/>.</param>
+    public GenerateDirectionsCommandHandlerMetrics(IMeterFactory meterFactory)
+    {
+        var meter = meterFactory.CreateAssemblyMeter();
+        var subjectName = nameof(GenerateDirectionsCommand).ToLower();
+
+        _count = meter.CreateCounter<long>($"{meter.Name.ToLower()}.{subjectName}.handled.count", description: "The number of commands handled.");
+        _guardTime = meter.CreateHistogram<double>($"{meter.Name.ToLower()}.{subjectName}.guard", description: "Time taken to process input guards.", unit: "ms");
+        _directionsTime = meter.CreateHistogram<double>($"{meter.Name.ToLower()}.{subjectName}.directions", description: "Time taken to generate directions.", unit: "ms");
+        _publishTime = meter.CreateHistogram<double>($"{meter.Name.ToLower()}.{subjectName}.publish", description: "Time taken to publish the event.", unit: "ms");
+    }
 
     /// <inheritdoc/>
     public void IncrementCount() => _count!.Add(1);

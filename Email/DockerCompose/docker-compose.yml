@@ -46,6 +46,7 @@ services:
       - cloudfiles:172.30.0.8
       - secretsmanager:172.30.0.12
       - cloudemail:172.30.0.13
+      - telemetry:172.30.0.15
     networks:
       microservices-infrastructure_microservices-net:
         ipv4_address: 172.30.0.80

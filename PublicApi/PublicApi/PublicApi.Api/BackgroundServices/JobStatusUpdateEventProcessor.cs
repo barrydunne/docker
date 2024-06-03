@@ -1,4 +1,5 @@
-﻿using AspNet.KickStarter.CQRS;
+﻿using AspNet.KickStarter;
+using AspNet.KickStarter.CQRS;
 using Mapster;
 using Microservices.Shared.Events;
 using Microservices.Shared.Queues;
@@ -17,8 +18,9 @@ internal class JobStatusUpdateEventProcessor : QueueToCommandProcessor<JobStatus
     /// </summary>
     /// <param name="queue">The queue being processed.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider"/> to use to create scoped instances.</param>
+    /// <param name="traceActivity">The trace activity source.</param>
     /// <param name="logger">The logger to write to.</param>
-    public JobStatusUpdateEventProcessor(IQueue<JobStatusUpdateEvent> queue, IServiceProvider serviceProvider, ILogger<JobStatusUpdateEventProcessor> logger) : base(queue, serviceProvider, logger) { }
+    public JobStatusUpdateEventProcessor(IQueue<JobStatusUpdateEvent> queue, IServiceProvider serviceProvider, ITraceActivity traceActivity, ILogger<JobStatusUpdateEventProcessor> logger) : base(queue, serviceProvider, traceActivity, logger) { }
 
     /// <inheritdoc/>
     protected override UpdateStatusCommand CreateCommand(JobStatusUpdateEvent message) => message.Adapt<UpdateStatusCommand>();

@@ -2,7 +2,6 @@
 using Geocoding.Application.Queries.GetAddressCoordinates;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Metrics;
 
 namespace Geocoding.Infrastructure.Metrics;
 
@@ -12,13 +11,6 @@ namespace Geocoding.Infrastructure.Metrics;
 [ExcludeFromCodeCoverage]
 public static class ApplicationMetrics
 {
-    static ApplicationMetrics() => Meter = new("Geocoding.Application");
-
-    /// <summary>
-    /// Gets the shared metrics Meter.
-    /// </summary>
-    internal static Meter Meter { get; }
-
     /// <summary>
     /// Register the required metrics providers.
     /// </summary>
@@ -27,7 +19,7 @@ public static class ApplicationMetrics
     public static IServiceCollection RegisterMetrics(this IServiceCollection services)
     {
         return services
-            .AddTransient<IGeocodeAddressesCommandHandlerMetrics, GeocodeAddressesCommandHandlerMetrics>()
-            .AddTransient<IGetAddressCoordinatesQueryHandlerMetrics, GetAddressCoordinatesQueryHandlerMetrics>();
+            .AddSingleton<IGeocodeAddressesCommandHandlerMetrics, GeocodeAddressesCommandHandlerMetrics>()
+            .AddSingleton<IGetAddressCoordinatesQueryHandlerMetrics, GetAddressCoordinatesQueryHandlerMetrics>();
     }
 }

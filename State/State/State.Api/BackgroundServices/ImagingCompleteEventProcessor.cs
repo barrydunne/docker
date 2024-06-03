@@ -1,4 +1,5 @@
-﻿using AspNet.KickStarter.CQRS;
+﻿using AspNet.KickStarter;
+using AspNet.KickStarter.CQRS;
 using Mapster;
 using Microservices.Shared.Events;
 using Microservices.Shared.Queues;
@@ -17,8 +18,9 @@ internal class ImagingCompleteEventProcessor : QueueToCommandProcessor<ImagingCo
     /// </summary>
     /// <param name="queue">The queue being processed.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider"/> to use to create scoped instances.</param>
+    /// <param name="traceActivity">The trace activity source.</param>
     /// <param name="logger">The logger to write to.</param>
-    public ImagingCompleteEventProcessor(IQueue<ImagingCompleteEvent> queue, IServiceProvider serviceProvider, ILogger<ImagingCompleteEventProcessor> logger) : base(queue, serviceProvider, logger) { }
+    public ImagingCompleteEventProcessor(IQueue<ImagingCompleteEvent> queue, IServiceProvider serviceProvider, ITraceActivity traceActivity, ILogger<ImagingCompleteEventProcessor> logger) : base(queue, serviceProvider, traceActivity, logger) { }
 
     /// <inheritdoc/>
     protected override UpdateImagingResultCommand CreateCommand(ImagingCompleteEvent message) => message.Adapt<UpdateImagingResultCommand>();

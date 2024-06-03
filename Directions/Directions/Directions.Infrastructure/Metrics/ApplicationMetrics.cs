@@ -2,7 +2,6 @@
 using Directions.Application.Queries.GetDirections;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Metrics;
 
 namespace Directions.Infrastructure.Metrics;
 
@@ -12,13 +11,6 @@ namespace Directions.Infrastructure.Metrics;
 [ExcludeFromCodeCoverage]
 public static class ApplicationMetrics
 {
-    static ApplicationMetrics() => Meter = new("Directions.Application");
-
-    /// <summary>
-    /// Gets the shared metrics Meter.
-    /// </summary>
-    internal static Meter Meter { get; }
-
     /// <summary>
     /// Register the required metrics providers.
     /// </summary>
@@ -27,7 +19,7 @@ public static class ApplicationMetrics
     public static IServiceCollection RegisterMetrics(this IServiceCollection services)
     {
         return services
-            .AddTransient<IGenerateDirectionsCommandHandlerMetrics, GenerateDirectionsCommandHandlerMetrics>()
-            .AddTransient<IGetDirectionsQueryHandlerMetrics, GetDirectionsQueryHandlerMetrics>();
+            .AddSingleton<IGenerateDirectionsCommandHandlerMetrics, GenerateDirectionsCommandHandlerMetrics>()
+            .AddSingleton<IGetDirectionsQueryHandlerMetrics, GetDirectionsQueryHandlerMetrics>();
     }
 }

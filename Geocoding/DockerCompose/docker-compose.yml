@@ -39,6 +39,7 @@ services:
       - rabbitmq2:172.30.0.3
       - seq:172.30.0.4
       - secretsmanager:172.30.0.12
+      - telemetry:172.30.0.15
     networks:
       microservices-infrastructure_microservices-net:
         ipv4_address: 172.30.0.40

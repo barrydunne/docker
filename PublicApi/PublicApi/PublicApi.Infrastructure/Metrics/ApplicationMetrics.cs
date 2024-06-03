@@ -3,7 +3,6 @@ using PublicApi.Application.Commands.CreateJob;
 using PublicApi.Application.Commands.UpdateStatus;
 using PublicApi.Application.Queries.GetJobStatus;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Metrics;
 
 namespace PublicApi.Infrastructure.Metrics;
 
@@ -13,13 +12,6 @@ namespace PublicApi.Infrastructure.Metrics;
 [ExcludeFromCodeCoverage]
 public static class ApplicationMetrics
 {
-    static ApplicationMetrics() => Meter = new("PublicApi.Application");
-
-    /// <summary>
-    /// Gets the shared metrics Meter.
-    /// </summary>
-    internal static Meter Meter { get; }
-
     /// <summary>
     /// Register the required metrics providers.
     /// </summary>
@@ -28,8 +20,8 @@ public static class ApplicationMetrics
     public static IServiceCollection RegisterMetrics(this IServiceCollection services)
     {
         return services
-            .AddTransient<ICreateJobCommandHandlerMetrics, CreateJobCommandHandlerMetrics>()
-            .AddTransient<IGetJobStatusQueryHandlerMetrics, GetJobStatusQueryHandlerMetrics>()
-            .AddTransient<IUpdateStatusCommandHandlerMetrics, UpdateStatusCommandHandlerMetrics>();
+            .AddSingleton<ICreateJobCommandHandlerMetrics, CreateJobCommandHandlerMetrics>()
+            .AddSingleton<IGetJobStatusQueryHandlerMetrics, GetJobStatusQueryHandlerMetrics>()
+            .AddSingleton<IUpdateStatusCommandHandlerMetrics, UpdateStatusCommandHandlerMetrics>();
     }
 }

@@ -25,6 +25,7 @@ services:
       - seq:172.30.0.4
       - cloudfiles:172.30.0.8
       - secretsmanager:172.30.0.12
+      - telemetry:172.30.0.15
     networks:
       microservices-infrastructure_microservices-net:
         ipv4_address: 172.30.0.70

@@ -27,7 +27,8 @@ public static class IoC
         // CQRS
         services
             .AddMediatR(_ => _.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
-            .AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>))
+            .AddTracePipelineBehavior()
+            .AddValidationPipelineBehavior()
             .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
 
         // Redis

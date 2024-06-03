@@ -16,7 +16,7 @@ await new ApiBuilder()
     .WithHealthHandler()
     .WithServices(IoC.RegisterServices)
     .WithEndpoints(Endpoints.Map)
-    .WithMetrics(8081)
+    .WithOpenTelemetry(8081)
     .WithAdditionalConfiguration(_ => _.Services
         .AddQueueToCommandProcessor<JobCreatedEvent, CreateJobCommand, Result, JobCreatedEventProcessor>()
         .AddQueueToCommandProcessor<GeocodingCompleteEvent, UpdateGeocodingResultCommand, Result, GeocodingCompleteEventProcessor>()

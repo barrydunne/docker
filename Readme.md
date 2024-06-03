@@ -66,6 +66,10 @@ The example shown was captured when running with real external services.
 
     <a href="Screenshots/FluentValidation.png" target="_blank"><img src="Screenshots/FluentValidation.png" width="400px"/></a>
 
+  - Tracing is implemented automatically for command handlers and other processing.
+
+    <a href="Screenshots/Trace.png" target="_blank" style="display:inline-block;vertical-align:top;"><img src="Screenshots/Trace.png" width="400px"/></a>
+
   - Caching is used at different levels and is implemented with:
       - **nginx** - caches the responses for requests using the same idempotency key to prevent unnecessary round trips to the API.
       - **in-memory** - the public API uses an in-memory job status cache to prevent unnecessary round trips to the database.
@@ -103,6 +107,7 @@ This codebase showcases the following technologies:
 • NuGet
 • NUnit
 • OAuth2
+• OpenTelemetry
 • PowerShell
 • Prometheus
 • RabbitMQ
@@ -405,34 +410,36 @@ The bold entries are for the main services of interest to use and monitor the ap
 API - http://localhost:11080
 Logs - http://localhost:10081
 Metrics - http://localhost:10088
+Aspire Dashboard - http://localhost:10089
 
 \* _Local port mappings for these services are made available for diagnostics purposes in this development environment._
 
-| IP Address   | Local Port(s) | Project        | Service         | Link(s) |
-| ------------| -------------- | -------------- | --------------- | ------- |
-| 172.30.0.2  | 10672*, 10692* | Infrastructure | RabbitMQ node 1 | http://localhost:10672 (admin / P@ssw0rd) http://localhost:10692/metrics |
-| 172.30.0.3  | 10673*, 10693* | Infrastructure | RabbitMQ node 2 | http://localhost:10673 (admin / P@ssw0rd) http://localhost:10693/metrics |
-| 172.30.0.4  | 10081          | Infrastructure | **Seq**         | http://localhost:10081/#/events?range=1d&signal=signal-17&tail |
-| 172.30.0.5  |                | Infrastructure | Seq Init        |  |
-| 172.30.0.6  | 10082*         | Infrastructure | Prometheus      | http://localhost:10082 |
-| 172.30.0.7  | 10088          | Infrastructure | **Grafana**     | http://localhost:10088/d/publicapi/public-api?orgId=1&refresh=5s&from=now-1h&to=now |
-| 172.30.0.8  | 10020*, 10021*, 10100-10199* | Infrastructure | VSFTP          | ftp://localhost:10021  |
-| 172.30.0.9  | 10379*         | Infrastructure | Redis           | redis-cli -h localhost -p 10379 |
-| 172.30.0.10 |                | Infrastructure | Redis Init      |  |
-| 172.30.0.11 | 10121*         | Infrastructure | Redis Metrics   | http://localhost:10121/metrics |
-| 172.30.0.12 | 10083*         | Infrastructure | Secrets Manager | http://localhost:10083 |
-| 172.30.0.13 | 10025*, 10084  | Infrastructure | **MailCatcher** | http://localhost:10084 |
-| 172.30.0.14 | 10004*         | Infrastructure | IdentityServer4 | http://localhost:10004/.well-known/openid-configuration |
-| 172.30.0.20 | 11080          | Public API     | **Nginx**       | http://localhost:11080 |
-| 172.30.0.21 | 11081*, 11082* | Public API     | Public API      | http://localhost:11081 http://localhost:11082/metrics |
-| 172.30.0.22 | 11017*         | Public API     | MongoDB         | mongodb://admin:P%40ssw0rd@localhost:11017/
-| 172.30.0.30 | 12080*, 12081* | State          | State API       | http://localhost:12080 http://localhost:12081/metrics |
-| 172.30.0.31 | 12017*         | State          | MongoDB         | mongodb://admin:P%40ssw0rd@localhost:12017/
-| 172.30.0.40 | 13080*, 13081* | Geocoding      | Geocoding API   | http://localhost:13080 http://localhost:13081/metrics |
-| 172.30.0.41 | 13379*         | Geocoding      | Redis           | redis-cli -h localhost -p 13379 |
-| 172.30.0.50 | 14080*, 14081* | Directions     | Directions API  | http://localhost:14080 http://localhost:14081/metrics |
-| 172.30.0.60 | 15080*, 15081* | Weather        | Weather API     | http://localhost:15080 http://localhost:15081/metrics |
-| 172.30.0.70 | 16080*, 16081* | Imaging        | Imaging API     | http://localhost:16080 http://localhost:16081/metrics |
-| 172.30.0.80 | 17080*, 17081* | Email          | Email API       | http://localhost:17080 http://localhost:17081/metrics |
-| 172.30.0.81 | 17306*         | Email          | MySQL           | Server=localhost;Port=17306;Database=email;Uid=admin;Pwd=P@ssw0rd;
+| IP Address   | Local Port(s) | Project        | Service              | Link(s) |
+| ------------| -------------- | -------------- | -------------------- | ------- |
+| 172.30.0.2  | 10672*, 10692* | Infrastructure | RabbitMQ node 1      | http://localhost:10672 (admin / P@ssw0rd) http://localhost:10692/metrics |
+| 172.30.0.3  | 10673*, 10693* | Infrastructure | RabbitMQ node 2      | http://localhost:10673 (admin / P@ssw0rd) http://localhost:10693/metrics |
+| 172.30.0.4  | 10081          | Infrastructure | **Seq**              | http://localhost:10081/#/events?range=1d&signal=signal-17&tail |
+| 172.30.0.5  |                | Infrastructure | Seq Init             |  |
+| 172.30.0.6  | 10082*         | Infrastructure | Prometheus           | http://localhost:10082 |
+| 172.30.0.7  | 10088          | Infrastructure | **Grafana**          | http://localhost:10088/d/publicapi/public-api?orgId=1&refresh=5s&from=now-1h&to=now |
+| 172.30.0.8  | 10020*, 10021*, 10100-10199* | Infrastructure | VSFTP  | ftp://localhost:10021  |
+| 172.30.0.9  | 10379*         | Infrastructure | Redis                | redis-cli -h localhost -p 10379 |
+| 172.30.0.10 |                | Infrastructure | Redis Init           |  |
+| 172.30.0.11 | 10121*         | Infrastructure | Redis Metrics        | http://localhost:10121/metrics |
+| 172.30.0.12 | 10083*         | Infrastructure | Secrets Manager      | http://localhost:10083 |
+| 172.30.0.13 | 10025*, 10084  | Infrastructure | **MailCatcher**      | http://localhost:10084 |
+| 172.30.0.14 | 10004*         | Infrastructure | IdentityServer4      | http://localhost:10004/.well-known/openid-configuration |
+| 172.30.0.15 | 10089          | Infrastructure | **Aspire Dashboard** | http://localhost:10089 |
+| 172.30.0.20 | 11080          | Public API     | **Nginx**            | http://localhost:11080 |
+| 172.30.0.21 | 11081*, 11082* | Public API     | Public API           | http://localhost:11081 http://localhost:11082/metrics |
+| 172.30.0.22 | 11017*         | Public API     | MongoDB              | mongodb://admin:P%40ssw0rd@localhost:11017/
+| 172.30.0.30 | 12080*, 12081* | State          | State API            | http://localhost:12080 http://localhost:12081/metrics |
+| 172.30.0.31 | 12017*         | State          | MongoDB              | mongodb://admin:P%40ssw0rd@localhost:12017/
+| 172.30.0.40 | 13080*, 13081* | Geocoding      | Geocoding API        | http://localhost:13080 http://localhost:13081/metrics |
+| 172.30.0.41 | 13379*         | Geocoding      | Redis                | redis-cli -h localhost -p 13379 |
+| 172.30.0.50 | 14080*, 14081* | Directions     | Directions API       | http://localhost:14080 http://localhost:14081/metrics |
+| 172.30.0.60 | 15080*, 15081* | Weather        | Weather API          | http://localhost:15080 http://localhost:15081/metrics |
+| 172.30.0.70 | 16080*, 16081* | Imaging        | Imaging API          | http://localhost:16080 http://localhost:16081/metrics |
+| 172.30.0.80 | 17080*, 17081* | Email          | Email API            | http://localhost:17080 http://localhost:17081/metrics |
+| 172.30.0.81 | 17306*         | Email          | MySQL                | Server=localhost;Port=17306;Database=email;Uid=admin;Pwd=P@ssw0rd;
 

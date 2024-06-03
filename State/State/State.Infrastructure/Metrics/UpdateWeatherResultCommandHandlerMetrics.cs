@@ -1,4 +1,5 @@
-﻿using State.Application.Commands.UpdateWeatherResult;
+﻿using AspNet.KickStarter;
+using State.Application.Commands.UpdateWeatherResult;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Metrics;
 
@@ -8,10 +9,25 @@ namespace State.Infrastructure.Metrics;
 [ExcludeFromCodeCoverage]
 internal class UpdateWeatherResultCommandHandlerMetrics : IUpdateWeatherResultCommandHandlerMetrics
 {
-    private static readonly Counter<long> _count = ApplicationMetrics.Meter.CreateCounter<long>("UpdateWeatherResult.Handled.Count", null, "The number of commands handled.");
-    private static readonly Histogram<double> _guardTime = ApplicationMetrics.Meter.CreateHistogram<double>("UpdateWeatherResult.Guard", unit: "ms", "Time taken to process input guards.");
-    private static readonly Histogram<double> _updateTime = ApplicationMetrics.Meter.CreateHistogram<double>("UpdateWeatherResult.Update", unit: "ms", "Time taken to update the local repository.");
-    private static readonly Histogram<double> _publishTime = ApplicationMetrics.Meter.CreateHistogram<double>("UpdateWeatherResult.Publish", unit: "ms", "Time taken to publish the event.");
+    private readonly Counter<long> _count;
+    private readonly Histogram<double> _guardTime;
+    private readonly Histogram<double> _updateTime;
+    private readonly Histogram<double> _publishTime;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UpdateWeatherResultCommandHandlerMetrics"/> class.
+    /// </summary>
+    /// <param name="meterFactory">The factory to supply the <see cref="Meter"/>.</param>
+    public UpdateWeatherResultCommandHandlerMetrics(IMeterFactory meterFactory)
+    {
+        var meter = meterFactory.CreateAssemblyMeter();
+        var subjectName = nameof(UpdateWeatherResultCommand).ToLower();
+
+        _count = meter.CreateCounter<long>($"{meter.Name.ToLower()}.{subjectName}.handled.count", description: "The number of commands handled.");
+        _guardTime = meter.CreateHistogram<double>($"{meter.Name.ToLower()}.{subjectName}.guard", description: "Time taken to process input guards.", unit: "ms");
+        _updateTime = meter.CreateHistogram<double>($"{meter.Name.ToLower()}.{subjectName}.update", description: "Time taken to update the local repository.", unit: "ms");
+        _publishTime = meter.CreateHistogram<double>($"{meter.Name.ToLower()}.{subjectName}.publish", description: "Time taken to publish the event.", unit: "ms");
+    }
 
     /// <inheritdoc/>
     public void IncrementCount() => _count!.Add(1);

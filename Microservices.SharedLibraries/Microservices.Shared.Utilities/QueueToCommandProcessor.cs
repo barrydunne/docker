@@ -1,4 +1,5 @@
-﻿using AspNet.KickStarter.CQRS;
+﻿using AspNet.KickStarter;
+using AspNet.KickStarter.CQRS;
 using MediatR;
 using Microservices.Shared.Events;
 using Microservices.Shared.Queues;
@@ -19,18 +20,25 @@ public abstract class QueueToCommandProcessor<TMessage, TCommand, TResult> : Bas
     where TResult : IResult
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly ITraceActivity _traceActivity;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="QueueToCommandProcessor{TMessage, TCommand, TResult}"/> class.
     /// </summary>
     /// <param name="queue">The queue being processed.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider"/> to use to create scoped instances.</param>
+    /// <param name="traceActivity">The trace activity source.</param>
     /// <param name="logger">The logger to write to.</param>
-    protected QueueToCommandProcessor(IQueue<TMessage> queue, IServiceProvider serviceProvider, ILogger logger) : base(queue, logger) => _serviceProvider = serviceProvider;
+    protected QueueToCommandProcessor(IQueue<TMessage> queue, IServiceProvider serviceProvider, ITraceActivity traceActivity, ILogger logger) : base(queue, logger)
+    {
+        _serviceProvider = serviceProvider;
+        _traceActivity = traceActivity;
+    }
 
     /// <inheritdoc/>
     protected override async Task<bool> ProcessMessageAsync(TMessage message)
     {
+        using var activity = _traceActivity.StartActivity($"MESSAGE {typeof(TMessage).Name}");
         _logger.LogInformation("New {MessageType} message received. [{CorrelationID}]", typeof(TMessage).Name, message.JobId);
         try
         {
@@ -43,6 +51,10 @@ public abstract class QueueToCommandProcessor<TMessage, TCommand, TResult> : Bas
             using var scope = _serviceProvider.CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<ISender>();
             var result = await mediator.Send(command);
+
+            _logger.LogDebug("{MessageType} message processing complete. [{CorrelationID}]", typeof(TMessage).Name, message.JobId);
+            activity?.Stop();
+
             return result.IsSuccess;
         }
         catch (Exception ex)

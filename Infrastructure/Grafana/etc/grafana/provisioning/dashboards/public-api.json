@@ -27,51 +27,23 @@
         "uid": "DS_PROMETHEUS"
       },
       "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "green",
-            "mode": "fixed"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 7,
-        "w": 2,
+        "w": 4,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
         },
-        "textMode": "auto"
+        "content": "# Public API\n\nThe initial API to create jobs and request job status.",
+        "mode": "markdown"
       },
-      "pluginVersion": "10.1.5",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -80,7 +52,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "system_net_http_requests_started{job=\"public-api\"}",
+          "expr": "process_start_time_seconds{job=\"public-api\"}\r\n",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -90,81 +62,8 @@
           "useBackend": false
         }
       ],
-      "title": "Total HTTP Requests",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DS_PROMETHEUS"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 2,
-        "x": 2,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "10.1.5",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DS_PROMETHEUS"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "system_net_http_requests_failed{job=\"public-api\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Failed HTTP Requests",
-      "type": "stat"
-    },
-    {
+      "type": "text"
+    },    {
       "datasource": {
         "type": "prometheus",
         "uid": "DS_PROMETHEUS"
@@ -257,7 +156,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "dotnet_total_memory_bytes{job=\"public-api\"} / 1024 / 1024",
+          "expr": "process_memory_usage_bytes{job=\"public-api\"} / 1024 / 1024",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -365,7 +264,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "process_num_threads{job=\"public-api\"}",
+          "expr": "process_threads{job=\"public-api\"}",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -441,7 +340,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
+        "w": 12,
         "x": 12,
         "y": 0
       },
@@ -472,232 +371,18 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "system_runtime_cpu_usage{job=\"public-api\"}",
+          "expr": "process_cpu_time_seconds_total{job=\"public-api\"}",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "intervalFactor": 1,
-          "legendFormat": "{{job}}",
+          "legendFormat": "{{state}}",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "CPU Percentage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DS_PROMETHEUS"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 16,
-        "y": 0
-      },
-      "id": 6,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.1.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DS_PROMETHEUS"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "system_net_sockets_bytes_sent{job=\"public-api\"} / 1024 / 1024",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "intervalFactor": 1,
-          "legendFormat": "{{job}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Network MB Sent",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DS_PROMETHEUS"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 20,
-        "y": 0
-      },
-      "id": 7,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.1.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DS_PROMETHEUS"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "system_net_sockets_bytes_received{job=\"public-api\"} / 1024 / 1024",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "intervalFactor": 1,
-          "legendFormat": "{{job}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Network MB Received",
+      "title": "CPU Time (seconds)",
       "type": "timeseries"
     },
     {
@@ -759,7 +444,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_application_createjob_handled_count{job=\"public-api\"}",
+          "expr": "publicapi_api_createjobcommand_handled_count_total{job=\"public-api\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -988,7 +673,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_application_createjob_guard_bucket{job=\"public-api\"}",
+          "expr": "publicapi_api_createjobcommand_guard_milliseconds_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1219,7 +904,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_application_createjob_idempotency_bucket{job=\"public-api\"}",
+          "expr": "publicapi_api_createjobcommand_idempotency_milliseconds_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1450,7 +1135,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_application_createjob_save_bucket{job=\"public-api\"}",
+          "expr": "publicapi_api_createjobcommand_save_milliseconds_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1681,7 +1366,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_application_createjob_publish_bucket{job=\"public-api\"}",
+          "expr": "publicapi_api_createjobcommand_publish_milliseconds_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1755,7 +1440,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_application_getjobstatus_handled_count{job=\"public-api\"}",
+          "expr": "publicapi_api_getjobstatusquery_handled_count_total{job=\"public-api\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1984,7 +1669,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_application_getjobstatus_guard_bucket{job=\"public-api\"}",
+          "expr": "publicapi_api_getjobstatusquery_guard_milliseconds_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2215,7 +1900,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_application_getjobstatus_cacheget_bucket{job=\"public-api\"}",
+          "expr": "publicapi_api_getjobstatusquery_cache_get_milliseconds_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2446,7 +2131,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_application_getjobstatus_load_bucket{job=\"public-api\"}",
+          "expr": "publicapi_api_getjobstatusquery_load_milliseconds_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2677,7 +2362,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_application_getjobstatus_cacheset_bucket{job=\"public-api\"}",
+          "expr": "publicapi_api_getjobstatusquery_cache_set_milliseconds_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -2751,7 +2436,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_application_updatestatus_handled_count{job=\"public-api\"}",
+          "expr": "publicapi_api_updatestatuscommand_handled_count_total{job=\"public-api\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2980,7 +2665,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_application_updatestatus_guard_bucket{job=\"public-api\"}",
+          "expr": "publicapi_api_updatestatuscommand_guard_milliseconds_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -3211,7 +2896,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "publicapi_application_updatestatus_update_bucket{job=\"public-api\"}",
+          "expr": "publicapi_api_updatestatuscommand_update_milliseconds_bucket{job=\"public-api\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,

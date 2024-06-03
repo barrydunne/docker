@@ -17,7 +17,7 @@ await new ApiBuilder()
     .WithServices(IoC.RegisterServices)
     .WithEndpoints(Endpoints.Map)
     .WithFluentValidationFromAssemblyContaining<CreateJobRequestValidator>()
-    .WithMetrics(8081)
+    .WithOpenTelemetry(8081)
     .WithAdditionalConfiguration(builder => builder.Services
         .AddQueueToCommandProcessor<JobStatusUpdateEvent, UpdateStatusCommand, Result, JobStatusUpdateEventProcessor>()
         .Configure<JsonOptions>(_ =>

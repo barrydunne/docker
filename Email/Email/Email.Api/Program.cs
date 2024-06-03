@@ -7,6 +7,7 @@ using Email.Application.Commands.SendEmail;
 using Email.Infrastructure;
 using Microservices.Shared.Events;
 using Microservices.Shared.Utilities;
+using OpenTelemetry.Trace;
 using IoC = Email.Api.IoC;
 
 await new ApiBuilder()
@@ -16,7 +17,9 @@ await new ApiBuilder()
     .WithServices(IoC.RegisterServices)
     .WithEndpoints(Endpoints.Map)
     .WithFluentValidationFromAssemblyContaining<GetEmailsSentToRecipientRequestValidator>()
-    .WithMetrics(8081)
+    .WithOpenTelemetry(
+        prometheusPort: 8081,
+        configureTraceBuilder: builder => builder.AddEntityFrameworkCoreInstrumentation())
     .WithAdditionalConfiguration(_ => _.Services
         .AddQueueToCommandProcessor<ProcessingCompleteEvent, SendEmailCommand, Result, ProcessingCompleteEventProcessor>())
     .WithMappings(Mappings.Map)

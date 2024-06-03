@@ -1,4 +1,5 @@
 ﻿using Ardalis.GuardClauses;
+using AspNet.KickStarter;
 using Microservices.Shared.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,6 +13,7 @@ public class SmtpEmail : ICloudEmail
 {
     private readonly SmtpEmailOptions _options;
     private readonly ISmtpClient _smtpClient;
+    private readonly ITraceActivity _traceActivity;
     private readonly ILogger _logger;
 
     /// <summary>
@@ -19,13 +21,15 @@ public class SmtpEmail : ICloudEmail
     /// </summary>
     /// <param name="options">The connection configuration options.</param>
     /// <param name="smtpClient">The client to use to send emails.</param>
+    /// <param name="traceActivity">The trace activity source.</param>
     /// <param name="logger">The logger to write to.</param>
-    public SmtpEmail(IOptions<SmtpEmailOptions> options, ISmtpClient smtpClient, ILogger<SmtpEmail> logger)
+    public SmtpEmail(IOptions<SmtpEmailOptions> options, ISmtpClient smtpClient, ITraceActivity traceActivity, ILogger<SmtpEmail> logger)
     {
         _options = options.Value;
         _smtpClient = smtpClient;
         _smtpClient.Host = _options.Host;
         _smtpClient.Port = _options.Port;
+        _traceActivity = traceActivity;
         _logger = logger;
     }
 
@@ -36,6 +40,7 @@ public class SmtpEmail : ICloudEmail
     /// <inheritdoc/>
     public async Task<bool> SendEmailAsync(string subject, string? htmlBody, string? plainBody, string[] to, string[]? cc, string[]? bcc, params (string Cid, Stream Stream, string ContentType)[] images)
     {
+        using var activity = _traceActivity.StartActivity("SMTP Send email");
         Guard.Against.Null(htmlBody ?? plainBody, nameof(htmlBody), $"Must provide either {nameof(htmlBody)} or {nameof(plainBody)}");
         Guard.Against.Empty(to, nameof(to));
 

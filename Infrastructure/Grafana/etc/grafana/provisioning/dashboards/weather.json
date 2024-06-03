@@ -27,50 +27,21 @@
         "uid": "DS_PROMETHEUS"
       },
       "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "green",
-            "mode": "fixed"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
       "gridPos": {
         "h": 7,
-        "w": 2,
+        "w": 4,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
         },
-        "textMode": "auto",
-        "wideLayout": true
+        "content": "# Weather\n\nThe service to provide a weather forecast for the destination.",
+        "mode": "markdown"
       },
       "pluginVersion": "10.2.2",
       "targets": [
@@ -81,7 +52,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "system_net_http_requests_started{job=\"weather\"}",
+          "expr": "process_start_time_seconds{job=\"public-api\"}\r\n",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -91,82 +62,8 @@
           "useBackend": false
         }
       ],
-      "title": "Total HTTP Requests",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DS_PROMETHEUS"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 2,
-        "x": 2,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.2.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DS_PROMETHEUS"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "system_net_http_requests_failed{job=\"weather\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Failed HTTP Requests",
-      "type": "stat"
-    },
-    {
+      "type": "text"
+    },    {
       "datasource": {
         "type": "prometheus",
         "uid": "DS_PROMETHEUS"
@@ -260,7 +157,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "dotnet_total_memory_bytes{job=\"weather\"} / 1024 / 1024",
+          "expr": "process_memory_usage_bytes{job=\"weather\"} / 1024 / 1024",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -369,7 +266,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "process_num_threads{job=\"weather\"}",
+          "expr": "process_threads{job=\"weather\"}",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -446,7 +343,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
+        "w": 12,
         "x": 12,
         "y": 0
       },
@@ -477,234 +374,18 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "system_runtime_cpu_usage{job=\"weather\"}",
+          "expr": "process_cpu_time_seconds_total{job=\"weather\"}",
           "format": "time_series",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "intervalFactor": 1,
-          "legendFormat": "{{job}}",
+          "legendFormat": "{{state}}",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "CPU Percentage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DS_PROMETHEUS"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 16,
-        "y": 0
-      },
-      "id": 6,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.1.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DS_PROMETHEUS"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "system_net_sockets_bytes_sent{job=\"weather\"} / 1024 / 1024",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "intervalFactor": 1,
-          "legendFormat": "{{job}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Network MB Sent",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "DS_PROMETHEUS"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 4,
-        "x": 20,
-        "y": 0
-      },
-      "id": 7,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.1.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "DS_PROMETHEUS"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "system_net_sockets_bytes_received{job=\"weather\"} / 1024 / 1024",
-          "format": "time_series",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "intervalFactor": 1,
-          "legendFormat": "{{job}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Network MB Received",
+      "title": "CPU Time (seconds)",
       "type": "timeseries"
     },
     {
@@ -767,7 +448,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "weather_application_generateweather_handled_count{job=\"weather\"}",
+          "expr": "weather_api_generateweathercommand_handled_count_total{job=\"weather\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -997,7 +678,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "weather_application_generateweather_guard_bucket{job=\"weather\"}",
+          "expr": "weather_api_generateweathercommand_guard_milliseconds_bucket{job=\"weather\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1229,7 +910,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "weather_application_generateweather_weather_bucket{job=\"weather\"}",
+          "expr": "weather_api_generateweathercommand_weather_milliseconds_bucket{job=\"weather\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1461,7 +1142,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "weather_application_generateweather_publish_bucket{job=\"weather\"}",
+          "expr": "weather_api_generateweathercommand_publish_milliseconds_bucket{job=\"weather\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1536,7 +1217,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "weather_application_getweather_handled_count{job=\"weather\"}",
+          "expr": "weather_api_getweatherquery_handled_count_total{job=\"weather\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1766,7 +1447,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "weather_application_getweather_guard_bucket{job=\"weather\"}",
+          "expr": "weather_api_getweatherquery_guard_milliseconds_bucket{job=\"weather\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,
@@ -1998,7 +1679,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "weather_application_getweather_external_bucket{job=\"weather\"}",
+          "expr": "weather_api_getweatherquery_external_milliseconds_bucket{job=\"weather\"}",
           "format": "heatmap",
           "fullMetaSearch": false,
           "hide": false,

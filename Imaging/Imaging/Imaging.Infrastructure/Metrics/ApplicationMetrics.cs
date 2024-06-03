@@ -2,7 +2,6 @@
 using Imaging.Application.Queries.GetImageUrl;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Metrics;
 
 namespace Imaging.Infrastructure.Metrics;
 
@@ -12,13 +11,6 @@ namespace Imaging.Infrastructure.Metrics;
 [ExcludeFromCodeCoverage]
 public static class ApplicationMetrics
 {
-    static ApplicationMetrics() => Meter = new("Imaging.Application");
-
-    /// <summary>
-    /// Gets the shared metrics Meter.
-    /// </summary>
-    internal static Meter Meter { get; }
-
     /// <summary>
     /// Register the required metrics providers.
     /// </summary>
@@ -27,7 +19,7 @@ public static class ApplicationMetrics
     public static IServiceCollection RegisterMetrics(this IServiceCollection services)
     {
         return services
-            .AddTransient<ISaveImageCommandHandlerMetrics, SaveImageCommandHandlerMetrics>()
-            .AddTransient<IGetImageUrlQueryHandlerMetrics, GetImageUrlQueryHandlerMetrics>();
+            .AddSingleton<ISaveImageCommandHandlerMetrics, SaveImageCommandHandlerMetrics>()
+            .AddSingleton<IGetImageUrlQueryHandlerMetrics, GetImageUrlQueryHandlerMetrics>();
     }
 }

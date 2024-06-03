@@ -12,9 +12,9 @@ await new ApiBuilder()
     .WithHealthHandler()
     .WithServices(IoC.RegisterServices)
     .WithEndpoints(Endpoints.Map)
-    .WithMetrics(8081)
+    .WithOpenTelemetry(8081)
     .WithAdditionalConfiguration(_ => _.Services
-        .AddQueueToCommandProcessor<LocationsReadyEvent, GenerateDirectionsCommand, Result, LocationsReadyEventProcessor>())
+    .AddQueueToCommandProcessor<LocationsReadyEvent, GenerateDirectionsCommand, Result, LocationsReadyEventProcessor>())
     .WithMappings(Mappings.Map)
     .Build(args)
     .RunAsync();

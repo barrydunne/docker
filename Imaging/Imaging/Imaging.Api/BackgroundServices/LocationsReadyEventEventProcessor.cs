@@ -1,4 +1,5 @@
-﻿using AspNet.KickStarter.CQRS;
+﻿using AspNet.KickStarter;
+using AspNet.KickStarter.CQRS;
 using Imaging.Application.Commands.SaveImage;
 using Mapster;
 using Microservices.Shared.Events;
@@ -17,8 +18,9 @@ internal class LocationsReadyEventProcessor : QueueToCommandProcessor<LocationsR
     /// </summary>
     /// <param name="queue">The queue being processed.</param>
     /// <param name="serviceProvider">The <see cref="IServiceProvider"/> to use to create scoped instances.</param>
+    /// <param name="traceActivity">The trace activity source.</param>
     /// <param name="logger">The logger to write to.</param>
-    public LocationsReadyEventProcessor(IQueue<LocationsReadyEvent> queue, IServiceProvider serviceProvider, ILogger<LocationsReadyEventProcessor> logger) : base(queue, serviceProvider, logger) { }
+    public LocationsReadyEventProcessor(IQueue<LocationsReadyEvent> queue, IServiceProvider serviceProvider, ITraceActivity traceActivity, ILogger<LocationsReadyEventProcessor> logger) : base(queue, serviceProvider, traceActivity, logger) { }
 
     /// <inheritdoc/>
     protected override SaveImageCommand CreateCommand(LocationsReadyEvent message) => message.Adapt<SaveImageCommand>();
