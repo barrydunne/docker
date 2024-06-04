@@ -1,8 +1,8 @@
 ﻿using Ardalis.GuardClauses;
-using AspNet.KickStarter;
 using FluentFTP;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Diagnostics;
 
 namespace Microservices.Shared.CloudFiles.Ftp;
 
@@ -11,30 +11,29 @@ public class FtpFiles : ICloudFiles
 {
     private readonly FtpFilesOptions _options;
     private readonly IAsyncFtpClient _asyncFtpClient;
-    private readonly ITraceActivity _traceActivity;
     private readonly ILogger _logger;
+
+    private static readonly ActivitySource _activitySource = new("Microservices.Shared.CloudFiles.Ftp");
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FtpFiles"/> class.
     /// </summary>
     /// <param name="options">The connection configuration options.</param>
     /// <param name="asyncFtpClient">The FTP client to use.</param>
-    /// <param name="traceActivity">The trace activity source.</param>
     /// <param name="logger">The logger to write to.</param>
-    public FtpFiles(IOptions<FtpFilesOptions> options, IAsyncFtpClient asyncFtpClient, ITraceActivity traceActivity, ILogger<FtpFiles> logger)
+    public FtpFiles(IOptions<FtpFilesOptions> options, IAsyncFtpClient asyncFtpClient, ILogger<FtpFiles> logger)
     {
         _options = options.Value;
         _asyncFtpClient = asyncFtpClient;
         _asyncFtpClient.Host = _options.Host;
         _asyncFtpClient.Port = _options.Port;
-        _traceActivity = traceActivity;
         _logger = logger;
     }
 
     /// <inheritdoc/>
     public async Task<bool> UploadFileAsync(string container, string name, Stream content, CancellationToken cancellationToken = default)
     {
-        using var activity = _traceActivity.StartActivity("FTP Upload");
+        using var activity = _activitySource.StartActivity("FTP Upload", ActivityKind.Client);
         var (remoteDirectory, remotePath) = GetRemoteDirectoryAndPath(container, name);
         Guard.Against.Null(content, nameof(content));
         try
@@ -64,7 +63,7 @@ public class FtpFiles : ICloudFiles
     /// <inheritdoc/>
     public async Task<bool> DownloadFileAsync(string container, string name, Stream content, CancellationToken cancellationToken = default)
     {
-        using var activity = _traceActivity.StartActivity("FTP Download");
+        using var activity = _activitySource.StartActivity("FTP Download", ActivityKind.Client);
         var (_, remotePath) = GetRemoteDirectoryAndPath(container, name);
         Guard.Against.Null(content, nameof(content));
         try
@@ -86,7 +85,7 @@ public class FtpFiles : ICloudFiles
     /// <inheritdoc/>
     public async Task<bool> FileExistsAsync(string container, string name, CancellationToken cancellationToken = default)
     {
-        using var activity = _traceActivity.StartActivity("FTP File exists");
+        using var activity = _activitySource.StartActivity("FTP File exists", ActivityKind.Client);
         var (remoteDirectory, remotePath) = GetRemoteDirectoryAndPath(container, name);
         try
         {
@@ -116,7 +115,7 @@ public class FtpFiles : ICloudFiles
     /// <inheritdoc/>
     public async Task<bool> DeleteFileAsync(string container, string name, CancellationToken cancellationToken = default)
     {
-        using var activity = _traceActivity.StartActivity("FTP Delete");
+        using var activity = _activitySource.StartActivity("FTP Delete");
         var (_, remotePath) = GetRemoteDirectoryAndPath(container, name);
         try
         {

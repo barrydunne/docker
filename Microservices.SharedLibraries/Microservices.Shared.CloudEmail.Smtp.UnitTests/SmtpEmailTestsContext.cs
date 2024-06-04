@@ -1,5 +1,4 @@
-﻿using AspNet.KickStarter;
-using Microservices.Shared.Mocks;
+﻿using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -14,7 +13,6 @@ internal class SmtpEmailTestsContext
     private readonly SmtpEmailOptions _options;
     private readonly IOptions<SmtpEmailOptions> _mockOptions;
     private readonly ISmtpClient _mockSmtpClient;
-    private readonly ITraceActivity _mockTraceActivity;
     private readonly MockLogger<SmtpEmail> _mockLogger;
     private readonly ConcurrentBag<MailMessage> _mails;
 
@@ -31,7 +29,6 @@ internal class SmtpEmailTestsContext
             .Returns(callInfo => _options);
         
         _mails = new();
-        _mockTraceActivity = Substitute.For<ITraceActivity>();
         _mockLogger = new();
 
         _mockSmtpClient = Substitute.For<ISmtpClient>();
@@ -39,7 +36,7 @@ internal class SmtpEmailTestsContext
             .When(_ => _.SendMailAsync(Arg.Any<MailMessage>()))
             .Do(callInfo => _mails.Add(callInfo.ArgAt<MailMessage>(0)));
 
-        Sut = new(_mockOptions, _mockSmtpClient, _mockTraceActivity, _mockLogger);
+        Sut = new(_mockOptions, _mockSmtpClient, _mockLogger);
     }
 
     internal SmtpEmailTestsContext WithSendException()

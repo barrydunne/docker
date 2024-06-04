@@ -1,5 +1,4 @@
-﻿using AspNet.KickStarter;
-using AutoFixture;
+﻿using AutoFixture;
 using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Options;
 using NSubstitute;
@@ -12,7 +11,6 @@ internal class SmtpEmailTestsContext : IDisposable
     private readonly SmtpEmailOptions _options;
     private readonly IOptions<SmtpEmailOptions> _mockOptions;
     private readonly SmtpClientAdapter _smtpClient;
-    private readonly ITraceActivity _mockTraceActivity;
     private readonly MockLogger<SmtpEmail> _mockLogger;
 
     private bool _disposedValue;
@@ -28,11 +26,10 @@ internal class SmtpEmailTestsContext : IDisposable
             .Value
             .Returns(callInfo => _options);
         _smtpClient = new();
-        _mockTraceActivity = Substitute.For<ITraceActivity>();
         _mockLogger = new();
         _disposedValue = false;
          
-        Sut = new(_mockOptions, _smtpClient, _mockTraceActivity, _mockLogger);
+        Sut = new(_mockOptions, _smtpClient, _mockLogger);
     }
 
     protected virtual void Dispose(bool disposing)

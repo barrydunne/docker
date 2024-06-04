@@ -19,7 +19,16 @@ await new ApiBuilder()
     .WithFluentValidationFromAssemblyContaining<GetEmailsSentToRecipientRequestValidator>()
     .WithOpenTelemetry(
         prometheusPort: 8081,
-        configureTraceBuilder: builder => builder.AddEntityFrameworkCoreInstrumentation())
+        configureTraceBuilder: builder =>
+        {
+            builder.AddEntityFrameworkCoreInstrumentation(options =>
+                    {
+                        options.SetDbStatementForText = true;
+                        options.SetDbStatementForStoredProcedure = true;
+                    })
+                   .AddSource("Microservices.Shared.CloudFiles.Ftp")
+                   .AddSource("Microservices.Shared.CloudEmail.Smtp");
+        })
     .WithAdditionalConfiguration(_ => _.Services
         .AddQueueToCommandProcessor<ProcessingCompleteEvent, SendEmailCommand, Result, ProcessingCompleteEventProcessor>())
     .WithMappings(Mappings.Map)

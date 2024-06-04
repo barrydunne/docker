@@ -1,5 +1,4 @@
-﻿using AspNet.KickStarter;
-using FluentFTP;
+﻿using FluentFTP;
 using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Options;
 using NSubstitute;
@@ -11,11 +10,10 @@ internal class FtpFilesTestsContext : IDisposable
     private readonly FtpFilesOptions _options;
     private readonly IOptions<FtpFilesOptions> _mockOptions;
     private readonly AsyncFtpClient _asyncFtpClient;
-    private readonly ITraceActivity _mockTraceActivity;
     private readonly MockLogger<FtpFiles> _mockLogger;
     private bool _disposedValue;
 
-    internal FtpFiles Sut => new(_mockOptions, _asyncFtpClient, _mockTraceActivity, _mockLogger);
+    internal FtpFiles Sut => new(_mockOptions, _asyncFtpClient, _mockLogger);
 
     internal FtpFilesTestsContext()
     {
@@ -23,7 +21,6 @@ internal class FtpFilesTestsContext : IDisposable
         _mockOptions = Substitute.For<IOptions<FtpFilesOptions>>();
         _mockOptions.Value.Returns(_options);
         _asyncFtpClient = new();
-        _mockTraceActivity = Substitute.For<ITraceActivity>();
         _mockLogger = new();
     }
 
