@@ -22,6 +22,7 @@ public class OpenMeteoApi : IExternalApi
 
     private readonly IFileSystem _fileSystem;
     private readonly IRestSharpClientFactory _restSharpFactory;
+    private readonly IRestSharpResiliencePipeline _restSharpResiliencePipeline;
     private readonly ILogger _logger;
     private readonly Lazy<Dictionary<int, Dictionary<string, Dictionary<string, string>>>> _lazyWmoCodesData;
     private readonly Lazy<Dictionary<int, string>> _lazyDescriptions;
@@ -32,11 +33,13 @@ public class OpenMeteoApi : IExternalApi
     /// </summary>
     /// <param name="fileSystem">The testable file system wrapper.</param>
     /// <param name="restSharpFactory">The factory to create IRestClient instances.</param>
+    /// <param name="restSharpResiliencePipeline">The resilient pipeline to use when making requests.</param>
     /// <param name="logger">The logger to write to.</param>
-    public OpenMeteoApi(IFileSystem fileSystem, IRestSharpClientFactory restSharpFactory, ILogger<OpenMeteoApi> logger)
+    public OpenMeteoApi(IFileSystem fileSystem, IRestSharpClientFactory restSharpFactory, IRestSharpResiliencePipeline restSharpResiliencePipeline, ILogger<OpenMeteoApi> logger)
     {
         _fileSystem = fileSystem;
         _restSharpFactory = restSharpFactory;
+        _restSharpResiliencePipeline = restSharpResiliencePipeline;
         _logger = logger;
 
         _lazyWmoCodesData = new(() => LoadWmoCodesData());
@@ -56,7 +59,7 @@ public class OpenMeteoApi : IExternalApi
             using var client = _restSharpFactory.CreateRestClient(new RestClientOptions(_baseUrl) { FailOnDeserializationError = true });
 
             _logger.LogDebug("Making GET request for weather. [{CorrelationId}]", correlationId);
-            var response = await client.ExecuteGetAsync<WeatherResponse>(request, cancellationToken);
+            var response = await client.ExecuteGetAsync<WeatherResponse>(request, _restSharpResiliencePipeline, cancellationToken);
             if (response.IsSuccessful)
                 _logger.LogDebug("Successful GET request. Response {Status}.", response.StatusCode);
             else

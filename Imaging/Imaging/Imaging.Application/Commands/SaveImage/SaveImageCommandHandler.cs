@@ -71,7 +71,7 @@ internal class SaveImageCommandHandler : ICommandHandler<SaveImageCommand>
             {
                 // Get file from internet
                 _logger.LogInformation("Downloading {ImageUrl}. [{CorrelationId}]", imagingResult.Value, command.JobId);
-                using var httpClient = _httpClientFactory.CreateClient();
+                using var httpClient = _httpClientFactory.CreateClient("resilient");
                 using var response = await httpClient.GetAsync(imagingResult.Value);
                 response.EnsureSuccessStatusCode();
                 _metrics.RecordDownloadTime(stopwatch.GetElapsedAndRestart().TotalMilliseconds);

@@ -32,6 +32,7 @@ public class MapQuestApi : IExternalApi
 
     private readonly ICloudSecrets _secrets;
     private readonly IRestSharpClientFactory _restSharpFactory;
+    private readonly IRestSharpResiliencePipeline _restSharpResiliencePipeline;
     private readonly ILogger _logger;
     private readonly AsyncLazy<string?> _lazyApiKey;
 
@@ -40,11 +41,13 @@ public class MapQuestApi : IExternalApi
     /// </summary>
     /// <param name="secrets">The secrets that contain the Google API Key.</param>
     /// <param name="restSharpFactory">The factory to create IRestClient instances.</param>
+    /// <param name="restSharpResiliencePipeline">The resilient pipeline to use when making requests.</param>
     /// <param name="logger">The logger to write to.</param>
-    public MapQuestApi(ICloudSecrets secrets, IRestSharpClientFactory restSharpFactory, ILogger<MapQuestApi> logger)
+    public MapQuestApi(ICloudSecrets secrets, IRestSharpClientFactory restSharpFactory, IRestSharpResiliencePipeline restSharpResiliencePipeline, ILogger<MapQuestApi> logger)
     {
         _secrets = secrets;
         _restSharpFactory = restSharpFactory;
+        _restSharpResiliencePipeline = restSharpResiliencePipeline;
         _logger = logger;
         _lazyApiKey = new(async () => await _secrets.GetSecretValueAsync("api.keys", "geocoding.mapquest"));
     }
@@ -66,7 +69,7 @@ public class MapQuestApi : IExternalApi
             using var client = _restSharpFactory.CreateRestClient(new RestClientOptions(_baseUrl) { FailOnDeserializationError = true });
 
             _logger.LogDebug("Making GET request for {Address}. [{CorrelationId}]", address, correlationId);
-            var response = await client.ExecutePostAsync<GeocodingResponse>(request, cancellationToken);
+            var response = await client.ExecutePostAsync<GeocodingResponse>(request, _restSharpResiliencePipeline, cancellationToken);
             if (response.IsSuccessful)
                 _logger.LogDebug("Successful GET request. Response {Status}.", response.StatusCode);
             else

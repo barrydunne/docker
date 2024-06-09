@@ -32,6 +32,7 @@ public class BingApi : IExternalApi
 
     private readonly ICloudSecrets _secrets;
     private readonly IRestSharpClientFactory _restSharpFactory;
+    private readonly IRestSharpResiliencePipeline _restSharpResiliencePipeline;
     private readonly ILogger _logger;
     private readonly AsyncLazy<string?> _lazyApiKey;
 
@@ -40,11 +41,13 @@ public class BingApi : IExternalApi
     /// </summary>
     /// <param name="secrets">The secrets that contain the Google API Key.</param>
     /// <param name="restSharpFactory">The factory to create IRestClient instances.</param>
+    /// <param name="restSharpResiliencePipeline">The resilient pipeline to use when making requests.</param>
     /// <param name="logger">The logger to write to.</param>
-    public BingApi(ICloudSecrets secrets, IRestSharpClientFactory restSharpFactory, ILogger<BingApi> logger)
+    public BingApi(ICloudSecrets secrets, IRestSharpClientFactory restSharpFactory, IRestSharpResiliencePipeline restSharpResiliencePipeline, ILogger<BingApi> logger)
     {
         _secrets = secrets;
         _restSharpFactory = restSharpFactory;
+        _restSharpResiliencePipeline = restSharpResiliencePipeline;
         _logger = logger;
         _lazyApiKey = new(async () => await _secrets.GetSecretValueAsync("api.keys", "imaging.bing"));
     }
@@ -66,7 +69,7 @@ public class BingApi : IExternalApi
             client.AddDefaultHeader("Ocp-Apim-Subscription-Key", apiKey!);
 
             _logger.LogDebug("Making GET request for images. [{CorrelationId}]", correlationId);
-            var response = await client.ExecuteGetAsync<ImagesResponse>(request, cancellationToken);
+            var response = await client.ExecuteGetAsync<ImagesResponse>(request, _restSharpResiliencePipeline, cancellationToken);
             if (response.IsSuccessful)
                 _logger.LogDebug("Successful GET request. Response {Status}.", response.StatusCode);
             else

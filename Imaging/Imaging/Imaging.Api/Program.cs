@@ -8,6 +8,10 @@ using Microservices.Shared.CloudSecrets;
 using Microservices.Shared.Events;
 using Microservices.Shared.Utilities;
 using OpenTelemetry.Trace;
+using Polly;
+using Polly.Contrib.WaitAndRetry;
+using Polly.Extensions.Http;
+using System.Net;
 
 await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
@@ -22,8 +26,18 @@ await new ApiBuilder()
             .AddSource(CloudFiles.ActivitySourceName)
             .AddSource(CloudSecrets.ActivitySourceName))
     .WithAdditionalConfiguration(_ => _.Services
-        .AddHttpClient()
-        .AddQueueToCommandProcessor<LocationsReadyEvent, SaveImageCommand, Result, LocationsReadyEventProcessor>())
+        .AddQueueToCommandProcessor<LocationsReadyEvent, SaveImageCommand, Result, LocationsReadyEventProcessor>()
+        .AddHttpClient("resilient")
+            .AddPolicyHandler(RetryPolicy))
     .WithMappings(Mappings.Map)
     .Build(args)
     .RunAsync();
+
+IAsyncPolicy<HttpResponseMessage> RetryPolicy(IServiceProvider services, HttpRequestMessage request) =>
+    HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .OrResult(_ => _.StatusCode == HttpStatusCode.NotFound)
+        .WaitAndRetryAsync(
+            sleepDurations: Backoff.DecorrelatedJitterBackoffV2(medianFirstRetryDelay: TimeSpan.FromSeconds(1), retryCount: 5),
+            onRetry: (outcome, timespan, retryAttempt, _) =>
+                services.GetService<ILogger<HttpClient>>()?.LogWarning("HTTP failure [{Status}]. Retry attempt {RetryAttempt} after a delay of {Delay}ms", outcome.Result?.StatusCode, retryAttempt, timespan.TotalMilliseconds));

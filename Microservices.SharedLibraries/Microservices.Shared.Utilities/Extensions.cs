@@ -31,6 +31,7 @@ public static class Extensions
     {
         // RestSharp
         builder.Services
+            .AddSingleton<IRestSharpResiliencePipeline, RestSharpResiliencePipeline>() // Assumes accessing single API per application
             .AddTransient<IRestSharpClientFactory, RestSharpClientFactory>();
 
         // Secrets

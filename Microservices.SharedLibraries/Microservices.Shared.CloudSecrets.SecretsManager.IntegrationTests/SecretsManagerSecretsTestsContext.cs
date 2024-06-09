@@ -13,11 +13,12 @@ internal class SecretsManagerSecretsTestsContext : IDisposable
 {
     private readonly IContainer _container;
     private readonly IOptions<SecretsManagerOptions> _mockOptions;
+    private readonly MockRestSharpResiliencePipeline _mockRestSharpResiliencePipeline;
     private readonly MockLogger<SecretsManagerSecrets> _mockLogger;
 
     private bool _disposedValue;
 
-    internal SecretsManagerSecrets Sut => new(_mockOptions, new RestSharpClientFactory(), _mockLogger);
+    internal SecretsManagerSecrets Sut => new(_mockOptions, new RestSharpClientFactory(), _mockRestSharpResiliencePipeline, _mockLogger);
 
     internal SecretsManagerSecretsTestsContext()
     {
@@ -39,6 +40,7 @@ internal class SecretsManagerSecretsTestsContext : IDisposable
             .Value
             .Returns(callInfo => new SecretsManagerOptions { BaseUrl = "http://localhost:10083" });
 
+        _mockRestSharpResiliencePipeline = new();
         _mockLogger = new();
     }
 

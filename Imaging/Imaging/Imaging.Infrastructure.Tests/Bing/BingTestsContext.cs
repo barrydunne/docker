@@ -15,6 +15,7 @@ internal class BingTestsContext
     private readonly string _apiKey;
     private readonly MockCloudSecrets _mockCloudSecrets;
     private readonly MockRestSharpFactory _mockRestSharpFactory;
+    private readonly MockRestSharpResiliencePipeline _mockRestSharpResiliencePipeline;
     private readonly MockLogger<BingApi> _mockLogger;
     private readonly ConcurrentDictionary<string, string> _knownImageUrls;
 
@@ -38,6 +39,7 @@ internal class BingTestsContext
         _mockRestSharpFactory = new();
         _mockRestSharpFactory.MockRestClient.ExecuteRequest = ExecuteRequest;
 
+        _mockRestSharpResiliencePipeline = new();
         _mockLogger = new();
         _knownImageUrls = new();
         _withNoResults = false;
@@ -46,7 +48,7 @@ internal class BingTestsContext
         _withNoData = false;
         _withExceptionMessage = null;
 
-        Sut = new(_mockCloudSecrets, _mockRestSharpFactory, _mockLogger);
+        Sut = new(_mockCloudSecrets, _mockRestSharpFactory, _mockRestSharpResiliencePipeline, _mockLogger);
     }
 
     private (HttpStatusCode StatusCode, string? Content, string? ContentType) ExecuteRequest(RestRequest request)

@@ -16,6 +16,7 @@ internal class MapQuestTestsContext
     private readonly string _apiKey;
     private readonly MockCloudSecrets _mockCloudSecrets;
     private readonly MockRestSharpFactory _mockRestSharpFactory;
+    private readonly MockRestSharpResiliencePipeline _mockRestSharpResiliencePipeline;
     private readonly MockLogger<MapQuestApi> _mockLogger;
     private readonly ConcurrentDictionary<string, Coordinates> _knownCoordinates;
 
@@ -34,11 +35,12 @@ internal class MapQuestTestsContext
         _mockRestSharpFactory = new();
         _mockRestSharpFactory.MockRestClient.ExecuteRequest = ExecuteRequest;
 
+        _mockRestSharpResiliencePipeline = new();
         _mockLogger = new();
         _knownCoordinates = new();
         _withExceptionMessage = null;
 
-        Sut = new(_mockCloudSecrets, _mockRestSharpFactory, _mockLogger);
+        Sut = new(_mockCloudSecrets, _mockRestSharpFactory, _mockRestSharpResiliencePipeline, _mockLogger);
     }
 
     private (HttpStatusCode StatusCode, string? Content, string? ContentType) ExecuteRequest(RestRequest request)

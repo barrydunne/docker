@@ -14,12 +14,13 @@ internal class SecretsManagerSecretsTestsContext
 {
     private readonly IOptions<SecretsManagerOptions> _mockOptions;
     private readonly MockRestSharpFactory _mockRestSharpFactory;
+    private readonly MockRestSharpResiliencePipeline _mockRestSharpResiliencePipeline;
     private readonly MockLogger<SecretsManagerSecrets> _mockLogger;
     private readonly Dictionary<string, Dictionary<string, string>> _vaults;
 
     private string? _withExceptionMessage;
 
-    internal SecretsManagerSecrets Sut => new(_mockOptions, _mockRestSharpFactory, _mockLogger);
+    internal SecretsManagerSecrets Sut => new(_mockOptions, _mockRestSharpFactory, _mockRestSharpResiliencePipeline, _mockLogger);
 
     internal SecretsManagerSecretsTestsContext()
     {
@@ -29,6 +30,7 @@ internal class SecretsManagerSecretsTestsContext
             .Returns(new SecretsManagerOptions { BaseUrl = "http://localhost" });
         _mockRestSharpFactory = new();
         _mockRestSharpFactory.MockRestClient.ExecuteRequest = ExecuteRequest;
+        _mockRestSharpResiliencePipeline = new();
         _mockLogger = new();
         _vaults = new();
         _withExceptionMessage = null;

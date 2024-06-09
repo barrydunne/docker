@@ -17,6 +17,7 @@ internal class OpenMeteoTestsContext
     private readonly Fixture _fixture;
     private readonly MockFileSystem _mockFileSystem;
     private readonly MockRestSharpFactory _mockRestSharpFactory;
+    private readonly MockRestSharpResiliencePipeline _mockRestSharpResiliencePipeline;
     private readonly MockLogger<OpenMeteoApi> _mockLogger;
     private readonly ConcurrentDictionary<Coordinates, WeatherForecast> _knownWeather;
 
@@ -47,12 +48,13 @@ internal class OpenMeteoTestsContext
         _mockRestSharpFactory = new();
         _mockRestSharpFactory.MockRestClient.ExecuteRequest = ExecuteRequest;
 
+        _mockRestSharpResiliencePipeline = new();
         _mockLogger = new();
         _knownWeather = new();
         _withNoResults = false;
         _withExceptionMessage = null;
 
-        Sut = new(_mockFileSystem, _mockRestSharpFactory, _mockLogger);
+        Sut = new(_mockFileSystem, _mockRestSharpFactory, _mockRestSharpResiliencePipeline, _mockLogger);
     }
 
     private (HttpStatusCode StatusCode, string? Content, string? ContentType) ExecuteRequest(RestRequest request)

@@ -16,6 +16,7 @@ public class SecretsManagerSecrets : ICloudSecrets
 
     private readonly SecretsManagerOptions _options;
     private readonly IRestSharpClientFactory _restSharpFactory;
+    private readonly IRestSharpResiliencePipeline _restSharpResiliencePipeline;
     private readonly ILogger _logger;
 
     private static readonly ActivitySource _activitySource = new(CloudSecrets.ActivitySourceName);
@@ -25,11 +26,13 @@ public class SecretsManagerSecrets : ICloudSecrets
     /// </summary>
     /// <param name="options">The connection options.</param>
     /// <param name="restSharpFactory">The factory to create IRestClient instances.</param>
+    /// <param name="restSharpResiliencePipeline">The resilient pipeline to use when making requests.</param>
     /// <param name="logger">The logger to write to.</param>
-    public SecretsManagerSecrets(IOptions<SecretsManagerOptions> options, IRestSharpClientFactory restSharpFactory, ILogger<SecretsManagerSecrets> logger)
+    public SecretsManagerSecrets(IOptions<SecretsManagerOptions> options, IRestSharpClientFactory restSharpFactory, IRestSharpResiliencePipeline restSharpResiliencePipeline, ILogger<SecretsManagerSecrets> logger)
     {
         _options = options.Value;
         _restSharpFactory = restSharpFactory;
+        _restSharpResiliencePipeline = restSharpResiliencePipeline;
         _logger = logger;
     }
 
@@ -74,7 +77,7 @@ public class SecretsManagerSecrets : ICloudSecrets
             using var client = _restSharpFactory.CreateRestClient(new RestClientOptions(_options.BaseUrl) { FailOnDeserializationError = true });
 
             _logger.LogDebug("Making GET request for {Resource}", resource);
-            var response = await client.ExecuteGetAsync<T>(new RestRequest(resource), cancellationToken);
+            var response = await client.ExecuteGetAsync<T>(new RestRequest(resource), _restSharpResiliencePipeline, cancellationToken);
             if (response.IsSuccessful)
                 _logger.LogDebug("Successful GET request for {Resource}. Response {Status}.", resource, response.StatusCode);
             else
