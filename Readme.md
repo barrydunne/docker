@@ -57,7 +57,7 @@ The example shown was captured when running with real external services.
 
     <a href="Screenshots/CodeCoverage.png" target="_blank"><img src="Screenshots/CodeCoverageHeader.png" width="400px"/></a>
 
-  - 25 containers, including a RabbitMQ cluster with 2 nodes as well as local 'cloud' services make up the running application.
+  - 27 containers, including a RabbitMQ cluster with 2 nodes as well as local 'cloud' services make up the running application.
 
     <a href="Screenshots/ContainersInfrastructure.png" target="_blank" style="display:inline-block;vertical-align:top;"><img src="Screenshots/ContainersInfrastructure.png" width="200px"/></a>
     <a href="Screenshots/ContainersServices.png" target="_blank" style="display:inline-block;vertical-align:top;"><img src="Screenshots/ContainersServices.png" width="200px"/></a>
@@ -75,12 +75,15 @@ The example shown was captured when running with real external services.
       - **in-memory** - the public API uses an in-memory job status cache to prevent unnecessary round trips to the database.
       - **redis** - the geocoding service caches address/coordinates key value pairs in redis with limited time-to-live to prevent unnecessary, and potentially costly, round trips to the external service.
 
+  - Cloud provider can be switched by simply changing the `Microservices.CloudProvider` environment variable.
+
 ## Technology showcase
 
 This codebase showcases the following technologies:
 
 • Asp.Net Core 8
 • AutoFixture
+• AWS
 • Cloud services
 • Code coverage
 • CQRS
@@ -92,6 +95,7 @@ This codebase showcases the following technologies:
 • Guard clauses
 • Idempotency
 • IdentityServer4
+• LocalStack
 • Mapster (auto mapping)
 • Markdown
 • MediatR
@@ -108,6 +112,7 @@ This codebase showcases the following technologies:
 • NUnit
 • OAuth2
 • OpenTelemetry
+• Polly
 • PowerShell
 • Prometheus
 • RabbitMQ
@@ -117,6 +122,7 @@ This codebase showcases the following technologies:
 • Serilog
 • Structured logging
 • Swagger
+• TestContainers
 • Tests (unit/integration/end-to-end/fluent contexts)
 
 ## Technical requirements:
@@ -127,9 +133,9 @@ This codebase showcases the following technologies:
   - Any message that cannot be handled due to an exception in the handler will be retried after a 30 second delay. Retries will occur indefinitely with no expiry.
   - A second API endpoint will be available that accepts the job id and returns the status (Accepted, Processing, Failed (with reason), Complete)
   - The directions, image and weather tasks are all dependent on the geocoding task which must complete first. Once geocoding is complete the other tasks will run in parallel.
-  - There will be no direct communication between the services, or knowledge of each other. Services may only connect to the shared 'cloud' infrastructure.
+  - There will be no direct communication between the services, or knowledge of each other. Services may only connect to the shared cloud infrastructure.
   - All external services used (geocoding, directions, weather, imaging) will be injected using interfaces and dummy implementations will be available to avoid the requirement for external API keys when running the application.
-  - All cloud services used (message queues, secrets, file storage, email) will be injected using interfaces and local docker based implementations will be available to avoid the requirement for AWS or Azure accounts when running the application.
+  - All cloud services used (message queues, secrets, file storage, email) will be injected using interfaces. Docker based implementations will be available to avoid the requirement for AWS or Azure accounts when running the application.
   - As a development aid, all services should provide HTTP API endpoints to allow developers to post events. This is in addition to the normal ingestion method of subscribing to published events. Whether the event is received via message or HTTP request the same processing will be performed. It is not required to return any content in the response to the HTTP requests.
   - Centralised logging and metrics are required detailing durations and counters for every operation.
   - All logging related to a job, from any component, will include the job id as a correlation id to allow tracing of all activity for a single job
@@ -240,10 +246,15 @@ sequenceDiagram
 
 ## Microservices.SharedLibraries
 The `Microservices.SharedLibraries.sln` solution contains the following projects, along with unit and integration tests.
-  - **Microservices.Shared.CloudEmail** - Contains the interface(s) for sending email
+  - **Microservices.Shared.CloudEmail** - Contains the interface(s) for sending email.
+  - **Microservices.Shared.CloudEmail.Aws** - Contains the implementation to send email using the AWS SES service.
   - **Microservices.Shared.CloudEmail.Smtp** - Contains the implementation to send email using the SMTP service in the infrastructure.
-  - **Microservices.Shared.CloudSecrets** - Contains the interface(s) for retrieving secrets from a secure vault.
-  - **Microservices.Shared.CloudSecrets.SecretsManager** - Contains the implementation to retrieve secrets from the secrets manager API service in the infrastructure. It also provides extensions to allow secrets to be applied to configuration values from appsettings.json at startup.
+  - **Microservices.Shared.CloudFiles** - Contains the interface(s) for storing files.
+  - **Microservices.Shared.CloudFiles.Aws** - Contains the implementation to store files using the AWS S3 service.
+  - **Microservices.Shared.CloudFiles.Ftp** - Contains the implementation to store files using the FTP service in the infrastructure.
+  - **Microservices.Shared.CloudSecrets** - Contains the interface(s) for retrieving secrets from a secure vault. It also provides extensions to allow secrets to be applied to configuration values from appsettings.json at startup.
+  - **Microservices.Shared.CloudSecrets.Aws** - Contains the implementation to retrieve secrets from the AWS SecretsManager service.
+  - **Microservices.Shared.CloudSecrets.SecretsManager** - Contains the implementation to retrieve secrets from the secrets manager API service in the infrastructure.
   - **Microservices.Shared.Events** - Contains the event types used throughout the application
   - **Microservices.Shared.Mocks** - Contains shared mocks that may be used in individual test projects.
   - **Microservices.Shared.Queues** - Contains the interface(s) for publishing and subscribing to events.
@@ -278,6 +289,7 @@ It is a prerequisite for all other services and includes:
   - Consolidated logging - **[Seq](https://datalust.co/)**
   - Consolidated metrics capture - **[Prometheus](https://prometheus.io/)**
   - Consolidated metrics visualisation - **[Grafana](https://grafana.com/)** with preconfigured dashboards for RabbitMQ, Redis and other services
+  - AWS services - ** [LocalStack](https://www.localstack.cloud/)**
   - 'Cloud' file storage - **VSFTP**
   - 'Cloud' secrets manager - **.Net 8 API** using **[Redis](https://redis.io/)** for persistence
   - 'Cloud' Email service - **[MailCatcher](https://mailcatcher.me/)**
@@ -414,7 +426,7 @@ Aspire Dashboard - http://localhost:10089
 
 \* _Local port mappings for these services are made available for diagnostics purposes in this development environment._
 
-| IP Address   | Local Port(s) | Project        | Service              | Link(s) |
+| IP Address  | Local Port(s) | Project        | Service              | Link(s) |
 | ------------| -------------- | -------------- | -------------------- | ------- |
 | 172.30.0.2  | 10672*, 10692* | Infrastructure | RabbitMQ node 1      | http://localhost:10672 (admin / P@ssw0rd) http://localhost:10692/metrics |
 | 172.30.0.3  | 10673*, 10693* | Infrastructure | RabbitMQ node 2      | http://localhost:10673 (admin / P@ssw0rd) http://localhost:10693/metrics |
@@ -430,6 +442,7 @@ Aspire Dashboard - http://localhost:10089
 | 172.30.0.13 | 10025*, 10084  | Infrastructure | **MailCatcher**      | http://localhost:10084 |
 | 172.30.0.14 | 10004*         | Infrastructure | IdentityServer4      | http://localhost:10004/.well-known/openid-configuration |
 | 172.30.0.15 | 10089          | Infrastructure | **Aspire Dashboard** | http://localhost:10089 |
+| 172.30.0.16 | 10566          | Infrastructure | LocalStack           |  |
 | 172.30.0.20 | 11080          | Public API     | **Nginx**            | http://localhost:11080 |
 | 172.30.0.21 | 11081*, 11082* | Public API     | Public API           | http://localhost:11081 http://localhost:11082/metrics |
 | 172.30.0.22 | 11017*         | Public API     | MongoDB              | mongodb://admin:P%40ssw0rd@localhost:11017/

@@ -1,11 +1,14 @@
 ﻿using Ardalis.GuardClauses;
 using AspNet.KickStarter.CQRS;
 using MediatR;
+using Microservices.Shared.CloudSecrets;
+using Microservices.Shared.CloudSecrets.Aws;
 using Microservices.Shared.CloudSecrets.SecretsManager;
 using Microservices.Shared.Events;
 using Microservices.Shared.Queues;
 using Microservices.Shared.Queues.RabbitMQ;
 using Microservices.Shared.RestSharpFactory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
@@ -31,7 +34,8 @@ public static class Extensions
             .AddTransient<IRestSharpClientFactory, RestSharpClientFactory>();
 
         // Secrets
-        builder.AddSecretsManagerSecrets();
+        builder.Services
+            .AddCloudServices(builder.Configuration);
 
         // RabbitMQ
         builder.Services
@@ -44,6 +48,19 @@ public static class Extensions
 
         return builder;
     }
+
+    private static IServiceCollection AddCloudServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        return Environment.GetEnvironmentVariable("Microservices.CloudProvider") == "AWS"
+            ? services.AddAwsCloudServices(configuration)
+            : services.AddLocalCloudServices(configuration);
+    }
+
+    private static IServiceCollection AddAwsCloudServices(this IServiceCollection services, IConfiguration configuration)
+        => services.AddCloudSecretsAws(configuration);
+
+    private static IServiceCollection AddLocalCloudServices(this IServiceCollection services, IConfiguration configuration)
+        => services.AddCloudSecretsManager(configuration);
 
     /// <summary>
     /// Register a background queue processor.

@@ -1,26 +1,6 @@
 $cwd = Get-Location
 Set-Location $PSScriptRoot/..
 
-# Use a local running copy of https://httpstat.us to remove the dependency on external site availability
-# This is used by Microservices.Shared.CloudSecrets.SecretsManager.IntegrationTests
-Write-Host Running local copy of httpstat.us on port 8888
-try {
-    docker rm -f http-status | Out-Null
-} catch { }
-docker run -p 8888:80 -d --name http-status ghcr.io/aaronpowell/httpstatus:c82331cbde67f430da66a84a758d94ba5afd7620
-$timeout = (Get-Date).AddSeconds(60)
-:whileWaiting while ((Get-Date) -lt $timeout) {
-    try {
-        Start-Sleep -Seconds 2
-        Invoke-RestMethod -Uri 'http://localhost:8888/200' -Method Get
-        Write-Host Local copy of httpstat.us is running
-        break whileWaiting
-    }
-    catch {
-        Write-Host Local copy of httpstat.us is not yet running
-    }
-}
-
 function Invoke-Tests {
     param(
         [Parameter(Mandatory)]$csproj,
@@ -36,10 +16,16 @@ function Invoke-Tests {
     }
 }
 
+Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudEmail.Aws.UnitTests/Microservices.Shared.CloudEmail.Aws.UnitTests.csproj' -includeAssembly 'Microservices.Shared.CloudEmail.Aws' -coverageName 'cea.u'
+Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudEmail.Aws.IntegrationTests/Microservices.Shared.CloudEmail.Aws.IntegrationTests.csproj' -includeAssembly 'Microservices.Shared.CloudEmail.Aws' -coverageName 'cea.i'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudEmail.Smtp.UnitTests/Microservices.Shared.CloudEmail.Smtp.UnitTests.csproj' -includeAssembly 'Microservices.Shared.CloudEmail.Smtp' -coverageName 'ce.u'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudEmail.Smtp.IntegrationTests/Microservices.Shared.CloudEmail.Smtp.IntegrationTests.csproj' -includeAssembly 'Microservices.Shared.CloudEmail.Smtp' -coverageName 'ce.i'
+Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudFiles.Aws.UnitTests/Microservices.Shared.CloudFiles.Aws.UnitTests.csproj' -includeAssembly 'Microservices.Shared.CloudFiles.Aws' -coverageName 'cfa.u'
+Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudFiles.Aws.IntegrationTests/Microservices.Shared.CloudFiles.Aws.IntegrationTests.csproj' -includeAssembly 'Microservices.Shared.CloudFiles.Aws' -coverageName 'cfa.i'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudFiles.Ftp.UnitTests/Microservices.Shared.CloudFiles.Ftp.UnitTests.csproj' -includeAssembly 'Microservices.Shared.CloudFiles.Ftp' -coverageName 'cf.u'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudFiles.Ftp.IntegrationTests/Microservices.Shared.CloudFiles.Ftp.IntegrationTests.csproj' -includeAssembly 'Microservices.Shared.CloudFiles.Ftp' -coverageName 'cf.i'
+Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudSecrets.Aws.UnitTests/Microservices.Shared.CloudSecrets.Aws.UnitTests.csproj' -includeAssembly 'Microservices.Shared.CloudSecrets.Aws' -coverageName 'csa.u'
+Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudSecrets.Aws.IntegrationTests/Microservices.Shared.CloudSecrets.Aws.IntegrationTests.csproj' -includeAssembly 'Microservices.Shared.CloudSecrets.Aws' -coverageName 'csa.i'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudSecrets.SecretsManager.UnitTests/Microservices.Shared.CloudSecrets.SecretsManager.UnitTests.csproj' -includeAssembly 'Microservices.Shared.CloudSecrets.SecretsManager' -coverageName 'cs.u'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudSecrets.SecretsManager.IntegrationTests/Microservices.Shared.CloudSecrets.SecretsManager.IntegrationTests.csproj' -includeAssembly 'Microservices.Shared.CloudSecrets.SecretsManager' -coverageName 'cs.i'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.Queues.RabbitMQ.UnitTests/Microservices.Shared.Queues.RabbitMQ.UnitTests.csproj' -includeAssembly 'Microservices.Shared.Queues.RabbitMQ' -coverageName 'mq.u'
@@ -71,7 +57,7 @@ dotnet tool list -g dotnet-reportgenerator-globaltool | Out-Null
 if ($LastExitCode -ne 0) {
     dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.1.26
 }
-reportgenerator -reports:'TestResults/ce.u.xml;TestResults/ce.i.xml;TestResults/cf.u.xml;TestResults/cf.i.xml;TestResults/cs.u.xml;TestResults/cs.i.xml;TestResults/mq.u.xml;TestResults/mq.i.xml;TestResults/sm.a.xml;TestResults/p.a.xml;TestResults/p.r.xml;TestResults/s.a.xml;TestResults/s.i.xml;TestResults/g.a.xml;TestResults/g.e.xml;TestResults/d.a.xml;TestResults/d.e.xml;TestResults/w.a.xml;TestResults/w.e.xml;TestResults/i.a.xml;TestResults/e.a.xml;TestResults/e.ri.xml;TestResults/e.ru.xml' -targetdir:TestResults/CoverageReport -reporttypes:"Html_Dark;TextSummary"
+reportgenerator -reports:'TestResults/cea.u.xml;TestResults/cea.i.xml;TestResults/ce.u.xml;TestResults/ce.i.xml;TestResults/cfa.u.xml;TestResults/cfa.i.xml;TestResults/cf.u.xml;TestResults/cf.i.xml;TestResults/csa.u.xml;TestResults/csa.i.xml;TestResults/cs.u.xml;TestResults/cs.i.xml;TestResults/mq.u.xml;TestResults/mq.i.xml;TestResults/sm.a.xml;TestResults/p.a.xml;TestResults/p.r.xml;TestResults/s.a.xml;TestResults/s.i.xml;TestResults/g.a.xml;TestResults/g.e.xml;TestResults/d.a.xml;TestResults/d.e.xml;TestResults/w.a.xml;TestResults/w.e.xml;TestResults/i.a.xml;TestResults/e.a.xml;TestResults/e.ri.xml;TestResults/e.ru.xml' -targetdir:TestResults/CoverageReport -reporttypes:"Html_Dark;TextSummary"
 if ($IsLinux) {
     $reportPath = Join-Path -Path $PSScriptRoot -ChildPath './TestResults/CoverageReport/index.html'
     Write-Host "HTML Coverage report: $reportPath"

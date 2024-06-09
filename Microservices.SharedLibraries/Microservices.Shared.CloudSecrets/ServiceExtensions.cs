@@ -2,27 +2,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Microservices.Shared.CloudSecrets.SecretsManager;
+namespace Microservices.Shared.CloudSecrets;
 
 /// <summary>
-/// Provides extensions for AspNet dependency injection.
+/// Provides extensions for dependency injection.
 /// </summary>
-public static class SecretExtensions
+public static class ServiceExtensions
 {
     private static ServiceProvider? _serviceProvider = null;
-
-    /// <summary>
-    /// Add the SecretsManagerSecrets type as the ICloudSecrets service.
-    /// </summary>
-    /// <param name="builder">The builder to register the service with.</param>
-    /// <param name="configSectionName">The name of the configuration section to use to create the required SecretsManagerOptions, defaults to "SecretsManagerOptions".</param>
-    /// <returns>The original builder.</returns>
-    public static IHostApplicationBuilder AddSecretsManagerSecrets(this IHostApplicationBuilder builder, string configSectionName = "SecretsManagerOptions")
-    {
-        builder.Services.AddTransient<ICloudSecrets, SecretsManagerSecrets>()
-               .Configure<SecretsManagerOptions>(builder.Configuration.GetSection(configSectionName));
-        return builder;
-    }
 
     /// <summary>
     /// Apply a secret value to the configuration.

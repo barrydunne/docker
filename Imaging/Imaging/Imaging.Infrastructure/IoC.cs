@@ -1,8 +1,7 @@
-using FluentFTP;
 using Imaging.Application.ExternalApi;
 using Imaging.Infrastructure.ExternalApi.Dummy;
 using Imaging.Infrastructure.Metrics;
-using Microservices.Shared.CloudFiles;
+using Microservices.Shared.CloudFiles.Aws;
 using Microservices.Shared.CloudFiles.Ftp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,9 +29,7 @@ public static class IoC
 
         // Cloud Services
         services
-            .AddTransient<ICloudFiles, FtpFiles>()
-            .AddTransient<IAsyncFtpClient, AsyncFtpClient>()
-            .Configure<FtpFilesOptions>(configuration.GetSection("FtpFilesOptions"));
+            .AddCloudServices(configuration);
 
         // Metrics
         services
@@ -40,4 +37,17 @@ public static class IoC
 
         return services;
     }
+
+    private static IServiceCollection AddCloudServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        return Environment.GetEnvironmentVariable("Microservices.CloudProvider") == "AWS"
+            ? services.AddAwsCloudServices(configuration)
+            : services.AddLocalCloudServices(configuration);
+    }
+
+    private static IServiceCollection AddAwsCloudServices(this IServiceCollection services, IConfiguration configuration)
+        => services.AddCloudFilesAws(configuration);
+
+    private static IServiceCollection AddLocalCloudServices(this IServiceCollection services, IConfiguration configuration)
+        => services.AddCloudFilesFtp(configuration);
 }

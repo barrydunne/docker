@@ -29,7 +29,6 @@ public abstract class BaseQueueProcessor<TMessage> : IDisposable
     {
         _queue = queue;
         _logger = logger;
-        _disposedValue = false;
     }
 
     /// <summary>

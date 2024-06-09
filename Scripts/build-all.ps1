@@ -11,6 +11,7 @@ if (!$skipLibraries) {
 # Build and run containers
 Set-Location $PSScriptRoot
 ./build-infrastructure.ps1
+./aws-init.ps1
 ./build-publicapi.ps1
 ./build-state.ps1
 ./build-geocoding.ps1

@@ -3,12 +3,12 @@ using Email.Application.Templates;
 using Email.Infrastructure.Metrics;
 using Email.Infrastructure.Repositories;
 using Email.Infrastructure.Templates;
-using FluentFTP;
-using Microservices.Shared.CloudEmail;
+using Microservices.Shared.CloudEmail.Aws;
 using Microservices.Shared.CloudEmail.Smtp;
-using Microservices.Shared.CloudFiles;
+using Microservices.Shared.CloudFiles.Aws;
 using Microservices.Shared.CloudFiles.Ftp;
-using Microservices.Shared.CloudSecrets.SecretsManager;
+using Microservices.Shared.CloudSecrets;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
@@ -40,12 +40,7 @@ public static class IoC
 
         // Cloud Services
         services
-            .AddTransient<ICloudEmail, SmtpEmail>()
-            .AddTransient<ISmtpClient, SmtpClientAdapter>()
-            .Configure<SmtpEmailOptions>(builder.Configuration.GetSection("SmtpEmailOptions"))
-            .AddTransient<ICloudFiles, FtpFiles>()
-            .AddTransient<IAsyncFtpClient, AsyncFtpClient>()
-            .Configure<FtpFilesOptions>(builder.Configuration.GetSection("FtpFilesOptions"));
+            .AddCloudServices(builder.Configuration);
 
         // Metrics
         services
@@ -56,5 +51,26 @@ public static class IoC
             .AddHttpClient();
 
         return services;
+    }
+
+    private static IServiceCollection AddCloudServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        return Environment.GetEnvironmentVariable("Microservices.CloudProvider") == "AWS"
+            ? services.AddAwsCloudServices(configuration)
+            : services.AddLocalCloudServices(configuration);
+    }
+
+    private static IServiceCollection AddAwsCloudServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        return services
+            .AddCloudEmailAws(configuration)
+            .AddCloudFilesAws(configuration);
+    }
+
+    private static IServiceCollection AddLocalCloudServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        return services
+            .AddCloudEmailSmtp(configuration)
+            .AddCloudFilesFtp(configuration);
     }
 }

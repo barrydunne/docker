@@ -10,11 +10,6 @@ public class JobCache : IJobCache, IDisposable
     private readonly MemoryCache _cache = new(new MemoryCacheOptions() { SizeLimit = 100 }); // Room to store 100 jobs
     private bool _disposedValue;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="JobCache"/> class.
-    /// </summary>
-    public JobCache() => _disposedValue = false;
-
     /// <inheritdoc/>
     public Job? Get(Guid jobId) => _cache.TryGetValue<Job>(jobId, out var job) ? job : null;
 

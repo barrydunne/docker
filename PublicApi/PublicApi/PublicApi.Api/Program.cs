@@ -1,9 +1,11 @@
 using AspNet.KickStarter;
 using AspNet.KickStarter.CQRS;
+using Microservices.Shared.CloudSecrets;
 using Microservices.Shared.Events;
 using Microservices.Shared.Utilities;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Trace;
 using PublicApi.Api;
 using PublicApi.Api.BackgroundServices;
 using PublicApi.Api.Validators;
@@ -17,7 +19,11 @@ await new ApiBuilder()
     .WithServices(IoC.RegisterServices)
     .WithEndpoints(Endpoints.Map)
     .WithFluentValidationFromAssemblyContaining<CreateJobRequestValidator>()
-    .WithOpenTelemetry(8081)
+    .WithOpenTelemetry(
+        prometheusPort: 8081,
+        configureTraceBuilder: _ => _
+            .AddAWSInstrumentation()
+            .AddSource(CloudSecrets.ActivitySourceName))
     .WithAdditionalConfiguration(builder => builder.Services
         .AddQueueToCommandProcessor<JobStatusUpdateEvent, UpdateStatusCommand, Result, JobStatusUpdateEventProcessor>()
         .Configure<JsonOptions>(_ =>

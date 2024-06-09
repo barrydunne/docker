@@ -4,6 +4,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RestSharp;
+using System.Diagnostics;
 
 namespace Microservices.Shared.CloudSecrets.SecretsManager;
 
@@ -16,6 +17,8 @@ public class SecretsManagerSecrets : ICloudSecrets
     private readonly SecretsManagerOptions _options;
     private readonly IRestSharpClientFactory _restSharpFactory;
     private readonly ILogger _logger;
+
+    private static readonly ActivitySource _activitySource = new(CloudSecrets.ActivitySourceName);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SecretsManagerSecrets"/> class.
@@ -40,6 +43,7 @@ public class SecretsManagerSecrets : ICloudSecrets
     /// <inheritdoc/>
     public async Task<Dictionary<string, string>> GetSecretsAsync(string vault, CancellationToken cancellationToken = default)
     {
+        using var activity = _activitySource.StartActivity("SecretsManager Get", ActivityKind.Client);
         Guard.Against.NullOrEmpty(vault, nameof(vault));
 
         if (Cache.TryGetValue<Dictionary<string, string>>(vault, out var secrets) && (secrets is not null))

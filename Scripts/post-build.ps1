@@ -37,12 +37,6 @@ Invoke-RestMethod -Uri 'http://localhost:10672/api/users/integration.tests' -Met
 
 
 # Mongo DB user creation
-if ($IsLinux) {
-    $tmp = '/tmp'
-}
-else {
-    $tmp = $env:TEMP
-}
 $connectionString = 'Server=localhost;Port=17306;User Id=root;Password=P@ssw0rd;'
 $csproj = @'
 <Project Sdk="Microsoft.NET.Sdk">
@@ -88,6 +82,9 @@ while (DateTime.UtcNow < end) {
     System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
 }
 "@
+$tmp = Join-Path -Path $PSScriptRoot -ChildPath 'temp'
+New-Item $tmp -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
+
 $dir = Join-Path -Path $tmp -ChildPath 'mongouser'
 New-Item -ItemType Directory -Path $dir -Force -ErrorAction SilentlyContinue | Out-Null
 $path = Join-Path -Path $dir -ChildPath 'program.cs'
@@ -158,3 +155,5 @@ Set-Content -Path $path -Value $csproj
 Set-Location $dir
 dotnet run
 Set-Location $PSScriptRoot
+
+Remove-Item -Path $tmp -Recurse -Force -ErrorAction SilentlyContinue | Out-Null

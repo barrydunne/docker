@@ -43,6 +43,7 @@ services:
       - seq:172.30.0.4
       - secretsmanager:172.30.0.12
       - telemetry:172.30.0.15
+      - aws:172.30.0.16
     networks:
       microservices-infrastructure_microservices-net:
         ipv4_address: 172.30.0.30

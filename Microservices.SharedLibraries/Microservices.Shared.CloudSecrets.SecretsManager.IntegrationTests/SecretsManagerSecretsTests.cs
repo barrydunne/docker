@@ -5,10 +5,11 @@ namespace Microservices.Shared.CloudSecrets.SecretsManager.IntegrationTests;
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 [Parallelizable(ParallelScope.Self)]
 [TestFixture(Category = "SecretsManager")]
-public class SecretsManagerSecretsTests
+public class SecretsManagerSecretsTests : IDisposable
 {
     private readonly SecretsManagerSecretsTestsContext _context = new();
     private readonly Fixture _fixture = new();
+    private bool _disposedValue;
 
     private const string _vault = "infrastructure";
     private const string _secret = "rabbit.user";
@@ -117,5 +118,21 @@ public class SecretsManagerSecretsTests
         _context.WithForbiddenResponse();
         await _context.Sut.GetSecretValueAsync(_vault, _secret);
         _context.AssertWarningLogged($"Failed GET request for /secrets/vaults/{_vault}. Response Forbidden.");
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+                _context.Dispose();
+            _disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

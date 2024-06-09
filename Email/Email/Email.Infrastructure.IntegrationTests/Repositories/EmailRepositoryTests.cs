@@ -9,7 +9,7 @@ internal class EmailRepositoryTests : IDisposable
 {
     private readonly Fixture _fixture = new();
     private readonly EmailRepositoryTestsContext _context = new();
-    private bool _disposedValue = false;
+    private bool _disposedValue;
 
     [Test]
     public async Task InsertSentEmailAsync_saves_entity_with_generated_id()

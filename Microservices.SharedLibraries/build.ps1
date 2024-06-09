@@ -15,8 +15,11 @@ function Invoke-Tests {
     }
 }
 
+Invoke-Tests -csproj 'Microservices.Shared.CloudEmail.Aws.UnitTests/Microservices.Shared.CloudEmail.Aws.UnitTests.csproj' -assembly 'Microservices.Shared.CloudEmail.Aws'
 Invoke-Tests -csproj 'Microservices.Shared.CloudEmail.Smtp.UnitTests/Microservices.Shared.CloudEmail.Smtp.UnitTests.csproj' -assembly 'Microservices.Shared.CloudEmail.Smtp'
+Invoke-Tests -csproj 'Microservices.Shared.CloudFiles.Aws.UnitTests/Microservices.Shared.CloudFiles.Aws.UnitTests.csproj' -assembly 'Microservices.Shared.CloudFiles.Aws'
 Invoke-Tests -csproj 'Microservices.Shared.CloudFiles.Ftp.UnitTests/Microservices.Shared.CloudFiles.Ftp.UnitTests.csproj' -assembly 'Microservices.Shared.CloudFiles.Ftp'
+Invoke-Tests -csproj 'Microservices.Shared.CloudSecrets.Aws.UnitTests/Microservices.Shared.CloudSecrets.Aws.UnitTests.csproj' -assembly 'Microservices.Shared.CloudSecrets.Aws'
 Invoke-Tests -csproj 'Microservices.Shared.CloudSecrets.SecretsManager.UnitTests/Microservices.Shared.CloudSecrets.SecretsManager.UnitTests.csproj' -assembly 'Microservices.Shared.CloudSecrets.SecretsManager'
 Invoke-Tests -csproj 'Microservices.Shared.Queues.RabbitMQ.UnitTests/Microservices.Shared.Queues.RabbitMQ.UnitTests.csproj' -assembly 'Microservices.Shared.Queues.RabbitMQ'
 

@@ -1,7 +1,9 @@
 using AspNet.KickStarter;
 using AspNet.KickStarter.CQRS;
+using Microservices.Shared.CloudSecrets;
 using Microservices.Shared.Events;
 using Microservices.Shared.Utilities;
+using OpenTelemetry.Trace;
 using State.Api;
 using State.Api.BackgroundServices;
 using State.Application.Commands.CreateJob;
@@ -16,7 +18,11 @@ await new ApiBuilder()
     .WithHealthHandler()
     .WithServices(IoC.RegisterServices)
     .WithEndpoints(Endpoints.Map)
-    .WithOpenTelemetry(8081)
+    .WithOpenTelemetry(
+        prometheusPort: 8081,
+        configureTraceBuilder: _ => _
+            .AddAWSInstrumentation()
+            .AddSource(CloudSecrets.ActivitySourceName))
     .WithAdditionalConfiguration(_ => _.Services
         .AddQueueToCommandProcessor<JobCreatedEvent, CreateJobCommand, Result, JobCreatedEventProcessor>()
         .AddQueueToCommandProcessor<GeocodingCompleteEvent, UpdateGeocodingResultCommand, Result, GeocodingCompleteEventProcessor>()

@@ -32,7 +32,7 @@ public class DummyApi : IExternalApi
     {
         _logger.LogDebug("Returning image URL. [{CorrelationId}]", correlationId);
         if (!_knownUrls.TryGetValue(coordinates, out var url))
-            url = "https://source.unsplash.com/featured/?Ireland";
+            url = "https://picsum.photos/400/300";
         return Task.FromResult((string?)url);
     }
 }

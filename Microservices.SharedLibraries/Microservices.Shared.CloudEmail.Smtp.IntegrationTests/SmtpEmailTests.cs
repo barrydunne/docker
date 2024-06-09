@@ -11,7 +11,7 @@ internal class SmtpEmailTests : IDisposable
 {
     private readonly SmtpEmailTestsContext _context = new();
     private readonly Fixture _fixture = new();
-    private bool _disposedValue = false;
+    private bool _disposedValue;
 
     [Test]
     public async Task SendEmailAsync_sends_message_using_images()

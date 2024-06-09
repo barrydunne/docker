@@ -15,7 +15,7 @@ public class SmtpEmail : ICloudEmail
     private readonly ISmtpClient _smtpClient;
     private readonly ILogger _logger;
 
-    private static readonly ActivitySource _activitySource = new("Microservices.Shared.CloudEmail.Smtp");
+    private static readonly ActivitySource _activitySource = new(CloudEmail.ActivitySourceName);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SmtpEmail"/> class.

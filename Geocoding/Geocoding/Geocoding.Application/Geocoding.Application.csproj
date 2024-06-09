@@ -13,7 +13,6 @@
   <ItemGroup>
     <PackageReference Include="AspNet.KickStarter.CQRS" Version="1.2.2" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.1" />
-    <PackageReference Include="Microservices.Shared.CloudSecrets.SecretsManager" Version="8.0.0" />
     <PackageReference Include="Microservices.Shared.Events" Version="8.0.0" />
     <PackageReference Include="Microservices.Shared.Queues.RabbitMQ" Version="8.0.0" />
     <PackageReference Include="Microservices.Shared.Utilities" Version="8.0.0" />

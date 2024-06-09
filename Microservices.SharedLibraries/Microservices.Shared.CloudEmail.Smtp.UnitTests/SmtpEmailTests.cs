@@ -43,7 +43,7 @@ internal class SmtpEmailTests
     {
         var (subject, htmlBody, plainBody, to, cc, bcc) = CreateAnonymousValues();
         await _context.Sut.SendEmailAsync(subject, htmlBody, plainBody, to, cc, bcc);
-        _context.AssertMessageSent((message) => message.Subject == subject);
+        _context.AssertMessageSent(message => message.Subject == subject);
     }
 
     [Test]
@@ -51,7 +51,7 @@ internal class SmtpEmailTests
     {
         var (subject, htmlBody, plainBody, to, cc, bcc) = CreateAnonymousValues();
         await _context.Sut.SendEmailAsync(subject, htmlBody, plainBody, to, cc, bcc);
-        _context.AssertMessageSent((message) => message.AlternateViews.FirstOrDefault(_ => _.ContentType.ToString().Contains(MediaTypeNames.Text.Html)) is not null);
+        _context.AssertMessageSent(message => message.AlternateViews.FirstOrDefault(_ => _.ContentType.ToString().Contains(MediaTypeNames.Text.Html)) is not null);
     }
 
     [Test]
@@ -59,7 +59,7 @@ internal class SmtpEmailTests
     {
         var (subject, htmlBody, plainBody, to, cc, bcc) = CreateAnonymousValues();
         await _context.Sut.SendEmailAsync(subject, htmlBody, plainBody, to, cc, bcc);
-        _context.AssertMessageSent((message) => message.Body == plainBody);
+        _context.AssertMessageSent(message => message.Body == plainBody);
     }
 
     [Test]
@@ -67,7 +67,7 @@ internal class SmtpEmailTests
     {
         var (subject, htmlBody, plainBody, to, cc, bcc) = CreateAnonymousValues();
         await _context.Sut.SendEmailAsync(subject, htmlBody, plainBody, to, cc, bcc);
-        _context.AssertMessageSent((message) => new CollectionEquivalentConstraint(to).ApplyTo(message.To.Select(_ => _.Address)).Status == ConstraintStatus.Success);
+        _context.AssertMessageSent(message => new CollectionEquivalentConstraint(to).ApplyTo(message.To.Select(_ => _.Address)).Status == ConstraintStatus.Success);
     }
 
     [Test]
@@ -75,7 +75,7 @@ internal class SmtpEmailTests
     {
         var (subject, htmlBody, plainBody, to, cc, bcc) = CreateAnonymousValues();
         await _context.Sut.SendEmailAsync(subject, htmlBody, plainBody, to, cc, bcc);
-        _context.AssertMessageSent((message) => new CollectionEquivalentConstraint(cc).ApplyTo(message.CC.Select(_ => _.Address)).Status == ConstraintStatus.Success);
+        _context.AssertMessageSent(message => new CollectionEquivalentConstraint(cc).ApplyTo(message.CC.Select(_ => _.Address)).Status == ConstraintStatus.Success);
     }
 
     [Test]
@@ -83,7 +83,7 @@ internal class SmtpEmailTests
     {
         var (subject, htmlBody, plainBody, to, cc, bcc) = CreateAnonymousValues();
         await _context.Sut.SendEmailAsync(subject, htmlBody, plainBody, to, cc, bcc);
-        _context.AssertMessageSent((message) => new CollectionEquivalentConstraint(bcc).ApplyTo(message.Bcc.Select(_ => _.Address)).Status == ConstraintStatus.Success);
+        _context.AssertMessageSent(message => new CollectionEquivalentConstraint(bcc).ApplyTo(message.Bcc.Select(_ => _.Address)).Status == ConstraintStatus.Success);
     }
 
     [Test]
@@ -97,7 +97,7 @@ internal class SmtpEmailTests
         using var image2Stream = new MemoryStream();
         var image2ContentType = MediaTypeNames.Image.Gif;
         await _context.Sut.SendEmailAsync(subject, htmlBody, plainBody, to, cc, bcc, new(image1Cid, image1Stream, image1ContentType), new(image2Cid, image2Stream, image2ContentType));
-        _context.AssertMessageSent((message) =>
+        _context.AssertMessageSent(message => 
         {
             var htmlView = message.AlternateViews.FirstOrDefault(_ => _.ContentType.ToString().Contains(MediaTypeNames.Text.Html));
             if (htmlView is null)

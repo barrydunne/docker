@@ -14,7 +14,7 @@ public class MockLogger<T> : ILogger<T>
 
     private void Write(LogLevel logLevel, Exception? exception, string message)
     {
-        var logMessage = $"[{logLevel}] {message}{(exception is null ? "" : $" ({exception?.Message}")}";
+        var logMessage = $"[{logLevel}] {message}{(exception is null ? "" : $" ({exception?.Message})")}";
         Trace.WriteLine(logMessage);
         _log.Enqueue(logMessage);
     }

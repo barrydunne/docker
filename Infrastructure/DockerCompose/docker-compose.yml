@@ -294,3 +294,18 @@ services:
         ipv4_address: 172.30.0.15
     ports:
       - 10089:18888 # Dashboard
+
+  aws.microservices-infrastructure:
+    # To be able to view emails with AWS, use localstack-pro image which can forward the SMTP traffic to smtp.microservices-infrastructure
+    #image: localstack/localstack-pro:3.4
+    image: localstack/localstack:3.4
+    container_name: aws.microservices-infrastructure
+    environment:
+      - SMTP_HOST=172.30.0.13:1025
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+    restart: no
+    networks:
+      microservices-net:
+        ipv4_address: 172.30.0.16
+    ports:
+      - 10566:4566 # AWS Services

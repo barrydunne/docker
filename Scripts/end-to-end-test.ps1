@@ -96,32 +96,62 @@ if ($status -ne 'Complete') {
 Write-Host '############################################'
 Write-Host Processing completed successfully -ForegroundColor Green
 Write-Host '############################################'
-Write-Host Check Email
-$timeout = (Get-Date).AddSeconds(10)
-$foundEmail = $null
+
+# When using AWS without LocalStack Pro, the email will not be verified
+$awsNotPro = $true
 try {
-    :whileWaiting while ((Get-Date) -lt $timeout) {
-        $emails = Invoke-RestMethod -Uri "$emailApi/messages" -Method Get
-        foreach ($email in $emails) {
-            if ($email.subject -eq "Processing complete. Job $jobId") {
-                $foundEmail = $email
-                break whileWaiting
-            }
+    $json = $(docker container inspect api.microservices-email -f 'json')
+    $inspect = $json | ConvertFrom-Json
+    $aws = $inspect[0].Config.Env.Contains('Microservices.CloudProvider=AWS')
+    if ($aws) {
+
+        Write-Host 'AWS detected, checking for LocalStack Pro'
+        $json = $(docker container inspect aws.microservices-infrastructure -f 'json')
+        $inspect = $json | ConvertFrom-Json
+        $image = $inspect[0].Config.Image
+        $localstackPro = $image.Contains('-pro')
+        Write-Host "LocalStack Pro: $localstackPro"
+
+        if (!$localstackPro) {
+            $awsNotPro = $false
         }
-        Start-Sleep -Milliseconds 500
     }
 }
 catch {
-    Write-Host "Failed to check email: $_" -ForegroundColor Red
-    exit 1
 }
-if ($null -ne $foundEmail) {
-    Write-Host "Email from $($foundEmail.sender) received successfully" -ForegroundColor Green
-    Write-Host "View may the email here: $emailApi/messages/$($foundEmail.id).html"
+
+if ($awsNotPro) {
+    Write-Host Check Email
+    $timeout = (Get-Date).AddSeconds(10)
+    $foundEmail = $null
+    try {
+        :whileWaiting while ((Get-Date) -lt $timeout) {
+            $emails = Invoke-RestMethod -Uri "$emailApi/messages" -Method Get
+            foreach ($email in $emails) {
+                if ($email.subject -eq "Processing complete. Job $jobId") {
+                    $foundEmail = $email
+                    break whileWaiting
+                }
+            }
+            Start-Sleep -Milliseconds 500
+        }
+    }
+    catch {
+        Write-Host "Failed to check email: $_" -ForegroundColor Red
+        exit 1
+    }
+    if ($null -ne $foundEmail) {
+        Write-Host "Email from $($foundEmail.sender) received successfully" -ForegroundColor Green
+        Write-Host "View may the email here: $emailApi/messages/$($foundEmail.id).html"
+    }
+    else {
+        Write-Host "Did not get email: $_" -ForegroundColor Red
+        exit 1
+    }
 }
 else {
-    Write-Host "Did not get email: $_" -ForegroundColor Red
-    exit 1
+    Write-Host 'Email will not be verified when using AWS without LocalStack Pro' -ForegroundColor Yellow
 }
+
 Write-Host '############################################'
 Write-Host Test completed successfully -ForegroundColor Green

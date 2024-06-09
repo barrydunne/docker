@@ -12,8 +12,8 @@
 
   <ItemGroup>
     <PackageReference Include="AspNet.KickStarter.Core" Version="1.2.2" />
+    <PackageReference Include="Microservices.Shared.CloudFiles.Aws" Version="8.0.0" />
     <PackageReference Include="Microservices.Shared.CloudFiles.Ftp" Version="8.0.0" />
-    <PackageReference Include="Microservices.Shared.CloudSecrets.SecretsManager" Version="8.0.0" />
     <PackageReference Include="Microservices.Shared.Events" Version="8.0.0" />
     <PackageReference Include="Microservices.Shared.Utilities" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />

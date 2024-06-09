@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Microservices.Shared.CloudSecrets.Aws\Microservices.Shared.CloudSecrets.Aws.csproj" />
     <ProjectReference Include="..\Microservices.Shared.CloudSecrets.SecretsManager\Microservices.Shared.CloudSecrets.SecretsManager.csproj" />
     <ProjectReference Include="..\Microservices.Shared.Events\Microservices.Shared.Events.csproj" />
     <ProjectReference Include="..\Microservices.Shared.Queues.RabbitMQ\Microservices.Shared.Queues.RabbitMQ.csproj" />

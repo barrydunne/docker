@@ -32,8 +32,6 @@ internal class EmailRepositoryTestsContext : IDisposable
         _db = new EmailRepositoryDbContext(options);
         _db.Database.EnsureCreated();
 
-        _disposedValue = false;
-
         SeedData = new();
 
         AddSeedData();

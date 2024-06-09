@@ -3,7 +3,6 @@ using Email.Application.Queries.GetEmailsSentToRecipient;
 using Email.Application.Tests.Mocks;
 using Microservices.Shared.Mocks;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 
 namespace Email.Application.Tests.Queries.GetEmailsBase;
 

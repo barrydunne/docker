@@ -53,7 +53,6 @@ public class RabbitMQQueue<TMessage> : IQueue<TMessage>, IDisposable
         _queueCreated = false;
         _exchangeCreated = false;
         _consumerTag = null;
-        _disposedValue = false;
     }
 
     /// <inheritdoc/>

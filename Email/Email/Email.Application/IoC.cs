@@ -1,6 +1,5 @@
 ﻿using AspNet.KickStarter.CQRS;
 using FluentValidation;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;

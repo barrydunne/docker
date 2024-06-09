@@ -10,7 +10,7 @@ internal class JobCacheTests : IDisposable
 {
     private readonly Fixture _fixture = new();
     private readonly JobCache _sut = new();
-    private bool _disposedValue = false;
+    private bool _disposedValue;
 
     [Test]
     public void JobCache_Get_returns_null_for_unknown_key()

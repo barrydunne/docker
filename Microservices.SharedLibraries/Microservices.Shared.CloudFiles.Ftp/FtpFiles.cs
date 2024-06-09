@@ -13,7 +13,7 @@ public class FtpFiles : ICloudFiles
     private readonly IAsyncFtpClient _asyncFtpClient;
     private readonly ILogger _logger;
 
-    private static readonly ActivitySource _activitySource = new("Microservices.Shared.CloudFiles.Ftp");
+    private static readonly ActivitySource _activitySource = new(CloudFiles.ActivitySourceName);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FtpFiles"/> class.
@@ -77,7 +77,7 @@ public class FtpFiles : ICloudFiles
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to upload {Container}/{File}.", container, name);
+            _logger.LogError(ex, "Failed to download {Container}/{File}.", container, name);
             throw;
         }
     }
