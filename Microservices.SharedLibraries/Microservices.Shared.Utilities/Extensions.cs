@@ -1,5 +1,5 @@
 ﻿using Ardalis.GuardClauses;
-using AspNet.KickStarter.CQRS;
+using AspNet.KickStarter.FunctionalResult;
 using MediatR;
 using Microservices.Shared.CloudSecrets;
 using Microservices.Shared.CloudSecrets.Aws;

@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using AspNet.KickStarter.FunctionalResult.Extensions;
+using FluentValidation;
 using Mapster;
 using MediatR;
 using PublicApi.Api.Models;

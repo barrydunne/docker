@@ -1,5 +1,5 @@
 ﻿using AspNet.KickStarter;
-using AspNet.KickStarter.CQRS;
+using AspNet.KickStarter.FunctionalResult;
 using Mapster;
 using Microservices.Shared.Events;
 using Microservices.Shared.Queues;

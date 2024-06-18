@@ -1,4 +1,5 @@
-﻿using Mapster;
+﻿using AspNet.KickStarter.FunctionalResult.Extensions;
+using Mapster;
 using MediatR;
 using Microservices.Shared.Events;
 using State.Application.Commands.CreateJob;

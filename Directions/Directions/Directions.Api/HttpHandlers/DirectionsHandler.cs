@@ -1,4 +1,5 @@
-﻿using Directions.Application.Commands.GenerateDirections;
+﻿using AspNet.KickStarter.FunctionalResult.Extensions;
+using Directions.Application.Commands.GenerateDirections;
 using Mapster;
 using MediatR;
 using Microservices.Shared.Events;

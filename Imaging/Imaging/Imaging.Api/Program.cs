@@ -1,5 +1,5 @@
 using AspNet.KickStarter;
-using AspNet.KickStarter.CQRS;
+using AspNet.KickStarter.FunctionalResult;
 using Imaging.Api;
 using Imaging.Api.BackgroundServices;
 using Imaging.Application.Commands.SaveImage;

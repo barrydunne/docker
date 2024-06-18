@@ -1,5 +1,5 @@
 using AspNet.KickStarter;
-using AspNet.KickStarter.CQRS;
+using AspNet.KickStarter.FunctionalResult;
 using Email.Api;
 using Email.Api.BackgroundServices;
 using Email.Api.Validators;

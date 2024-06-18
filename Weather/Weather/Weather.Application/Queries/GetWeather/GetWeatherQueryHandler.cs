@@ -1,9 +1,9 @@
-﻿using System.Diagnostics;
-using AspNet.KickStarter.CQRS;
-using AspNet.KickStarter.CQRS.Abstractions.Queries;
+﻿using AspNet.KickStarter.CQRS.Abstractions.Queries;
+using AspNet.KickStarter.FunctionalResult;
 using Microservices.Shared.Events;
 using Microservices.Shared.Utilities;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using Weather.Application.ExternalApi;
 
 namespace Weather.Application.Queries.GetWeather;

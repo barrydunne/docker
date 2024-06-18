@@ -1,5 +1,5 @@
-﻿using AspNet.KickStarter.CQRS;
-using AspNet.KickStarter.CQRS.Abstractions.Queries;
+﻿using AspNet.KickStarter.CQRS.Abstractions.Queries;
+using AspNet.KickStarter.FunctionalResult;
 using Geocoding.Application.Caching;
 using Geocoding.Application.ExternalApi;
 using Microservices.Shared.Events;

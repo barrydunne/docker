@@ -1,4 +1,4 @@
-﻿using AspNet.KickStarter.CQRS;
+﻿using AspNet.KickStarter.FunctionalResult;
 using Directions.Application.Commands.GenerateDirections;
 using Directions.Application.Queries.GetDirections;
 using MediatR;

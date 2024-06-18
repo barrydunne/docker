@@ -1,5 +1,5 @@
-﻿using AspNet.KickStarter.CQRS;
-using AspNet.KickStarter.CQRS.Abstractions.Commands;
+﻿using AspNet.KickStarter.CQRS.Abstractions.Commands;
+using AspNet.KickStarter.FunctionalResult;
 using Geocoding.Application.Queries.GetAddressCoordinates;
 using MediatR;
 using Microservices.Shared.Events;

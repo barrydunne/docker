@@ -1,4 +1,4 @@
-﻿using AspNet.KickStarter.CQRS;
+﻿using AspNet.KickStarter.FunctionalResult;
 using MediatR;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;

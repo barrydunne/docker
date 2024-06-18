@@ -1,5 +1,5 @@
-﻿using AspNet.KickStarter.CQRS;
-using AspNet.KickStarter.CQRS.Abstractions.Commands;
+﻿using AspNet.KickStarter.CQRS.Abstractions.Commands;
+using AspNet.KickStarter.FunctionalResult;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 

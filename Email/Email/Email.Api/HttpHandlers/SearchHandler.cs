@@ -1,4 +1,5 @@
-﻿using Email.Api.Models;
+﻿using AspNet.KickStarter.FunctionalResult.Extensions;
+using Email.Api.Models;
 using Email.Application.Queries.GetEmailsSentBetweenTimes;
 using Email.Application.Queries.GetEmailsSentToRecipient;
 using FluentValidation;

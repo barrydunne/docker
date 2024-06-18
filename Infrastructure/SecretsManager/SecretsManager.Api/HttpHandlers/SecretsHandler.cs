@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AspNet.KickStarter.FunctionalResult.Extensions;
+using MediatR;
 using SecretsManager.Application.Commands.SetSecretValue;
 using SecretsManager.Application.Queries.GetSecrets;
 using SecretsManager.Application.Queries.GetSecretValue;

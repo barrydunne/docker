@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNet.KickStarter.Core" Version="1.2.2" />
+    <PackageReference Include="AspNet.KickStarter.Core" Version="1.2.3" />
     <PackageReference Include="Microservices.Shared.CloudEmail.Aws" Version="8.0.0" />
     <PackageReference Include="Microservices.Shared.CloudEmail.Smtp" Version="8.0.0" />
     <PackageReference Include="Microservices.Shared.CloudFiles.Aws" Version="8.0.0" />

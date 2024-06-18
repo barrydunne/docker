@@ -1,5 +1,5 @@
 ﻿using AspNet.KickStarter;
-using AspNet.KickStarter.CQRS;
+using AspNet.KickStarter.FunctionalResult;
 using Email.Application.Commands.SendEmail;
 using Mapster;
 using Microservices.Shared.Events;

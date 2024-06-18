@@ -1,11 +1,11 @@
-﻿using System.Diagnostics;
-using AspNet.KickStarter.CQRS;
-using AspNet.KickStarter.CQRS.Abstractions.Commands;
+﻿using AspNet.KickStarter.CQRS.Abstractions.Commands;
+using AspNet.KickStarter.FunctionalResult;
 using MediatR;
 using Microservices.Shared.Events;
 using Microservices.Shared.Queues;
 using Microservices.Shared.Utilities;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using Weather.Application.Queries.GetWeather;
 
 namespace Weather.Application.Commands.GenerateWeather;

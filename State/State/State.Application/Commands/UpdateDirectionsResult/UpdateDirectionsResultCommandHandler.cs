@@ -1,5 +1,5 @@
-﻿using AspNet.KickStarter.CQRS;
-using AspNet.KickStarter.CQRS.Abstractions.Commands;
+﻿using AspNet.KickStarter.CQRS.Abstractions.Commands;
+using AspNet.KickStarter.FunctionalResult;
 using MediatR;
 using Microservices.Shared.Utilities;
 using Microsoft.Extensions.Logging;

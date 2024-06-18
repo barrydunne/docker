@@ -1,5 +1,5 @@
-﻿using AspNet.KickStarter.CQRS;
-using AspNet.KickStarter.CQRS.Abstractions.Commands;
+﻿using AspNet.KickStarter.CQRS.Abstractions.Commands;
+using AspNet.KickStarter.FunctionalResult;
 using Email.Application.Models;
 using Email.Application.Repositories;
 using Email.Application.Templates;

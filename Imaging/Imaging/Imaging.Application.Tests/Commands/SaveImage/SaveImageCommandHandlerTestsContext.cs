@@ -1,4 +1,4 @@
-﻿using AspNet.KickStarter.CQRS;
+﻿using AspNet.KickStarter.FunctionalResult;
 using Imaging.Application.Commands.SaveImage;
 using Imaging.Application.Queries.GetImageUrl;
 using Imaging.Application.Tests.Mocks;

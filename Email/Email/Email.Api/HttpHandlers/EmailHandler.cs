@@ -1,4 +1,5 @@
-﻿using Email.Application.Commands.SendEmail;
+﻿using AspNet.KickStarter.FunctionalResult.Extensions;
+using Email.Application.Commands.SendEmail;
 using Mapster;
 using MediatR;
 using Microservices.Shared.Events;

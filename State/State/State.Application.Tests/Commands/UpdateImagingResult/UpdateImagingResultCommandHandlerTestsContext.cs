@@ -1,9 +1,7 @@
-﻿using AspNet.KickStarter.CQRS;
+﻿using AspNet.KickStarter.FunctionalResult;
 using MediatR;
-using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using State.Application.Commands.CreateJob;
 using State.Application.Commands.NotifyJobStatusUpdate;
 using State.Application.Commands.NotifyProcessingComplete;

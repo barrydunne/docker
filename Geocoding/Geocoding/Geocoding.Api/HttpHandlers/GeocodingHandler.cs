@@ -1,4 +1,5 @@
-﻿using Geocoding.Application.Commands.GeocodeAddresses;
+﻿using AspNet.KickStarter.FunctionalResult.Extensions;
+using Geocoding.Application.Commands.GeocodeAddresses;
 using Mapster;
 using MediatR;
 using Microservices.Shared.Events;

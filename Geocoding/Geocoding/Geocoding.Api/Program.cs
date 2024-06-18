@@ -1,5 +1,5 @@
 using AspNet.KickStarter;
-using AspNet.KickStarter.CQRS;
+using AspNet.KickStarter.FunctionalResult;
 using Geocoding.Api;
 using Geocoding.Api.BackgroundServices;
 using Geocoding.Application.Commands.GeocodeAddresses;

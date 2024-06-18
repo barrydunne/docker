@@ -1,5 +1,5 @@
 using AspNet.KickStarter;
-using AspNet.KickStarter.CQRS;
+using AspNet.KickStarter.FunctionalResult;
 using Directions.Api;
 using Directions.Api.BackgroundServices;
 using Directions.Application.Commands.GenerateDirections;

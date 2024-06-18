@@ -1,4 +1,5 @@
-﻿using Imaging.Application.Commands.SaveImage;
+﻿using AspNet.KickStarter.FunctionalResult.Extensions;
+using Imaging.Application.Commands.SaveImage;
 using Mapster;
 using MediatR;
 using Microservices.Shared.Events;

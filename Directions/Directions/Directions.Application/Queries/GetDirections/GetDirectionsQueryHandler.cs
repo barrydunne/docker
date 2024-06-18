@@ -1,5 +1,5 @@
-﻿using AspNet.KickStarter.CQRS;
-using AspNet.KickStarter.CQRS.Abstractions.Queries;
+﻿using AspNet.KickStarter.CQRS.Abstractions.Queries;
+using AspNet.KickStarter.FunctionalResult;
 using Directions.Application.ExternalApi;
 using Microservices.Shared.Utilities;
 using Microsoft.Extensions.Logging;

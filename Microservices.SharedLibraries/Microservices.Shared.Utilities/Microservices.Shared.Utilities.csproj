@@ -18,7 +18,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNet.KickStarter.CQRS" Version="1.2.2" />
+    <PackageReference Include="AspNet.KickStarter.FunctionalResult" Version="1.2.3" />
+    <PackageReference Include="AspNet.KickStarter.Tracing" Version="1.2.3" />
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="9.25.0.90414">

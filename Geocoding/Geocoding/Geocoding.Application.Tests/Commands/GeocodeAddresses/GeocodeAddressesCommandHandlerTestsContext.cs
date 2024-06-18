@@ -1,4 +1,4 @@
-﻿using AspNet.KickStarter.CQRS;
+﻿using AspNet.KickStarter.FunctionalResult;
 using Geocoding.Application.Commands.GeocodeAddresses;
 using Geocoding.Application.Queries.GetAddressCoordinates;
 using MediatR;
