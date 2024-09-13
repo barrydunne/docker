@@ -71,7 +71,7 @@ internal class GenerateDirectionsCommandHandler : ICommandHandler<GenerateDirect
         }
     }
 
-    private DirectionsCompleteEvent CreateDirectionsCompleteEvent(GenerateDirectionsCommand command, Result<Microservices.Shared.Events.Directions> result)
+    private static DirectionsCompleteEvent CreateDirectionsCompleteEvent(GenerateDirectionsCommand command, Result<Microservices.Shared.Events.Directions> result)
     {
         var directions = result.IsSuccess
             ? result.Value

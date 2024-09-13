@@ -71,10 +71,10 @@ public class DummyApi : IExternalApi
         return Task.FromResult(weather);
     }
 
-    private WeatherForecastItem[] GetWeatherForecastItems()
+    private static WeatherForecastItem[] GetWeatherForecastItems()
         => Enumerable.Range(0, 7).Select(day => GetWeatherForecastItem(DateTimeOffset.Now.AddDays(day))).ToArray();
 
-    private WeatherForecastItem GetWeatherForecastItem(DateTimeOffset dateTimeOffset)
+    private static WeatherForecastItem GetWeatherForecastItem(DateTimeOffset dateTimeOffset)
     {
         var wmoCode = _wmoCodes[Random.Shared.Next(0, _wmoCodes.Length)];
         var maxC = Random.Shared.Next(0, 400) / 10.0;

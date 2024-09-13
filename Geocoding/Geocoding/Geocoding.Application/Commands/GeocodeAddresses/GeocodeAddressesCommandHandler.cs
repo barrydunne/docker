@@ -83,7 +83,7 @@ internal class GeocodeAddressesCommandHandler : ICommandHandler<GeocodeAddresses
         return (geocodeStartingQueryResult, geocodeDestinationQueryResult);
     }
 
-    private GeocodingCompleteEvent CreateGeocodingCompleteEvent(GeocodeAddressesCommand command, Result<Coordinates> geocodeStartingQueryResult, Result<Coordinates> geocodeDestinationQueryResult)
+    private static GeocodingCompleteEvent CreateGeocodingCompleteEvent(GeocodeAddressesCommand command, Result<Coordinates> geocodeStartingQueryResult, Result<Coordinates> geocodeDestinationQueryResult)
     {
         var starting = geocodeStartingQueryResult.IsSuccess ? new GeocodingCoordinates(true, geocodeStartingQueryResult.Value, null) : new GeocodingCoordinates(false, null, geocodeStartingQueryResult.Error!.Value.Message);
         var destination = geocodeDestinationQueryResult.IsSuccess ? new GeocodingCoordinates(true, geocodeDestinationQueryResult.Value, null) : new GeocodingCoordinates(false, null, geocodeDestinationQueryResult.Error!.Value.Message);

@@ -45,8 +45,8 @@ $csproj = @'
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="MongoDB.Driver" Version="2.21.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0-rc.1.23419.4"/>
+        <PackageReference Include="MongoDB.Driver" Version="2.28.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1"/>
     </ItemGroup>
 </Project>
 '@

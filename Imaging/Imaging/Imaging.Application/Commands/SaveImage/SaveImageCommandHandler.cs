@@ -100,7 +100,7 @@ internal class SaveImageCommandHandler : ICommandHandler<SaveImageCommand>
         }
     }
 
-    private ImagingCompleteEvent CreateImagingCompleteEvent(SaveImageCommand command, Result<string?> result, string imagePath)
+    private static ImagingCompleteEvent CreateImagingCompleteEvent(SaveImageCommand command, Result<string?> result, string imagePath)
     {
         var imagingResult = new ImagingResult(true, result.Value, imagePath, null);
         return new(command.JobId, imagingResult);

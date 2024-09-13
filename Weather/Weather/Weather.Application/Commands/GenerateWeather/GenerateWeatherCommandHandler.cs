@@ -71,7 +71,7 @@ internal class GenerateWeatherCommandHandler : ICommandHandler<GenerateWeatherCo
         }
     }
 
-    private WeatherCompleteEvent CreateWeatherCompleteEvent(GenerateWeatherCommand command, Result<WeatherForecast> result)
+    private static WeatherCompleteEvent CreateWeatherCompleteEvent(GenerateWeatherCommand command, Result<WeatherForecast> result)
     {
         var weather = result.IsSuccess
             ? result.Value

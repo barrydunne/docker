@@ -257,14 +257,14 @@ internal class AwsFilesTests
     public void GetBucketAndKey_guards_against_missing_container_argument()
     {
         var name = _fixture.Create<string>();
-        Assert.That(() => _context.Sut.GetBucketAndKey(string.Empty, name), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input container was empty. (Parameter 'container')"));
+        Assert.That(() => AwsFiles.GetBucketAndKey(string.Empty, name), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input container was empty. (Parameter 'container')"));
     }
 
     [Test]
     public void GetBucketAndKey_guards_against_missing_name_argument()
     {
         var container = _fixture.Create<string>();
-        Assert.That(() => _context.Sut.GetBucketAndKey(container, string.Empty), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input name was empty. (Parameter 'name')"));
+        Assert.That(() => AwsFiles.GetBucketAndKey(container, string.Empty), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input name was empty. (Parameter 'name')"));
     }
 
     [Test]
@@ -276,7 +276,7 @@ internal class AwsFilesTests
         var container = $"/\\/{a.ToUpper()}\\{b}/\\/{c}/\\/";
         var name = _fixture.Create<string>();
 
-        var (bucket, _) = _context.Sut.GetBucketAndKey(container, name);
+        var (bucket, _) = AwsFiles.GetBucketAndKey(container, name);
 
         var expected = $"{a}.{b}...{c}".ToLower();
         Assert.That(bucket, Is.EqualTo(expected));
@@ -291,7 +291,7 @@ internal class AwsFilesTests
         var container = _fixture.Create<string>(); 
         var name = $"/\\/{a}\\{b}/\\/{c}/\\/";
 
-        var (_, key) = _context.Sut.GetBucketAndKey(container, name);
+        var (_, key) = AwsFiles.GetBucketAndKey(container, name);
 
         var expected = $"{a}/{b}/{c}";
         Assert.That(key, Is.EqualTo(expected));

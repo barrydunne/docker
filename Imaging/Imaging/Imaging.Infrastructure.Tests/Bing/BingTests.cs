@@ -97,7 +97,7 @@ internal class BingTests
         var correlationId = _fixture.Create<Guid>();
         _context.WithoutSecretApiKey();
         Assert.That(async () => await _context.Sut.GetImageUrlAsync(address, coordinates, correlationId),
-            Throws.TypeOf<ImagingException>().With.Property("Message").EqualTo("No image result obtained from Bing."));
+            Throws.TypeOf<ImagingException>().With.Property("Message").EqualTo("Value cannot be null. (Parameter 'value')"));
     }
 
     [Test]

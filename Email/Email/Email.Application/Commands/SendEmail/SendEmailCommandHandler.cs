@@ -94,7 +94,7 @@ internal class SendEmailCommandHandler : ICommandHandler<SendEmailCommand>
         }
     }
 
-    private async Task<string> GetImageMimeTypeAsync(MemoryStream imageStream, CancellationToken cancellationToken)
+    private static async Task<string> GetImageMimeTypeAsync(MemoryStream imageStream, CancellationToken cancellationToken)
     {
         var format = await Image.DetectFormatAsync(imageStream, cancellationToken);
         imageStream.Seek(0, SeekOrigin.Begin);

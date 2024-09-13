@@ -1,6 +1,6 @@
 using AspNet.KickStarter;
+using Duende.IdentityServer.Configuration;
 using IdentityServer.Api;
-using IdentityServer4.Configuration;
 
 await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))

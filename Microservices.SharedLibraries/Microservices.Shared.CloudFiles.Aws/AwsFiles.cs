@@ -146,7 +146,7 @@ public class AwsFiles : ICloudFiles
     /// <param name="container">The container name.</param>
     /// <param name="name">The file name.</param>
     /// <returns>A tuple containing the bucket and key.</returns>
-    internal (string Bucket, string Key) GetBucketAndKey(string container, string name)
+    internal static (string Bucket, string Key) GetBucketAndKey(string container, string name)
     {
         Guard.Against.NullOrEmpty(container, nameof(container));
         Guard.Against.NullOrEmpty(name, nameof(name));
