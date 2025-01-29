@@ -1,6 +1,5 @@
 ﻿using Directions.Application.Commands.GenerateDirections;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 
 namespace Directions.Application.Tests.CommandHandlers.GenerateDirectionsCommandHandler;
 

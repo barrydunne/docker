@@ -4,14 +4,15 @@ using Microservices.Shared.Mocks;
 using Microservices.Shared.RestSharpFactory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using System.Net;
+using System.Reflection;
 
 namespace Microservices.Shared.CloudSecrets.SecretsManager.IntegrationTests;
 
 internal class SecretsManagerSecretsTestsContext : IDisposable
 {
-    private readonly IContainer _container;
+    private readonly IContainer _containerApi;
+    private readonly IContainer _containerStatusCodes;
     private readonly IOptions<SecretsManagerOptions> _mockOptions;
     private readonly MockRestSharpResiliencePipeline _mockRestSharpResiliencePipeline;
     private readonly MockLogger<SecretsManagerSecrets> _mockLogger;
@@ -22,9 +23,21 @@ internal class SecretsManagerSecretsTestsContext : IDisposable
 
     internal SecretsManagerSecretsTestsContext()
     {
-        // Run a container with SMTP support. Bind port 1025 to random local port, and wait for HTTP site to be available.
-        _container = new ContainerBuilder()
+        // Run a container with simulated API responses.
+        var conf = GetNginxConf();
+        _containerApi = new ContainerBuilder()
+            .WithImage("nginx:1.25.3")
+            .WithName($"SecretsManagerTests.Nginx_{Guid.NewGuid():N}")
+            .WithResourceMapping(conf, "/etc/nginx/conf.d/default.conf")
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(80))
+            .WithPortBinding(80, true)
+            .Build();
+        _containerApi.StartAsync().GetAwaiter().GetResult();
+
+        // Run a container with HTTP status code support.
+        _containerStatusCodes = new ContainerBuilder()
             .WithImage("ghcr.io/aaronpowell/httpstatus:c82331cbde67f430da66a84a758d94ba5afd7620")
+            .WithName($"SecretsManagerTests.HttpStatus_{Guid.NewGuid():N}")
             .WithPortBinding(80, true)
             .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(wait =>
             {
@@ -33,22 +46,30 @@ internal class SecretsManagerSecretsTestsContext : IDisposable
                            .ForStatusCode(HttpStatusCode.OK);
             }))
             .Build();
-        _container.StartAsync().GetAwaiter().GetResult();
+        _containerStatusCodes.StartAsync().GetAwaiter().GetResult();
 
         _mockOptions = Substitute.For<IOptions<SecretsManagerOptions>>();
         _mockOptions
             .Value
-            .Returns(callInfo => new SecretsManagerOptions { BaseUrl = "http://localhost:10083" });
+            .Returns(callInfo => new SecretsManagerOptions { BaseUrl = $"http://localhost:{_containerApi.GetMappedPublicPort(80)}" });
 
         _mockRestSharpResiliencePipeline = new();
         _mockLogger = new();
+    }
+
+    private byte[] GetNginxConf()
+    {
+        using var mem = new MemoryStream();
+        using var source = Assembly.GetExecutingAssembly().GetManifestResourceStream("Microservices.Shared.CloudSecrets.SecretsManager.IntegrationTests.nginx.conf");
+        source!.CopyTo(mem);
+        return mem.ToArray();
     }
 
     internal SecretsManagerSecretsTestsContext WithForbiddenResponse()
     {
         _mockOptions
             .Value
-            .Returns(callInfo => new SecretsManagerOptions { BaseUrl = $"http://localhost:{_container.GetMappedPublicPort(80)}/403" });
+            .Returns(callInfo => new SecretsManagerOptions { BaseUrl = $"http://localhost:{_containerStatusCodes.GetMappedPublicPort(80)}/403" });
         return this;
     }
 
@@ -56,7 +77,7 @@ internal class SecretsManagerSecretsTestsContext : IDisposable
     {
         _mockOptions
             .Value
-            .Returns(callInfo => new SecretsManagerOptions { BaseUrl = $"http://localhost:{_container.GetMappedPublicPort(80)}/505" });
+            .Returns(callInfo => new SecretsManagerOptions { BaseUrl = $"http://localhost:{_containerStatusCodes.GetMappedPublicPort(80)}/505" });
         return this;
     }
 
@@ -70,7 +91,7 @@ internal class SecretsManagerSecretsTestsContext : IDisposable
 
     internal SecretsManagerSecretsTestsContext AssertWarningLogged(string message)
     {
-        Assert.That(_mockLogger.Messages, Does.Contain($"[{LogLevel.Warning}] {message}"));
+        _mockLogger.Messages.ShouldContain($"[{LogLevel.Warning}] {message}");
         return this;
     }
 
@@ -79,7 +100,10 @@ internal class SecretsManagerSecretsTestsContext : IDisposable
         if (!_disposedValue)
         {
             if (disposing)
-                _container.DisposeAsync().GetAwaiter().GetResult();
+            {
+                _containerApi.DisposeAsync().GetAwaiter().GetResult();
+                _containerStatusCodes.DisposeAsync().GetAwaiter().GetResult();
+            }
             _disposedValue = true;
         }
     }

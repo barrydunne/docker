@@ -19,7 +19,7 @@ internal class DummyApiTests
         var directions = _fixture.Build<Microservices.Shared.Events.Directions>().With(_ => _.IsSuccessful, true).With(_ => _.Error, (string?)null).Create();
         _context.WithDirections(startingCoordinates, destinationCoordinates, directions);
         var result = await _context.Sut.GetDirectionsAsync(startingCoordinates, destinationCoordinates, correlationId);
-        Assert.That(result, Is.EqualTo(directions));
+        result.ShouldBe(directions);
     }
 
     [Test]
@@ -29,6 +29,6 @@ internal class DummyApiTests
         var destinationCoordinates = _fixture.Create<Coordinates>();
         var correlationId = _fixture.Create<Guid>();
         var result = await _context.Sut.GetDirectionsAsync(startingCoordinates, destinationCoordinates, correlationId);
-        Assert.That(result?.Steps?.Length ?? 0, Is.GreaterThan(0));
+        (result?.Steps?.Length ?? 0).ShouldBeGreaterThan(0);
     }
 }

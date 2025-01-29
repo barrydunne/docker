@@ -1,6 +1,5 @@
 ﻿using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 using PublicApi.Application.Commands.CreateJob;
 using PublicApi.Application.Models;
 using PublicApi.Application.Tests.Mocks;
@@ -59,21 +58,21 @@ internal class CreateJobCommandHandlerTestsContext
     internal CreateJobCommandHandlerTestsContext AssertJobSaved(Guid jobId)
     {
         var job = _mockJobRepository.GetJob(jobId);
-        Assert.That(job, Is.Not.Null);
+        job.ShouldNotBeNull();
         return this;
     }
 
     internal CreateJobCommandHandlerTestsContext AssertJobIdempotencyKey(Guid jobId, string idempotencyKey)
     {
         var job = _mockJobRepository.GetJob(jobId);
-        Assert.That(job?.IdempotencyKey, Is.EqualTo(idempotencyKey));
+        job?.IdempotencyKey.ShouldBe(idempotencyKey);
         return this;
     }
 
     internal CreateJobCommandHandlerTestsContext AssertJobStatus(Guid jobId, JobStatus status)
     {
         var job = _mockJobRepository.GetJob(jobId);
-        Assert.That(job?.Status, Is.EqualTo(status));
+        job?.Status.ShouldBe(status);
         return this;
     }
 
@@ -83,7 +82,7 @@ internal class CreateJobCommandHandlerTestsContext
             => _.JobId == jobId
             && _.StartingAddress == command.StartingAddress
             && _.DestinationAddress == command.DestinationAddress);
-        Assert.That(published, Is.Not.Null);
+        published.ShouldNotBeNull();
         return this;
     }
 }

@@ -82,7 +82,7 @@ internal class UpdateStatusCommandHandlerTests
                               .With(_ => _.JobId, MockJobRepository.FailingJobId)
                               .Create();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -92,6 +92,6 @@ internal class UpdateStatusCommandHandlerTests
                               .With(_ => _.JobId, MockJobRepository.FailingJobId)
                               .Create();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo(MockJobRepository.FailingJobIdError));
+        result.Error?.Message.ShouldBe(MockJobRepository.FailingJobIdError);
     }
 }

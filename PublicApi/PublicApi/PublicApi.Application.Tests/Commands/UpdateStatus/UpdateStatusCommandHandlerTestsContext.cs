@@ -1,6 +1,5 @@
 ﻿using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 using PublicApi.Application.Caching;
 using PublicApi.Application.Commands.UpdateStatus;
 using PublicApi.Application.Models;
@@ -66,14 +65,14 @@ internal class UpdateStatusCommandHandlerTestsContext
     internal UpdateStatusCommandHandlerTestsContext AssertJobStatus(Guid jobId, JobStatus status)
     {
         var job = _mockJobRepository.GetJob(jobId);
-        Assert.That(job?.Status, Is.EqualTo(status));
+        job?.Status.ShouldBe(status);
         return this;
     }
 
     internal UpdateStatusCommandHandlerTestsContext AssertJobAdditionalInformation(Guid jobId, string? additionalInformation)
     {
         var job = _mockJobRepository.GetJob(jobId);
-        Assert.That(job?.AdditionalInformation, Is.EqualTo(additionalInformation));
+        job?.AdditionalInformation.ShouldBe(additionalInformation);
         return this;
     }
 

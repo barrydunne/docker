@@ -27,16 +27,20 @@ internal class SmtpEmailTests
     }
 
     [Test]
-    public void SendEmailAsync_guards_against_missing_body()
-        => Assert.That(async () => await _context.Sut.SendEmailAsync(_fixture.Create<string>(), null!, new[] { _fixture.Create<MailAddress>().Address }), 
-            Throws.TypeOf<ArgumentNullException>()
-            .With.Property("Message").EqualTo("Must provide either htmlBody or plainBody (Parameter 'htmlBody')"));
+    public async Task SendEmailAsync_guards_against_missing_body()
+    {
+        async Task<bool> func() => await _context.Sut.SendEmailAsync(_fixture.Create<string>(), null!, new[] { _fixture.Create<MailAddress>().Address });
+        var ex = await func().ShouldThrowAsync<ArgumentNullException>();
+        ex.Message.ShouldBe("Must provide either htmlBody or plainBody (Parameter 'htmlBody')");
+    }
 
     [Test]
-    public void SendEmailAsync_guards_against_missing_to()
-        => Assert.That(async () => await _context.Sut.SendEmailAsync(_fixture.Create<string>(), _fixture.Create<string>(), Array.Empty<string>()),
-            Throws.TypeOf<ArgumentException>()
-            .With.Property("Message").EqualTo("Required input to was empty. (Parameter 'to')"));
+    public async Task SendEmailAsync_guards_against_missing_to()
+    {
+        async Task<bool> func() => await _context.Sut.SendEmailAsync(_fixture.Create<string>(), _fixture.Create<string>(), Array.Empty<string>());
+        var ex = await func().ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldBe("Required input to was empty. (Parameter 'to')");
+    }
 
     [Test]
     public async Task SendEmailAsync_sends_message_using_subject()
@@ -119,7 +123,7 @@ internal class SmtpEmailTests
     {
         var (subject, htmlBody, plainBody, to, cc, bcc) = CreateAnonymousValues();
         var result = await _context.Sut.SendEmailAsync(subject, htmlBody, plainBody, to, cc, bcc);
-        Assert.That(result, Is.True);
+        result.ShouldBeTrue();
     }
 
     [Test]
@@ -128,7 +132,7 @@ internal class SmtpEmailTests
         _context.WithSendException();
         var (subject, htmlBody, plainBody, to, cc, bcc) = CreateAnonymousValues();
         var result = await _context.Sut.SendEmailAsync(subject, htmlBody, plainBody, to, cc, bcc);
-        Assert.That(result, Is.False);
+        result.ShouldBeFalse();
     }
 
     private (string subject, string htmlBody, string plainBody, string[] to, string[] cc, string[] bcc) CreateAnonymousValues()

@@ -3,7 +3,6 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using System.Collections.Concurrent;
 using System.Net;
@@ -154,7 +153,7 @@ internal class AwsFilesTestsContext
         _mockAmazonS3
         .Received(times)
             .PutBucketAsync(Arg.Any<PutBucketRequest>(), Arg.Any<CancellationToken>());
-        Assert.That(_files.TryGetValue(bucket, out var _), Is.True, "Bucket should exist");
+        _files.TryGetValue(bucket, out var _).ShouldBeTrue("Bucket should exist");
         return this;
     }
 
@@ -164,10 +163,10 @@ internal class AwsFilesTestsContext
             .Received(1)
             .UploadObjectFromStreamAsync(container, name, Arg.Any<Stream>(), Arg.Any<IDictionary<string, object>>(), Arg.Any<CancellationToken>());
 
-        Assert.That(_files.TryGetValue(container, out var bucket), Is.True, "Bucket should exist");
+        _files.TryGetValue(container, out var bucket).ShouldBeTrue("Bucket should exist");
         byte[]? bytes = null;
-        Assert.That(bucket?.TryGetValue(name, out bytes), Is.True, "Key should exist");
-        Assert.That(bytes?.SequenceEqual(data), Is.True, "Data should match");
+        bucket?.TryGetValue(name, out bytes).ShouldBeTrue("Key should exist");
+        bytes?.SequenceEqual(data).ShouldBeTrue("Data should match");
         return this;
     }
 

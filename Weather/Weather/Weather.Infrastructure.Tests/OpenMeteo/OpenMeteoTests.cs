@@ -28,7 +28,7 @@ internal class OpenMeteoTests
         _context.WithWeather(coordinates, weather);
         var result = await _context.Sut.GetWeatherAsync(coordinates, correlationId);
         // Use JSON to compare steps collections
-        Assert.That(JsonSerializer.Serialize(result), Is.EqualTo(JsonSerializer.Serialize(weather)));
+        JsonSerializer.Serialize(result).ShouldBe(JsonSerializer.Serialize(weather));
     }
 
     [Test]
@@ -40,7 +40,7 @@ internal class OpenMeteoTests
         var correlationId = _fixture.Create<Guid>();
         _context.WithWeather(coordinates, weather);
         var result = await _context.Sut.GetWeatherAsync(coordinates, correlationId);
-        Assert.That(result.Items![0].Description, Is.EqualTo("Clear"));
+        result.Items![0].Description.ShouldBe("Clear");
     }
 
     [Test]
@@ -52,7 +52,7 @@ internal class OpenMeteoTests
         var correlationId = _fixture.Create<Guid>();
         _context.WithWeather(coordinates, weather);
         var result = await _context.Sut.GetWeatherAsync(coordinates, correlationId);
-        Assert.That(result.Items![0].ImageUrl, Is.Null);
+        result.Items![0].ImageUrl.ShouldBeNull();
     }
 
     [Test]
@@ -66,7 +66,7 @@ internal class OpenMeteoTests
             .WithWeather(coordinates, weather)
             .WithMissingJson();
         var result = await _context.Sut.GetWeatherAsync(coordinates, correlationId);
-        Assert.That(result.Items![0].Description, Is.EqualTo("Clear"));
+        result.Items![0].Description.ShouldBe("Clear");
     }
 
     [Test]
@@ -80,7 +80,7 @@ internal class OpenMeteoTests
             .WithWeather(coordinates, weather)
             .WithMissingJson();
         var result = await _context.Sut.GetWeatherAsync(coordinates, correlationId);
-        Assert.That(result.Items![0].ImageUrl, Is.Null);
+        result.Items![0].ImageUrl.ShouldBeNull();
     }
 
     [Test]
@@ -94,7 +94,7 @@ internal class OpenMeteoTests
             .WithWeather(coordinates, weather)
             .WithInvalidJson();
         var result = await _context.Sut.GetWeatherAsync(coordinates, correlationId);
-        Assert.That(result.Items![0].Description, Is.EqualTo("Clear"));
+        result.Items![0].Description.ShouldBe("Clear");
     }
 
     [Test]
@@ -108,37 +108,40 @@ internal class OpenMeteoTests
             .WithWeather(coordinates, weather)
             .WithInvalidJson();
         var result = await _context.Sut.GetWeatherAsync(coordinates, correlationId);
-        Assert.That(result.Items![0].ImageUrl, Is.Null);
+        result.Items![0].ImageUrl.ShouldBeNull();
     }
 
     [Test]
-    public void MapQuest_GetWeatherAsync_throws_WeatherException_for_bad_request()
+    public async Task MapQuest_GetWeatherAsync_throws_WeatherException_for_bad_request()
     {
         var coordinates = _fixture.Create<Coordinates>();
         var correlationId = _fixture.Create<Guid>();
         _context.WithBadRequest();
-        Assert.That(async () => await _context.Sut.GetWeatherAsync(coordinates, correlationId),
-            Throws.TypeOf<WeatherException>().With.Property("Message").EqualTo("No weather forecast obtained from OpenMeteo."));
+        async Task<WeatherForecast> func() => await _context.Sut.GetWeatherAsync(coordinates, correlationId);
+        var ex = await func().ShouldThrowAsync<WeatherException>();
+        ex.Message.ShouldBe("No weather forecast obtained from OpenMeteo.");
     }
 
     [Test]
-    public void MapQuest_GetWeatherAsync_throws_WeatherException_for_no_result()
+    public async Task MapQuest_GetWeatherAsync_throws_WeatherException_for_no_result()
     {
         var coordinates = _fixture.Create<Coordinates>();
         var correlationId = _fixture.Create<Guid>();
         _context.WithNoResult();
-        Assert.That(async () => await _context.Sut.GetWeatherAsync(coordinates, correlationId),
-            Throws.TypeOf<WeatherException>().With.Property("Message").EqualTo("No weather forecast obtained from OpenMeteo."));
+        async Task<WeatherForecast> func() => await _context.Sut.GetWeatherAsync(coordinates, correlationId);
+        var ex = await func().ShouldThrowAsync<WeatherException>();
+        ex.Message.ShouldBe("No weather forecast obtained from OpenMeteo.");
     }
 
     [Test]
-    public void MapQuest_GetWeatherAsync_throws_for_exception()
+    public async Task MapQuest_GetWeatherAsync_throws_for_exception()
     {
         var coordinates = _fixture.Create<Coordinates>();
         var correlationId = _fixture.Create<Guid>();
         var message = _fixture.Create<string>();
         _context.WithException(message);
-        Assert.That(async () => await _context.Sut.GetWeatherAsync(coordinates, correlationId),
-            Throws.TypeOf<WeatherException>().With.Property("Message").EqualTo(message));
+        async Task<WeatherForecast> func() => await _context.Sut.GetWeatherAsync(coordinates, correlationId);
+        var ex = await func().ShouldThrowAsync<WeatherException>();
+        ex.Message.ShouldBe(message);
     }
 }

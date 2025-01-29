@@ -57,7 +57,7 @@ internal class GetJobStatusQueryHandlerTests
                             .With(_ => _.JobId, job.JobId)
                             .Create();
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.EqualTo(job));
+        result.Value.ShouldBe(job);
     }
 
     [Test]
@@ -65,8 +65,8 @@ internal class GetJobStatusQueryHandlerTests
     {
         var query = _fixture.Create<GetJobStatusQuery>();
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.Null);
-        Assert.That(result.IsSuccess, Is.True);
+        result.Value.ShouldBeNull();
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -78,7 +78,7 @@ internal class GetJobStatusQueryHandlerTests
                             .With(_ => _.JobId, job.JobId)
                             .Create();
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.EqualTo(job));
+        result.Value.ShouldBe(job);
         _context.AssertRepositoryNotUsed(job.JobId);
     }
 
@@ -91,7 +91,7 @@ internal class GetJobStatusQueryHandlerTests
                             .With(_ => _.JobId, job.JobId)
                             .Create();
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.EqualTo(job));
+        result.Value.ShouldBe(job);
         _context.AssertRepositoryUsed(job.JobId);
     }
 
@@ -104,7 +104,7 @@ internal class GetJobStatusQueryHandlerTests
                             .With(_ => _.JobId, job.JobId)
                             .Create();
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.EqualTo(job));
+        result.Value.ShouldBe(job);
         _context.AssertCacheUpdated(job.JobId);
     }
 
@@ -115,6 +115,6 @@ internal class GetJobStatusQueryHandlerTests
                             .With(_ => _.JobId, MockJobRepository.FailingJobId)
                             .Create();
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Error, Is.Not.Null);
+        result.Error.ShouldNotBeNull();
     }
 }

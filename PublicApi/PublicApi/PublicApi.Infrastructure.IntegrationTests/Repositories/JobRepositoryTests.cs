@@ -7,10 +7,11 @@ namespace PublicApi.Infrastructure.IntegrationTests.Repositories;
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 [Parallelizable(ParallelScope.Self)]
 [TestFixture(Category = "JobRepository")]
-public class JobRepositoryTests
+public class JobRepositoryTests : IDisposable
 {
     private readonly Fixture _fixture = new();
     private readonly JobRepositoryTestsContext _context = new();
+    private bool _disposedValue;
 
     public JobRepositoryTests() => _fixture.Customize<Job>(_ => _.With(_ => _.CreatedUtc, UtcNowWithLowPrecision()));
 
@@ -38,7 +39,7 @@ public class JobRepositoryTests
         var job = _fixture.Create<Job>();
         await _context.Sut.InsertAsync(job);
         var retrieved = await _context.Sut.GetJobByIdAsync(job.JobId);
-        Assert.That(JsonSerializer.Serialize(retrieved), Is.EqualTo(JsonSerializer.Serialize(job)));
+        JsonSerializer.Serialize(retrieved).ShouldBe(JsonSerializer.Serialize(job));
     }
 
     [Test]
@@ -46,7 +47,7 @@ public class JobRepositoryTests
     {
         var job = _fixture.Create<Job>();
         var retrieved = await _context.Sut.GetJobByIdAsync(job.JobId);
-        Assert.That(retrieved, Is.Null);
+        retrieved.ShouldBeNull();
     }
 
     [Test]
@@ -55,7 +56,7 @@ public class JobRepositoryTests
         var job = _fixture.Create<Job>();
         await _context.Sut.InsertAsync(job);
         var retrieved = await _context.Sut.GetJobIdByIdempotencyKeyAsync(job.IdempotencyKey);
-        Assert.That(retrieved, Is.EqualTo(job.JobId));
+        retrieved.ShouldBe(job.JobId);
     }
 
     [Test]
@@ -63,7 +64,7 @@ public class JobRepositoryTests
     {
         var job = _fixture.Create<Job>();
         var retrieved = await _context.Sut.GetJobIdByIdempotencyKeyAsync(job.IdempotencyKey);
-        Assert.That(retrieved, Is.Null);
+        retrieved.ShouldBeNull();
     }
 
     [Test]
@@ -114,5 +115,21 @@ public class JobRepositoryTests
         _context.WithExistingIndex(nameof(Job.JobId), true);
         await _context.Sut.InsertAsync(job);
         _context.AssertIndexCreated(nameof(Job.IdempotencyKey));
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+                _context.Dispose();
+            _disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

@@ -19,7 +19,7 @@ internal class DummyApiTests
         var imageUrl = _fixture.Create<string>();
         _context.WithImageUrl(coordinates, imageUrl);
         var result = await _context.Sut.GetImageUrlAsync(address, coordinates, correlationId);
-        Assert.That(result, Is.EqualTo(imageUrl));
+        result.ShouldBe(imageUrl);
     }
 
     [Test]
@@ -29,6 +29,6 @@ internal class DummyApiTests
         var correlationId = _fixture.Create<Guid>();
         var address = _fixture.Create<string>();
         var result = await _context.Sut.GetImageUrlAsync(address, coordinates, correlationId);
-        Assert.That(result, Is.Not.Null.Or.Empty);
+        result.ShouldNotBeNullOrEmpty();
     }
 }

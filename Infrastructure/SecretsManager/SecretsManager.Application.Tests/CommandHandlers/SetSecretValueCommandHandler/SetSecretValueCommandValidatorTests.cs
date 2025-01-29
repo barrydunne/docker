@@ -22,7 +22,7 @@ internal class SetSecretValueCommandValidatorTests
     {
         var command = _fixture.Create<SetSecretValueCommand>();
         var result = await _sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.True);
+        result.IsValid.ShouldBeTrue();
     }
 
     [Test]
@@ -32,7 +32,7 @@ internal class SetSecretValueCommandValidatorTests
                               .With(_ => _.Vault, string.Empty)
                               .Create();
         var result = await _sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -43,7 +43,7 @@ internal class SetSecretValueCommandValidatorTests
                               .Create();
         var result = await _sut.TestValidateAsync(command);
         var error = result.Errors.SingleOrDefault(_ => (_.PropertyName == nameof(command.Vault)) && (_.ErrorMessage == "'Vault' must not be empty."));
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -53,7 +53,7 @@ internal class SetSecretValueCommandValidatorTests
                               .With(_ => _.Secret, string.Empty)
                               .Create();
         var result = await _sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -64,7 +64,7 @@ internal class SetSecretValueCommandValidatorTests
                               .Create();
         var result = await _sut.TestValidateAsync(command);
         var error = result.Errors.SingleOrDefault(_ => (_.PropertyName == nameof(command.Secret)) && (_.ErrorMessage == "'Secret' must not be empty."));
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -72,7 +72,7 @@ internal class SetSecretValueCommandValidatorTests
     {
         SetSecretValueCommand command = null!;
         var result = await _sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -81,6 +81,6 @@ internal class SetSecretValueCommandValidatorTests
         SetSecretValueCommand command = null!;
         var result = await _sut.TestValidateAsync(command);
         var error = result.Errors.SingleOrDefault(_ => (_.PropertyName == nameof(SetSecretValueCommand)) && (_.ErrorMessage == "'SetSecretValueCommand' must not be null."));
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 }

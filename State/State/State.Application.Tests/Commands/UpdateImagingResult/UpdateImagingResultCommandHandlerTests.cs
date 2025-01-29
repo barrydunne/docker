@@ -68,7 +68,7 @@ internal class UpdateImagingResultCommandHandlerTests
         var command = _fixture.Build<UpdateImagingResultCommand>().With(_ => _.JobId, job.JobId).Create();
         await _context.Sut.Handle(command, CancellationToken.None);
         job = _context.GetJob(job.JobId);
-        Assert.That(job?.ImagingSuccessful, Is.EqualTo(command.Imaging.IsSuccessful));
+        job?.ImagingSuccessful.ShouldBe(command.Imaging.IsSuccessful);
     }
 
     [Test]
@@ -84,7 +84,7 @@ internal class UpdateImagingResultCommandHandlerTests
         var command = _fixture.Build<UpdateImagingResultCommand>().With(_ => _.JobId, job.JobId).Create();
         await _context.Sut.Handle(command, CancellationToken.None);
         job = _context.GetJob(job.JobId);
-        Assert.That(job?.ImagingResult, Is.EqualTo(command.Imaging));
+        job?.ImagingResult.ShouldBe(command.Imaging);
     }
 
     [Test]
@@ -93,7 +93,7 @@ internal class UpdateImagingResultCommandHandlerTests
         _context.WithJobRepositoryException();
         var command = _fixture.Create<UpdateImagingResultCommand>();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -109,7 +109,7 @@ internal class UpdateImagingResultCommandHandlerTests
         var command = _fixture.Build<UpdateImagingResultCommand>().With(_ => _.JobId, job.JobId).Create();
         _context.WithSendException(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -125,7 +125,7 @@ internal class UpdateImagingResultCommandHandlerTests
         var command = _fixture.Build<UpdateImagingResultCommand>().With(_ => _.JobId, job.JobId).Create();
         _context.WithSendFailure(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]

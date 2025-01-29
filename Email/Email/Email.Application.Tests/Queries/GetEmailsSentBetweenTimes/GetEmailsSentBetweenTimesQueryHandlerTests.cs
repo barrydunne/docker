@@ -20,6 +20,6 @@ internal class GetEmailsSentBetweenTimesQueryHandlerTests
         _context.WithData(data);
         var query = new GetEmailsSentBetweenTimesQuery(data.Min(_ => _.SentTime), data.Max(_ => _.SentTime), data.Count(), 1);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.EquivalentTo(data));
+        result.Value.ShouldBe(data, ignoreOrder: true);
     }
 }

@@ -13,7 +13,7 @@ internal class ExtensionsTests
         var name = _fixture.Create<string>();
         var expected = $"{Consts.SecretVaultPrefix}{name}{Consts.SecretVaultSuffix}";
         var actual = name.ToSecretVaultName();
-        Assert.That(actual, Is.EqualTo(expected));
+        actual.ShouldBe(expected);
     }
 
     [Test]
@@ -22,6 +22,6 @@ internal class ExtensionsTests
         var name = _fixture.Create<string>();
         var full = $"{Consts.SecretVaultPrefix}{name}{Consts.SecretVaultSuffix}";
         var actual = full.FromSecretVaultName();
-        Assert.That(actual, Is.EqualTo(name));
+        actual.ShouldBe(name);
     }
 }

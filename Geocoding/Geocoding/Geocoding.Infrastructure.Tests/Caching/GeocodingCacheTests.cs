@@ -14,21 +14,21 @@ internal class GeocodingCacheTests
     public async Task GeocodingCache_GetAsync_returns_null_for_unknown_address()
     {
         var cached = await _context.Sut.GetAsync(_fixture.Create<string>());
-        Assert.That(cached, Is.Null);
+        cached.ShouldBeNull();
     }
 
     [Test]
     public async Task GeocodingCache_GetAsync_returns_null_for_empty_address()
     {
         var cached = await _context.Sut.GetAsync(string.Empty);
-        Assert.That(cached, Is.Null);
+        cached.ShouldBeNull();
     }
 
     [Test]
     public async Task GeocodingCache_GetAsync_returns_null_for_blank_address()
     {
         var cached = await _context.Sut.GetAsync("   ");
-        Assert.That(cached, Is.Null);
+        cached.ShouldBeNull();
     }
 
     [Test]
@@ -38,7 +38,7 @@ internal class GeocodingCacheTests
         var coordinates = _fixture.Create<Coordinates>();
         await _context.Sut.SetAsync(address, coordinates, TimeSpan.FromSeconds(10));
         var cached = await _context.Sut.GetAsync(address);
-        Assert.That(cached, Is.EqualTo(coordinates));
+        cached.ShouldBe(coordinates);
     }
 
     [Test]
@@ -48,7 +48,7 @@ internal class GeocodingCacheTests
         var coordinates = _fixture.Create<Coordinates>();
         await _context.Sut.SetAsync(address, coordinates, TimeSpan.FromSeconds(10));
         var cached = await _context.Sut.GetAsync(address);
-        Assert.That(cached, Is.EqualTo(coordinates));
+        cached.ShouldBe(coordinates);
     }
 
     [Test]
@@ -59,6 +59,6 @@ internal class GeocodingCacheTests
         await _context.Sut.SetAsync(address, coordinates, TimeSpan.FromSeconds(10));
         await _context.Sut.RemoveAsync(address);
         var cached = await _context.Sut.GetAsync(address);
-        Assert.That(cached, Is.Null);
+        cached.ShouldBeNull();
     }
 }

@@ -25,7 +25,7 @@ internal class GetEmailsSentToRecipientQueryValidatorTests
     {
         var query = CreateGetEmailsSentToRecipientQuery();
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.True);
+        result.IsValid.ShouldBeTrue();
     }
 
     [Test]
@@ -33,7 +33,7 @@ internal class GetEmailsSentToRecipientQueryValidatorTests
     {
         var query = CreateGetEmailsSentToRecipientQuery(email: string.Empty);
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -42,7 +42,7 @@ internal class GetEmailsSentToRecipientQueryValidatorTests
         var query = CreateGetEmailsSentToRecipientQuery(email: string.Empty);
         var result = await _context.Sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.Email) && _.ErrorMessage == "'Email' must not be empty.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -50,7 +50,7 @@ internal class GetEmailsSentToRecipientQueryValidatorTests
     {
         var query = CreateGetEmailsSentToRecipientQuery(email: "invalid");
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -59,7 +59,7 @@ internal class GetEmailsSentToRecipientQueryValidatorTests
         var query = CreateGetEmailsSentToRecipientQuery(email: "invalid");
         var result = await _context.Sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.Email) && _.ErrorMessage == "'Email' is not a valid email address.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -67,7 +67,7 @@ internal class GetEmailsSentToRecipientQueryValidatorTests
     {
         var query = CreateGetEmailsSentToRecipientQuery(pageSize: int.MinValue);
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -76,7 +76,7 @@ internal class GetEmailsSentToRecipientQueryValidatorTests
         var query = CreateGetEmailsSentToRecipientQuery(pageSize: int.MinValue);
         var result = await _context.Sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.PageSize) && _.ErrorMessage == "'Page Size' must be greater than or equal to '1'.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -84,7 +84,7 @@ internal class GetEmailsSentToRecipientQueryValidatorTests
     {
         var query = CreateGetEmailsSentToRecipientQuery(pageSize: int.MaxValue);
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -93,7 +93,7 @@ internal class GetEmailsSentToRecipientQueryValidatorTests
         var query = CreateGetEmailsSentToRecipientQuery(pageSize: int.MaxValue);
         var result = await _context.Sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.PageSize) && _.ErrorMessage == "'Page Size' must be less than or equal to '500'.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -101,7 +101,7 @@ internal class GetEmailsSentToRecipientQueryValidatorTests
     {
         var query = CreateGetEmailsSentToRecipientQuery(pageNumber: int.MinValue);
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -110,7 +110,7 @@ internal class GetEmailsSentToRecipientQueryValidatorTests
         var query = CreateGetEmailsSentToRecipientQuery(pageNumber: int.MinValue);
         var result = await _context.Sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.PageNumber) && _.ErrorMessage == "'Page Number' must be greater than or equal to '1'.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     private GetEmailsSentToRecipientQuery CreateGetEmailsSentToRecipientQuery(string? email = null, int? pageSize = null, int? pageNumber = null)

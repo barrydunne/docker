@@ -14,7 +14,7 @@ internal class JobCacheTests : IDisposable
 
     [Test]
     public void JobCache_Get_returns_null_for_unknown_key()
-        => Assert.That(_sut.Get(_fixture.Create<Guid>()), Is.Null);
+        => _sut.Get(_fixture.Create<Guid>()).ShouldBeNull();
 
     [Test]
     public void JobCache_Get_returns_job_for_known_key()
@@ -22,7 +22,7 @@ internal class JobCacheTests : IDisposable
         var job = _fixture.Create<Job>();
         _sut.Set(job, TimeSpan.FromSeconds(1));
         var cached = _sut.Get(job.JobId);
-        Assert.That(cached, Is.EqualTo(job));
+        cached.ShouldBe(job);
     }
 
     [Test]
@@ -31,7 +31,7 @@ internal class JobCacheTests : IDisposable
         var job = _fixture.Create<Job>();
         _sut.Set(job, TimeSpan.FromSeconds(1));
         var cached = _sut.Get(job.JobId);
-        Assert.That(cached, Is.EqualTo(job));
+        cached.ShouldBe(job);
     }
 
     [Test]
@@ -41,7 +41,7 @@ internal class JobCacheTests : IDisposable
         _sut.Set(job, TimeSpan.FromSeconds(1));
         _sut.Remove(job.JobId);
         var cached = _sut.Get(job.JobId);
-        Assert.That(cached, Is.Null);
+        cached.ShouldBeNull();
     }
 
     protected virtual void Dispose(bool disposing)

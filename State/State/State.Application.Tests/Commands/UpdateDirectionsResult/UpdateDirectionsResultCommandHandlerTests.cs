@@ -68,7 +68,7 @@ internal class UpdateDirectionsResultCommandHandlerTests
         var command = _fixture.Build<UpdateDirectionsResultCommand>().With(_ => _.JobId, job.JobId).Create();
         await _context.Sut.Handle(command, CancellationToken.None);
         job = _context.GetJob(job.JobId);
-        Assert.That(job?.DirectionsSuccessful, Is.EqualTo(command.Directions.IsSuccessful));
+        job?.DirectionsSuccessful.ShouldBe(command.Directions.IsSuccessful);
     }
 
     [Test]
@@ -84,7 +84,7 @@ internal class UpdateDirectionsResultCommandHandlerTests
         var command = _fixture.Build<UpdateDirectionsResultCommand>().With(_ => _.JobId, job.JobId).Create();
         await _context.Sut.Handle(command, CancellationToken.None);
         job = _context.GetJob(job.JobId);
-        Assert.That(job?.Directions, Is.EqualTo(command.Directions));
+        job?.Directions.ShouldBe(command.Directions);
     }
 
     [Test]
@@ -93,7 +93,7 @@ internal class UpdateDirectionsResultCommandHandlerTests
         _context.WithJobRepositoryException();
         var command = _fixture.Create<UpdateDirectionsResultCommand>();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -109,7 +109,7 @@ internal class UpdateDirectionsResultCommandHandlerTests
         var command = _fixture.Build<UpdateDirectionsResultCommand>().With(_ => _.JobId, job.JobId).Create();
         _context.WithSendException(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -125,7 +125,7 @@ internal class UpdateDirectionsResultCommandHandlerTests
         var command = _fixture.Build<UpdateDirectionsResultCommand>().With(_ => _.JobId, job.JobId).Create();
         _context.WithSendFailure(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
-using NSubstitute;
 using PublicApi.Application.Commands.CreateJob;
 
 namespace PublicApi.Application.Tests.Commands.CreateJob;

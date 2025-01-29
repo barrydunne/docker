@@ -1,6 +1,5 @@
 ﻿using Email.Application.Queries.GetEmailsSentToRecipient;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 
 namespace Email.Application.Tests.Queries.GetEmailsSentToRecipient;
 

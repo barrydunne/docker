@@ -1,6 +1,5 @@
 ﻿using Geocoding.Application.Queries.GetAddressCoordinates;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 
 namespace Geocoding.Application.Tests.Queries.GetAddressCoordinates;
 

@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using System.Text;
+﻿using System.Text;
 
 namespace Microservices.Shared.CloudFiles.Aws.IntegrationTests;
 
@@ -19,7 +18,7 @@ public class AwsFilesTests : IDisposable
         var key = $"{_fixture.Create<string>()}/{_fixture.Create<string>()}.txt";
 
         var fileExists = await _context.Sut.FileExistsAsync(bucket, key);
-        Assert.That(fileExists, Is.False, "File should not exist at the start of the test.");
+        fileExists.ShouldBeFalse("File should not exist at the start of the test.");
 
         var content = _fixture.Create<string>();
         var contentBytes = Encoding.UTF8.GetBytes(content);
@@ -28,29 +27,29 @@ public class AwsFilesTests : IDisposable
         source.Seek(0, SeekOrigin.Begin);
 
         var status = await _context.Sut.UploadFileAsync(bucket, key, source);
-        Assert.That(status, Is.True, "Failed to upload file.");
+        status.ShouldBeTrue("Failed to upload file.");
 
         fileExists = await _context.Sut.FileExistsAsync(bucket, key);
-        Assert.That(fileExists, Is.True, "File should exist after upload.");
+        fileExists.ShouldBeTrue("File should exist after upload.");
 
         using var target = new MemoryStream();
         status = await _context.Sut.DownloadFileAsync(bucket, key, target);
-        Assert.That(status, Is.True, "Failed to download file.");
+        status.ShouldBeTrue("Failed to download file.");
 
         fileExists = await _context.Sut.FileExistsAsync(bucket, key);
-        Assert.That(fileExists, Is.True, "File should still exist after download.");
+        fileExists.ShouldBeTrue("File should still exist after download.");
 
         status = await _context.Sut.DeleteFileAsync(bucket, key);
-        Assert.That(status, Is.True, "Failed to delete file.");
+        status.ShouldBeTrue("Failed to delete file.");
 
         fileExists = await _context.Sut.FileExistsAsync(bucket, key);
-        Assert.That(fileExists, Is.False, "File should not exist after delete.");
+        fileExists.ShouldBeFalse("File should not exist after delete.");
 
         var downloadedBytes = target.ToArray();
-        Assert.That(downloadedBytes.SequenceEqual(contentBytes), Is.True, "Downloaded different bytes");
+        downloadedBytes.ShouldBe(contentBytes, "Downloaded different bytes");
 
         var downloaded = Encoding.UTF8.GetString(downloadedBytes);
-        Assert.That(downloaded, Is.EqualTo(content), "Downloaded content is different");
+        downloaded.ShouldBe(content, "Downloaded content is different");
     }
 
     protected virtual void Dispose(bool disposing)

@@ -1,7 +1,6 @@
 ﻿using AspNet.KickStarter.FunctionalResult;
 using MediatR;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 using State.Application.Commands.CreateJob;
 using State.Application.Commands.NotifyJobStatusUpdate;
 using State.Application.Tests.Mocks;
@@ -84,13 +83,13 @@ internal class CreateJobCommandHandlerTestsContext
     internal CreateJobCommandHandlerTestsContext AssertJobSaved(Guid jobId)
     {
         var job = _mockJobRepository.GetJob(jobId);
-        Assert.That(job, Is.Not.Null);
+        job.ShouldNotBeNull();
         return this;
     }
 
     internal CreateJobCommandHandlerTestsContext AssertNotifyJobStatusUpdateCommandSent(Guid jobId)
     {
-        Assert.That(_notifyJobStatusUpdateCommands, Has.Exactly(1).Matches<NotifyJobStatusUpdateCommand>(_ => _.JobId == jobId));
+        _notifyJobStatusUpdateCommands.Where(_ => _.JobId == jobId).ShouldHaveSingleItem();
         return this;
     }
 }

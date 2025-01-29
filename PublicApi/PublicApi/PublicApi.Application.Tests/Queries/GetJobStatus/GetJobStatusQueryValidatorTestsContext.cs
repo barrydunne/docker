@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
-using NSubstitute;
 using PublicApi.Application.Queries.GetJobStatus;
 
 namespace PublicApi.Application.Tests.Queries.GetJobStatus;

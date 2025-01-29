@@ -21,7 +21,7 @@ internal class SetSecretValueCommandHandlerTests
         var value = _fixture.Create<string>();
         var command = new SetSecretValueCommand(vault, secret, value);
         await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(_context.Vaults[vault.ToSecretVaultName()][secret], Is.EqualTo(value));
+        _context.Vaults[vault.ToSecretVaultName()][secret].ShouldBe(value);
     }
 
     [Test]
@@ -35,7 +35,7 @@ internal class SetSecretValueCommandHandlerTests
         var value = _fixture.Create<string>();
         var command = new SetSecretValueCommand(vault, secret, value);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -49,7 +49,7 @@ internal class SetSecretValueCommandHandlerTests
         var value = _fixture.Create<string>();
         var command = new SetSecretValueCommand(vault, secret, value);
         await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(_context.Vaults[vault.ToSecretVaultName()][secret], Is.EqualTo(value));
+        _context.Vaults[vault.ToSecretVaultName()][secret].ShouldBe(value);
     }
 
     [Test]
@@ -63,7 +63,7 @@ internal class SetSecretValueCommandHandlerTests
         var value = _fixture.Create<string>();
         var command = new SetSecretValueCommand(vault, secret, value);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -74,7 +74,7 @@ internal class SetSecretValueCommandHandlerTests
         var value = _fixture.Create<string>();
         var command = new SetSecretValueCommand(vault, secret, value);
         await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(_context.Vaults[vault.ToSecretVaultName()][secret], Is.EqualTo(value));
+        _context.Vaults[vault.ToSecretVaultName()][secret].ShouldBe(value);
     }
 
     [Test]
@@ -85,7 +85,7 @@ internal class SetSecretValueCommandHandlerTests
         var value = _fixture.Create<string>();
         var command = new SetSecretValueCommand(vault, secret, value);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -97,6 +97,6 @@ internal class SetSecretValueCommandHandlerTests
         var command = new SetSecretValueCommand(vault, secret, value);
         _context.WithException();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 }

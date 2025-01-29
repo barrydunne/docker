@@ -1,6 +1,5 @@
 ﻿using Imaging.Application.Queries.GetImageUrl;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 
 namespace Imaging.Application.Tests.QueryHandlers.GetImageUrl;
 

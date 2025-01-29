@@ -99,7 +99,7 @@ internal class SendEmailCommandHandlerTests
         var command = _fixture.Create<SendEmailCommand>();
         _context.WithSendFailure();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -108,6 +108,6 @@ internal class SendEmailCommandHandlerTests
         var command = _fixture.Create<SendEmailCommand>();
         _context.WithSendException();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 }

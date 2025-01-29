@@ -146,7 +146,8 @@ public class RabbitMQQueueTests
     {
         using var sut = _context.Sut<SendMessage>();
         sut.StartReceiving((_) => Task.FromResult(false));
-        Assert.That(() => sut.StartSubscribing(true, (_) => Task.FromResult(true)), Throws.InvalidOperationException);
+        Action action = () => sut.StartSubscribing(true, (_) => Task.FromResult(true));
+        action.ShouldThrow<InvalidOperationException>();
     }
 
     [Test]

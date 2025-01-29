@@ -16,12 +16,12 @@
     <PackageReference Include="AspNet.KickStarter" Version="1.2.3" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
     <PackageReference Include="Mapster" Version="7.4.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="OpenTelemetry.Contrib.Instrumentation.AWS" Version="1.0.2" />
-    <PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
-    <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.32.0.97167">
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.5.0.109200">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

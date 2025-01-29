@@ -3,7 +3,6 @@ using Email.Application.Templates;
 using Email.Application.Tests.Mocks;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 
 namespace Email.Application.Tests.Commands.SendEmail;
 
@@ -91,17 +90,17 @@ internal class SendEmailCommandHandlerTestsContext
 
     internal SendEmailCommandHandlerTestsContext AssertEmailSentWithoutImage()
     {
-        Assert.That(_mockCloudEmail.Emails.Count, Is.EqualTo(1), "No email sent");
+        _mockCloudEmail.Emails.Count.ShouldBe(1, "No email sent");
         var (_, _, _, _, _, _, images) = _mockCloudEmail.Emails.First();
-        Assert.That(images, Is.Empty, "Image sent");
+        images.ShouldBeEmpty("Image sent");
         return this;
     }
 
     internal SendEmailCommandHandlerTestsContext AssertEmailSentWithImage()
     {
-        Assert.That(_mockCloudEmail.Emails.Count, Is.EqualTo(1), "No email sent");
+        _mockCloudEmail.Emails.Count.ShouldBe(1, "No email sent");
         var (_, _, _, _, _, _, images) = _mockCloudEmail.Emails.First();
-        Assert.That(images.Count(), Is.EqualTo(1), "Image not sent");
+        images.Count().ShouldBe(1, "Image not sent");
         return this;
     }
 }

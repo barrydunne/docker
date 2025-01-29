@@ -1,7 +1,6 @@
 ﻿using Geocoding.Infrastructure.Caching;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 using System.Collections.Concurrent;

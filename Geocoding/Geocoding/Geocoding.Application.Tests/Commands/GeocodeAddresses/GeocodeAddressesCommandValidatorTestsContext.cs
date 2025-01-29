@@ -1,6 +1,5 @@
 ﻿using Geocoding.Application.Commands.GeocodeAddresses;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 
 namespace Geocoding.Application.Tests.Commands.GeocodeAddresses;
 

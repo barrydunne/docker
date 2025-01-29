@@ -1,9 +1,7 @@
-﻿using AutoFixture;
-using DotNet.Testcontainers.Builders;
+﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using System.Net;
 
 namespace Microservices.Shared.CloudEmail.Smtp.IntegrationTests;
@@ -26,6 +24,7 @@ internal class SmtpEmailTestsContext : IDisposable
         // Run a container with SMTP support. Bind port 1025 to random local port, and wait for HTTP site to be available.
         _container = new ContainerBuilder()
             .WithImage("dockage/mailcatcher:0.9.0")
+            .WithName($"SmtpEmailTests.MailCatcher_{Guid.NewGuid():N}")
             .WithPortBinding(1025, true)
             .WithPortBinding(1080, true)
             .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(wait =>

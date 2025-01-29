@@ -50,7 +50,7 @@ internal class GetAddressCoordinatesQueryHandlerTests
         var coordinates = _fixture.Create<Coordinates>();
         _context.WithExternalResult(coordinates);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.EqualTo(coordinates));
+        result.Value.ShouldBe(coordinates);
     }
 
     [Test]
@@ -67,8 +67,7 @@ internal class GetAddressCoordinatesQueryHandlerTests
     public async Task GeocodeAddressesCommandHandler_returns_result_from_external_service_if_not_exists_in_cache()
     {
         var query = _fixture.Create<GetAddressCoordinatesQuery>();
-        var coordinates = _fixture.Create<Coordinates>();
-        var result = await _context.Sut.Handle(query, CancellationToken.None);
+        await _context.Sut.Handle(query, CancellationToken.None);
         _context.AssertExternalServiceUsed(query.Address);
     }
 
@@ -76,7 +75,6 @@ internal class GetAddressCoordinatesQueryHandlerTests
     public async Task GeocodeAddressesCommandHandler_saves_coordinates_in_cache()
     {
         var query = _fixture.Create<GetAddressCoordinatesQuery>();
-        var coordinates = _fixture.Create<Coordinates>();
         await _context.Sut.Handle(query, CancellationToken.None);
         _context.AssertCacheUpdated(query.Address);
     }
@@ -88,7 +86,7 @@ internal class GetAddressCoordinatesQueryHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -98,6 +96,6 @@ internal class GetAddressCoordinatesQueryHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo(message));
+        result.Error?.Message.ShouldBe(message);
     }
 }

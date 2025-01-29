@@ -1,5 +1,3 @@
-using AutoFixture;
-
 namespace Microservices.Shared.CloudSecrets.Aws.IntegrationTests;
 
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
@@ -18,7 +16,8 @@ public class AwsSecretsTests : IDisposable
     public async Task GetSecretsAsync_returns_secrets_when_exist()
     {
         var secrets = await _context.Sut.GetSecretsAsync(_context.KnownVault);
-        Assert.That(secrets, Is.Not.Null.Or.Empty);
+        secrets.ShouldNotBeNull();
+        secrets.ShouldNotBeEmpty();
     }
 
     [Test]
@@ -26,14 +25,14 @@ public class AwsSecretsTests : IDisposable
     {
         var vault = _fixture.Create<string>();
         var secrets = await _context.Sut.GetSecretsAsync(vault);
-        Assert.That(secrets, Is.Empty);
+        secrets.ShouldBeEmpty();
     }
 
     [Test]
     public async Task GetSecretValueAsync_returns_secrets_when_exist()
     {
         var value = await _context.Sut.GetSecretValueAsync(_context.KnownVault, _context.KnownSecret);
-        Assert.That(value, Is.EqualTo(_context.KnownValue));
+        value.ShouldBe(_context.KnownValue);
     }
 
     [Test]
@@ -41,7 +40,7 @@ public class AwsSecretsTests : IDisposable
     {
         var vault = _fixture.Create<string>();
         var value = await _context.Sut.GetSecretValueAsync(vault, _context.KnownSecret);
-        Assert.That(value, Is.Null);
+        value.ShouldBeNull();
     }
 
     [Test]
@@ -49,7 +48,7 @@ public class AwsSecretsTests : IDisposable
     {
         var secret = _fixture.Create<string>();
         var value = await _context.Sut.GetSecretValueAsync(_context.KnownVault, secret);
-        Assert.That(value, Is.Null);
+        value.ShouldBeNull();
     }
 
     protected virtual void Dispose(bool disposing)

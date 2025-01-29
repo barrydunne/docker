@@ -1,6 +1,5 @@
 ﻿using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 using State.Application.Commands.NotifyJobStatusUpdate;
 
 namespace State.Application.Tests.Commands.NotifyJobStatusUpdate;
@@ -46,7 +45,7 @@ internal class NotifyJobStatusUpdateCommandHandlerTestsContext
             => _.JobId == command.JobId
             && _.Status == command.Status
             && _.Details == command.Details);
-        Assert.That(published, Is.Not.Null);
+        published.ShouldNotBeNull();
         return this;
     }
 }

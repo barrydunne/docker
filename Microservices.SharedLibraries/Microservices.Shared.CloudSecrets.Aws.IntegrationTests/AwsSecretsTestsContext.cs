@@ -1,6 +1,5 @@
 ﻿using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
-using AutoFixture;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Microservices.Shared.Mocks;
@@ -34,7 +33,8 @@ internal class AwsSecretsTestsContext : IDisposable
     {
         // Run a LocalStack container. Bind port 4566 to random local port, and wait for HTTP site to be available.
         _container = new ContainerBuilder()
-            .WithImage("localstack/localstack:3.4")
+            .WithImage("localstack/localstack:4.0")
+            .WithName($"AwsSecretsTests.LocalStack_{Guid.NewGuid():N}")
             .WithPortBinding(4566, true)
             .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(wait =>
             {

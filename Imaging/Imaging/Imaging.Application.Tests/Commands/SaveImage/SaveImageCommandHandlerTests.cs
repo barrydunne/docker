@@ -71,7 +71,7 @@ internal class SaveImageCommandHandlerTests
     {
         var command = _fixture.Create<SaveImageCommand>();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -80,7 +80,7 @@ internal class SaveImageCommandHandlerTests
         var command = _fixture.Create<SaveImageCommand>();
         _context.WithInvalidCoordinates(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -89,7 +89,7 @@ internal class SaveImageCommandHandlerTests
         var command = _fixture.Create<SaveImageCommand>();
         _context.WithCoordinatesException(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -98,7 +98,7 @@ internal class SaveImageCommandHandlerTests
         var command = _fixture.Create<SaveImageCommand>();
         _context.WithDownloadFailure();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -107,7 +107,7 @@ internal class SaveImageCommandHandlerTests
         var command = _fixture.Create<SaveImageCommand>();
         _context.WithUploadFailure();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -143,7 +143,7 @@ internal class SaveImageCommandHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -153,6 +153,6 @@ internal class SaveImageCommandHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo(message));
+        result.Error?.Message.ShouldBe(message);
     }
 }

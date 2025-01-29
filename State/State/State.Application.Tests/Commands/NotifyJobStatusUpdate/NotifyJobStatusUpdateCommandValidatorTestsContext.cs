@@ -1,5 +1,4 @@
 ﻿using Microservices.Shared.Mocks;
-using NSubstitute;
 using State.Application.Commands.NotifyJobStatusUpdate;
 
 namespace State.Application.Tests.Commands.NotifyJobStatusUpdate;

@@ -33,7 +33,7 @@ internal class GetWeatherQueryHandlerTests
         var weather = _context.CreateWeatherForecast();
         _context.WithExternalResult(weather);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.EqualTo(weather));
+        result.Value.ShouldBe(weather);
     }
 
     [Test]
@@ -43,7 +43,7 @@ internal class GetWeatherQueryHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -53,6 +53,6 @@ internal class GetWeatherQueryHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo(message));
+        result.Error?.Message.ShouldBe(message);
     }
 }

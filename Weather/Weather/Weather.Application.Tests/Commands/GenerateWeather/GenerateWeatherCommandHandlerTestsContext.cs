@@ -2,7 +2,6 @@
 using MediatR;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 using System.Collections.Concurrent;
 using Weather.Application.Commands.GenerateWeather;
 using Weather.Application.Queries.GetWeather;
@@ -103,7 +102,7 @@ internal class GenerateWeatherCommandHandlerTestsContext
 
     internal GenerateWeatherCommandHandlerTestsContext AssertWeatherObtained(GenerateWeatherCommand command)
     {
-        Assert.That(_weather.Keys, Does.Contain(command.Coordinates));
+        _weather.Keys.ShouldContain(command.Coordinates);
         return this;
     }
 
@@ -114,7 +113,7 @@ internal class GenerateWeatherCommandHandlerTestsContext
             && _.Weather.IsSuccessful == _validCoordinates
             && _.Weather.Error == (_validCoordinates ? null : GetError(command))
             && _.Weather.Items == (_validCoordinates ? _weather[command.Coordinates].Items : null));
-        Assert.That(published, Is.Not.Null);
+        published.ShouldNotBeNull();
         return this;
     }
 }

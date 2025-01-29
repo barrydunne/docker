@@ -1,6 +1,5 @@
 ﻿using Email.Application.Commands.SendEmail;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 
 namespace Email.Application.Tests.Commands.SendEmail;
 

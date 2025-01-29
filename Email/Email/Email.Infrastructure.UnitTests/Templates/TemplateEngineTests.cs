@@ -22,7 +22,7 @@ internal class TemplateEngineTests
     {
         (var startingAddress, var destinationAddress, var directions, var weather, var imageCid) = CreateInput();
         var html = new TemplateEngine().GenerateHtml(startingAddress, destinationAddress, directions, weather, imageCid);
-        Assert.That(html, Does.Contain(startingAddress));
+        html.ShouldContain(startingAddress);
     }
 
     [Test]
@@ -30,7 +30,7 @@ internal class TemplateEngineTests
     {
         (var startingAddress, var destinationAddress, var directions, var weather, var imageCid) = CreateInput();
         var html = new TemplateEngine().GenerateHtml(startingAddress, destinationAddress, directions, weather, imageCid);
-        Assert.That(html, Does.Contain(destinationAddress));
+        html.ShouldContain(destinationAddress);
     }
 
     [Test]
@@ -38,8 +38,8 @@ internal class TemplateEngineTests
     {
         (var startingAddress, var destinationAddress, var directions, var weather, var imageCid) = CreateInput();
         var html = new TemplateEngine().GenerateHtml(startingAddress, destinationAddress, directions, weather, imageCid);
-        Assert.That(html, Does.Contain(directions.Steps![0].Description));
-        Assert.That(html, Does.Not.Contain("No Directions Available"));
+        html.ShouldContain(directions.Steps![0].Description);
+        html.ShouldNotContain("No Directions Available");
     }
 
     [Test]
@@ -47,8 +47,8 @@ internal class TemplateEngineTests
     {
         (var startingAddress, var destinationAddress, var directions, var weather, var imageCid) = CreateInput(withDirectionsSuccessful: false);
         var html = new TemplateEngine().GenerateHtml(startingAddress, destinationAddress, directions, weather, imageCid);
-        Assert.That(html, Does.Contain("No Directions Available"));
-        Assert.That(html, Does.Not.Contain(directions.Steps![0].Description));
+        html.ShouldContain("No Directions Available");
+        html.ShouldNotContain(directions.Steps![0].Description);
     }
 
     [Test]
@@ -56,8 +56,8 @@ internal class TemplateEngineTests
     {
         (var startingAddress, var destinationAddress, var directions, var weather, var imageCid) = CreateInput(withDirections: false);
         var html = new TemplateEngine().GenerateHtml(startingAddress, destinationAddress, directions, weather, imageCid);
-        Assert.That(html, Does.Not.Contain("No Directions Available"));
-        Assert.That(html, Does.Not.Contain("<li>"));
+        html.ShouldNotContain("No Directions Available");
+        html.ShouldNotContain("<li>");
     }
 
     [Test]
@@ -65,8 +65,8 @@ internal class TemplateEngineTests
     {
         (var startingAddress, var destinationAddress, var directions, var weather, var imageCid) = CreateInput();
         var html = new TemplateEngine().GenerateHtml(startingAddress, destinationAddress, directions, weather, imageCid);
-        Assert.That(html, Does.Contain(weather.Items![0].ImageUrl));
-        Assert.That(html, Does.Not.Contain("No Weather Available"));
+        html.ShouldContain(weather.Items![0].ImageUrl!);
+        html.ShouldNotContain("No Weather Available");
     }
 
     [Test]
@@ -74,8 +74,8 @@ internal class TemplateEngineTests
     {
         (var startingAddress, var destinationAddress, var directions, var weather, var imageCid) = CreateInput(withWeatherSuccessful: false);
         var html = new TemplateEngine().GenerateHtml(startingAddress, destinationAddress, directions, weather, imageCid);
-        Assert.That(html, Does.Contain("No Weather Available"));
-        Assert.That(html, Does.Not.Contain(weather.Items![0].ImageUrl));
+        html.ShouldContain("No Weather Available");
+        html.ShouldNotContain(weather.Items![0].ImageUrl!);
     }
 
     [Test]
@@ -83,8 +83,8 @@ internal class TemplateEngineTests
     {
         (var startingAddress, var destinationAddress, var directions, var weather, var imageCid) = CreateInput(withWeather: false);
         var html = new TemplateEngine().GenerateHtml(startingAddress, destinationAddress, directions, weather, imageCid);
-        Assert.That(html, Does.Not.Contain("No Weather Available"));
-        Assert.That(html, Does.Not.Contain("class=\"MaxC\""));
+        html.ShouldNotContain("No Weather Available");
+        html.ShouldNotContain("class=\"MaxC\"");
     }
 
     [Test]
@@ -92,8 +92,8 @@ internal class TemplateEngineTests
     {
         (var startingAddress, var destinationAddress, var directions, var weather, var imageCid) = CreateInput();
         var html = new TemplateEngine().GenerateHtml(startingAddress, destinationAddress, directions, weather, imageCid);
-        Assert.That(html, Does.Contain($"""<img src="cid:{imageCid}" />"""));
-        Assert.That(html, Does.Not.Contain("No Image Available"));
+        html.ShouldContain($"""<img src="cid:{imageCid}" />""");
+        html.ShouldNotContain("No Image Available");
     }
 
     [Test]
@@ -101,8 +101,8 @@ internal class TemplateEngineTests
     {
         (var startingAddress, var destinationAddress, var directions, var weather, var imageCid) = CreateInput(withImage: false);
         var html = new TemplateEngine().GenerateHtml(startingAddress, destinationAddress, directions, weather, imageCid);
-        Assert.That(html, Does.Contain("No Image Available"));
-        Assert.That(html, Does.Not.Contain($"""<img src="cid:{imageCid}" />"""));
+        html.ShouldContain("No Image Available");
+        html.ShouldNotContain($"""<img src="cid:{imageCid}" />""");
     }
 
     private (string StartingAddress, string DestinationAddress, Directions Directions, WeatherForecast Weather, string? ImageCid) CreateInput(bool withDirectionsSuccessful = true, bool withDirections = true, bool withWeatherSuccessful = true, bool withWeather = true, bool withImage = true)

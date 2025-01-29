@@ -1,13 +1,11 @@
 ﻿using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
-using AutoFixture;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using System.Net;
 using System.Net.Mail;
 
@@ -30,7 +28,8 @@ internal class AwsEmailTestsContext : IDisposable
     {
         // Run a LocalStack container. Bind port 4566 to random local port, and wait for HTTP site to be available.
         _container = new ContainerBuilder()
-            .WithImage("localstack/localstack:3.4")
+            .WithImage("localstack/localstack:4.0")
+            .WithName($"AwsEmailTests.LocalStack_{Guid.NewGuid():N}")
             .WithPortBinding(4566, true)
             .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(wait =>
             {

@@ -1,7 +1,6 @@
 ﻿using AspNet.KickStarter.FunctionalResult;
 using MediatR;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 using State.Application.Commands.CreateJob;
 using State.Application.Commands.NotifyJobStatusUpdate;
 using State.Application.Commands.NotifyProcessingComplete;
@@ -106,15 +105,13 @@ internal class UpdateImagingResultCommandHandlerTestsContext
 
     internal UpdateImagingResultCommandHandlerTestsContext AssertNotifyJobStatusUpdateCommandSent(Guid jobId, bool error)
     {
-        Assert.That(_notifyJobStatusUpdateCommands, Has.Exactly(1).Matches<NotifyJobStatusUpdateCommand>(_
-            => _.JobId == jobId
-            && string.IsNullOrWhiteSpace(_.Details) == !error));
+        _notifyJobStatusUpdateCommands.Where(_ => _.JobId == jobId && string.IsNullOrWhiteSpace(_.Details) == !error).ShouldHaveSingleItem();
         return this;
     }
 
     internal UpdateImagingResultCommandHandlerTestsContext AssertNotifyProcessingCompleteCommandSent(Guid jobId)
     {
-        Assert.That(_notifyJobStatusUpdateCommands, Has.Exactly(1).Matches<NotifyJobStatusUpdateCommand>(_ => _.JobId == jobId));
+        _notifyJobStatusUpdateCommands.Where(_ => _.JobId == jobId).ShouldHaveSingleItem();
         return this;
     }
 }

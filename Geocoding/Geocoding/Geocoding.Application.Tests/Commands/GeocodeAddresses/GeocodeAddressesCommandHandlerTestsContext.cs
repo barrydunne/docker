@@ -4,7 +4,6 @@ using Geocoding.Application.Queries.GetAddressCoordinates;
 using MediatR;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 using System.Collections.Concurrent;
 
 namespace Geocoding.Application.Tests.Commands.GeocodeAddresses;
@@ -115,7 +114,7 @@ internal class GeocodeAddressesCommandHandlerTestsContext
 
     internal GeocodeAddressesCommandHandlerTestsContext AssertAddressGeocoded(string address)
     {
-        Assert.That(_geocodedAddresses.Keys, Does.Contain(address));
+        _geocodedAddresses.Keys.ShouldContain(address);
         return this;
     }
 
@@ -129,7 +128,7 @@ internal class GeocodeAddressesCommandHandlerTestsContext
             && _.DestinationCoordinates.IsSuccessful == _validDestinationAddress
             && _.DestinationCoordinates.Coordinates == (_validDestinationAddress ? _geocodedAddresses[command.DestinationAddress] : null)
             && _.DestinationCoordinates.Error == (_validDestinationAddress ? null : GetError(command.DestinationAddress)));
-        Assert.That(published, Is.Not.Null);
+        published.ShouldNotBeNull();
         return this;
     }
 }

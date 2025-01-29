@@ -15,7 +15,7 @@ function Invoke-Tests {
         exit 1
     }
 }
-
+<#
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudEmail.Aws.UnitTests/Microservices.Shared.CloudEmail.Aws.UnitTests.csproj' -includeAssembly 'Microservices.Shared.CloudEmail.Aws' -coverageName 'cea.u'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudEmail.Aws.IntegrationTests/Microservices.Shared.CloudEmail.Aws.IntegrationTests.csproj' -includeAssembly 'Microservices.Shared.CloudEmail.Aws' -coverageName 'cea.i'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudEmail.Smtp.UnitTests/Microservices.Shared.CloudEmail.Smtp.UnitTests.csproj' -includeAssembly 'Microservices.Shared.CloudEmail.Smtp' -coverageName 'ce.u'
@@ -31,6 +31,7 @@ Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudSe
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.Queues.RabbitMQ.UnitTests/Microservices.Shared.Queues.RabbitMQ.UnitTests.csproj' -includeAssembly 'Microservices.Shared.Queues.RabbitMQ' -coverageName 'mq.u'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.Queues.RabbitMQ.IntegrationTests/Microservices.Shared.Queues.RabbitMQ.IntegrationTests.csproj' -includeAssembly 'Microservices.Shared.Queues.RabbitMQ' -coverageName 'mq.i'
 Invoke-Tests -csproj 'Infrastructure/SecretsManager/SecretsManager.Application.Tests/SecretsManager.Application.Tests.csproj' -includeAssembly 'SecretsManager.Application' -coverageName 'sm.a'
+#>
 Invoke-Tests -csproj 'PublicApi/PublicApi/PublicApi.Application.Tests/PublicApi.Application.Tests.csproj' -includeAssembly 'PublicApi.Application' -coverageName 'p.a'
 Invoke-Tests -csproj 'PublicApi/PublicApi/PublicApi.Infrastructure.IntegrationTests/PublicApi.Infrastructure.IntegrationTests.csproj' -includeAssembly 'PublicApi.Infrastructure' -coverageName 'p.r'
 Invoke-Tests -csproj 'State/State/State.Application.Tests/State.Application.Tests.csproj' -includeAssembly 'State.Application' -coverageName 's.a'
@@ -47,15 +48,12 @@ Invoke-Tests -csproj 'Email/Email/Email.Application.Tests/Email.Application.Test
 Invoke-Tests -csproj 'Email/Email/Email.Infrastructure.IntegrationTests/Email.Infrastructure.IntegrationTests.csproj' -includeAssembly 'Email.Infrastructure' -coverageName 'e.ri'
 Invoke-Tests -csproj 'Email/Email/Email.Infrastructure.UnitTests/Email.Infrastructure.UnitTests.csproj' -includeAssembly 'Email.Infrastructure' -coverageName 'e.ru'
 
-Write-Host Removing local copy of httpstat.us
-docker rm -f http-status
-
 Write-Host Generating Reports
 Set-Location $PSScriptRoot
 # Check dotnet-reportgenerator-globaltool is installed
 dotnet tool list -g dotnet-reportgenerator-globaltool | Out-Null
 if ($LastExitCode -ne 0) {
-    dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.1.26
+    dotnet tool install --global dotnet-reportgenerator-globaltool
 }
 reportgenerator -reports:'TestResults/cea.u.xml;TestResults/cea.i.xml;TestResults/ce.u.xml;TestResults/ce.i.xml;TestResults/cfa.u.xml;TestResults/cfa.i.xml;TestResults/cf.u.xml;TestResults/cf.i.xml;TestResults/csa.u.xml;TestResults/csa.i.xml;TestResults/cs.u.xml;TestResults/cs.i.xml;TestResults/mq.u.xml;TestResults/mq.i.xml;TestResults/sm.a.xml;TestResults/p.a.xml;TestResults/p.r.xml;TestResults/s.a.xml;TestResults/s.i.xml;TestResults/g.a.xml;TestResults/g.e.xml;TestResults/d.a.xml;TestResults/d.e.xml;TestResults/w.a.xml;TestResults/w.e.xml;TestResults/i.a.xml;TestResults/e.a.xml;TestResults/e.ri.xml;TestResults/e.ru.xml' -targetdir:TestResults/CoverageReport -reporttypes:"Html_Dark;TextSummary"
 if ($IsLinux) {

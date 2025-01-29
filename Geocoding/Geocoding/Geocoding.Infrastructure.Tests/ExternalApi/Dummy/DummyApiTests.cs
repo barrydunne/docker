@@ -18,7 +18,7 @@ internal class DummyApiTests
         var coordinates = _fixture.Create<Coordinates>();
         _context.WithAddressCoordinates(address, coordinates);
         var result = await _context.Sut.GetCoordinatesAsync(address, correlationId);
-        Assert.That(result, Is.EqualTo(coordinates));
+        result.ShouldBe(coordinates);
     }
 
     [Test]
@@ -27,6 +27,6 @@ internal class DummyApiTests
         var address = _fixture.Create<string>();
         var correlationId = _fixture.Create<Guid>();
         var result = await _context.Sut.GetCoordinatesAsync(address, correlationId);
-        Assert.That(result.Latitude, Is.GreaterThan(0));
+        result.Latitude.ShouldBeGreaterThan(0);
     }
 }

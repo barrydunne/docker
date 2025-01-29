@@ -24,7 +24,7 @@ internal class UpdateStatusCommandValidatorTests
     {
         var command = _fixture.Create<UpdateStatusCommand>();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.True);
+        result.IsValid.ShouldBeTrue();
     }
 
     [Test]
@@ -34,7 +34,7 @@ internal class UpdateStatusCommandValidatorTests
                               .With(_ => _.JobId, Guid.Empty)
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -45,6 +45,6 @@ internal class UpdateStatusCommandValidatorTests
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(command.JobId) && _.ErrorMessage == "'Job Id' must not be empty.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 }

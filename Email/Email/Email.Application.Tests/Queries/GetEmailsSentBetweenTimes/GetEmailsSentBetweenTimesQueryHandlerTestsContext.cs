@@ -2,7 +2,6 @@
 using Email.Application.Queries.GetEmailsSentBetweenTimes;
 using Email.Application.Tests.Mocks;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 
 namespace Email.Application.Tests.Queries.GetEmailsSentBetweenTimes;
 

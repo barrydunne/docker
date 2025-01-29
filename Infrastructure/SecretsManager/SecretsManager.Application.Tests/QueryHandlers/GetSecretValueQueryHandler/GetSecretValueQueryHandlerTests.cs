@@ -20,7 +20,7 @@ internal class GetSecretValueQueryHandlerTests
         var secret = secrets.Keys.OrderBy(_ => Random.Shared.NextDouble()).First();
         var query = new GetSecretValueQuery(vault, secret);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.EqualTo(secrets[secret]));
+        result.Value.ShouldBe(secrets[secret]);
     }
 
     [Test]
@@ -30,8 +30,8 @@ internal class GetSecretValueQueryHandlerTests
         var secret = _fixture.Create<string>();
         var query = new GetSecretValueQuery(vault, secret);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.Null);
-        Assert.That(result.IsSuccess, Is.True);
+        result.Value.ShouldBeNull();
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -42,7 +42,7 @@ internal class GetSecretValueQueryHandlerTests
         var query = new GetSecretValueQuery(vault, secret);
         _context.WithException();
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.Null);
-        Assert.That(result.IsSuccess, Is.True);
+        result.Value.ShouldBeNull();
+        result.IsSuccess.ShouldBeTrue();
     }
 }

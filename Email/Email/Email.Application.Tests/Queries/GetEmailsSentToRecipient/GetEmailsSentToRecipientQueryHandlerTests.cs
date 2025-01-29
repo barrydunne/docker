@@ -20,6 +20,6 @@ internal class GetEmailsSentToRecipientQueryHandlerTests
         _context.WithData(data);
         var query = new GetEmailsSentToRecipientQuery(email, data.Count(), 1);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.EquivalentTo(data));
+        result.Value.ShouldBe(data, ignoreOrder: true);
     }
 }

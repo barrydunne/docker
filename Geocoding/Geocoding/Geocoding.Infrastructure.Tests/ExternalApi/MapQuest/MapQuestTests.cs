@@ -29,45 +29,49 @@ internal class MapQuestTests
         var coordinates = _fixture.Create<Coordinates>();
         _context.WithAddressCoordinates(address, coordinates);
         var result = await _context.Sut.GetCoordinatesAsync(address, correlationId);
-        Assert.That(result, Is.EqualTo(coordinates));
+        result.ShouldBe(coordinates);
     }
 
     [Test]
-    public void MapQuest_GetCoordinatesAsync_throws_GeocodingException_for_no_result()
+    public async Task MapQuest_GetCoordinatesAsync_throws_GeocodingException_for_no_result()
     {
         var correlationId = _fixture.Create<Guid>();
-        Assert.That(async () => await _context.Sut.GetCoordinatesAsync(string.Empty, correlationId),
-            Throws.TypeOf<GeocodingException>().With.Property("Message").EqualTo("No geocoding result obtained from MapQuest."));
+        async Task<Coordinates> func() => await _context.Sut.GetCoordinatesAsync(string.Empty, correlationId);
+        var ex = await func().ShouldThrowAsync<GeocodingException>();
+        ex.Message.ShouldBe("No geocoding result obtained from MapQuest.");
     }
 
     [Test]
-    public void MapQuest_GetCoordinatesAsync_throws_for_invalid_api_key()
+    public async Task MapQuest_GetCoordinatesAsync_throws_for_invalid_api_key()
     {
         var address = _fixture.Create<string>();
         var correlationId = _fixture.Create<Guid>();
         _context.WithSecretApiKey(_fixture.Create<string>());
-        Assert.That(async () => await _context.Sut.GetCoordinatesAsync(address, correlationId),
-            Throws.TypeOf<GeocodingException>().With.Property("Message").EqualTo("No geocoding result obtained from MapQuest."));
+        async Task<Coordinates> func() => await _context.Sut.GetCoordinatesAsync(address, correlationId);
+        var ex = await func().ShouldThrowAsync<GeocodingException>();
+        ex.Message.ShouldBe("No geocoding result obtained from MapQuest.");
     }
 
     [Test]
-    public void MapQuest_GetCoordinatesAsync_throws_for_no_api_key()
+    public async Task MapQuest_GetCoordinatesAsync_throws_for_no_api_key()
     {
         var address = _fixture.Create<string>();
         var correlationId = _fixture.Create<Guid>();
         _context.WithoutSecretApiKey();
-        Assert.That(async () => await _context.Sut.GetCoordinatesAsync(address, correlationId),
-            Throws.TypeOf<GeocodingException>().With.Property("Message").EqualTo("No geocoding result obtained from MapQuest."));
+        async Task<Coordinates> func() => await _context.Sut.GetCoordinatesAsync(address, correlationId);
+        var ex = await func().ShouldThrowAsync<GeocodingException>();
+        ex.Message.ShouldBe("No geocoding result obtained from MapQuest.");
     }
 
     [Test]
-    public void MapQuest_GetCoordinatesAsync_throws_for_exception()
+    public async Task MapQuest_GetCoordinatesAsync_throws_for_exception()
     {
         var address = _fixture.Create<string>();
         var correlationId = _fixture.Create<Guid>();
         var message = _fixture.Create<string>();
         _context.WithException(message);
-        Assert.That(async () => await _context.Sut.GetCoordinatesAsync(address, correlationId),
-            Throws.TypeOf<GeocodingException>().With.Property("Message").EqualTo(message));
+        async Task<Coordinates> func() => await _context.Sut.GetCoordinatesAsync(address, correlationId);
+        var ex = await func().ShouldThrowAsync<GeocodingException>();
+        ex.Message.ShouldBe(message);
     }
 }

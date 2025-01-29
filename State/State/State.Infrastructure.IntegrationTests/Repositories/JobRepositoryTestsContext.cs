@@ -3,17 +3,21 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using State.Application.Models;
 using State.Infrastructure.Repositories;
+using Testcontainers.MongoDb;
 
 namespace State.Infrastructure.IntegrationTests.Repositories;
 
-internal class JobRepositoryTestsContext
+internal class JobRepositoryTestsContext : IDisposable
 {
+    private readonly MongoDbContainer _container;
     private readonly string _connectionString;
     private readonly MockCloudSecrets _mockCloudSecrets;
     private readonly MockLogger<JobRepository> _mockLogger;
     private readonly Fixture _fixture;
     private readonly string _databaseName;
     private readonly string _collectionName;
+
+    private bool _disposedValue;
 
     internal JobRepository Sut { get; }
 
@@ -24,7 +28,17 @@ internal class JobRepositoryTestsContext
          * use admin
          * db.createUser({user: "integration.tests",pwd:"password", roles:["userAdminAnyDatabase", "dbAdminAnyDatabase", "readWriteAnyDatabase"]})
          */
-        _connectionString = "mongodb://integration.tests:password@localhost:12017/";
+
+        _container = new MongoDbBuilder()
+            .WithImage("mongo:7.0.2")
+            .WithName($"JobRepositoryTests.Mongo_{Guid.NewGuid():N}")
+            .WithUsername("integration.tests")
+            .WithPassword("password")
+            .Build();
+
+        _container.StartAsync().GetAwaiter().GetResult();
+
+        _connectionString = _container.GetConnectionString();
         _mockCloudSecrets = new();
         _mockCloudSecrets.WithSecretValue("state", "mongo.connectionstring", _connectionString);
 
@@ -49,7 +63,7 @@ internal class JobRepositoryTestsContext
         return database.GetCollection<Job>(_collectionName);
     }
 
-    private IMongoQueryable<Job> GetCollectionQueryable() => GetCollection().AsQueryable();
+    private IQueryable<Job> GetCollectionQueryable() => GetCollection().AsQueryable();
 
     internal JobRepositoryTestsContext DeleteDatabase()
     {
@@ -74,7 +88,7 @@ internal class JobRepositoryTestsContext
     internal JobRepositoryTestsContext AssertJobSaved(Job job)
     {
         var saved = GetCollectionQueryable().Where(_ => _.JobId == job.JobId).FirstOrDefault();
-        Assert.That(saved, Is.Not.Null);
+        saved.ShouldNotBeNull();
         return this;
     }
 
@@ -82,7 +96,25 @@ internal class JobRepositoryTestsContext
     {
         var indexes = GetCollection().Indexes.List().ToList();
         var indexKeyNames = indexes.Select(_ => string.Join(",", _["key"].AsBsonDocument.Elements.Select(_ => _.Name))).ToArray();
-        Assert.That(indexKeyNames, Does.Contain(propertyName));
+        indexKeyNames.ShouldContain(propertyName);
         return this;
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                _container.DisposeAsync().GetAwaiter().GetResult();
+            }
+            _disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

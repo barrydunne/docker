@@ -18,7 +18,7 @@ internal class GetSecretVaultsQueryHandlerTests
             _context.WithVaultSecrets(vault, _fixture.Create<Dictionary<string, string>>());
         var query = new GetSecretVaultsQuery();
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.EquivalentTo(vaults));
+        result.Value.ShouldBe(vaults);
     }
 
     [Test]
@@ -26,7 +26,7 @@ internal class GetSecretVaultsQueryHandlerTests
     {
         var query = new GetSecretVaultsQuery();
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.Empty);
+        result.Value.ShouldBeEmpty();
     }
 
     [Test]
@@ -35,6 +35,6 @@ internal class GetSecretVaultsQueryHandlerTests
         var query = new GetSecretVaultsQuery();
         _context.WithException();
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.Empty);
+        result.Value.ShouldBeEmpty();
     }
 }

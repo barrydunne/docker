@@ -33,7 +33,7 @@ internal class GetImageUrlQueryHandlerTests
         var imageUrl = _fixture.Create<string>();
         _context.WithExternalResult(imageUrl);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.EqualTo(imageUrl));
+        result.Value.ShouldBe(imageUrl);
     }
 
     [Test]
@@ -43,7 +43,7 @@ internal class GetImageUrlQueryHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -53,6 +53,6 @@ internal class GetImageUrlQueryHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo(message));
+        result.Error?.Message.ShouldBe(message);
     }
 }

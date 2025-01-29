@@ -4,7 +4,6 @@ using Directions.Application.Queries.GetDirections;
 using MediatR;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 using System.Collections.Concurrent;
 
 using EventDirections = Microservices.Shared.Events.Directions;
@@ -108,7 +107,7 @@ internal class GenerateDirectionsCommandHandlerTestsContext
 
     internal GenerateDirectionsCommandHandlerTestsContext AssertDirectionsObtained(GenerateDirectionsCommand command)
     {
-        Assert.That(_directions.Keys, Does.Contain(GetKey(command)));
+        _directions.Keys.ShouldContain(GetKey(command));
         return this;
     }
 
@@ -121,7 +120,7 @@ internal class GenerateDirectionsCommandHandlerTestsContext
             && (_.Directions.Steps == (_validCoordinates ? _directions[GetKey(command)].Steps : null))
             && (_.Directions.TravelTimeSeconds == (_validCoordinates ? _directions[GetKey(command)].TravelTimeSeconds : null))
             && (_.Directions.DistanceKm == (_validCoordinates ? _directions[GetKey(command)].DistanceKm : null)));
-        Assert.That(published, Is.Not.Null);
+        published.ShouldNotBeNull();
         return this;
     }
 }

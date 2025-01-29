@@ -2,7 +2,6 @@
 using Amazon.SecretsManager.Model;
 using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Logging;
-using NSubstitute;
 using RestSharp;
 using System.Net;
 using System.Net.Mime;
@@ -108,7 +107,7 @@ internal class AwsSecretsTestsContext
 
     internal AwsSecretsTestsContext AssertErrorLogged(string message)
     {
-        Assert.That(_mockLogger.Messages, Does.Contain($"[{LogLevel.Error}] {message}"));
+        _mockLogger.Messages.ShouldContain($"[{LogLevel.Error}] {message}");
         return this;
     }
 }

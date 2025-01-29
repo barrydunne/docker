@@ -22,7 +22,7 @@ internal class GetSecretValueQueryValidatorTests
     {
         var query = _fixture.Create<GetSecretValueQuery>();
         var result = await _sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.True);
+        result.IsValid.ShouldBeTrue();
     }
 
     [Test]
@@ -32,7 +32,7 @@ internal class GetSecretValueQueryValidatorTests
                             .With(_ => _.Vault, string.Empty)
                             .Create();
         var result = await _sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -43,7 +43,7 @@ internal class GetSecretValueQueryValidatorTests
                             .Create();
         var result = await _sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.Vault) && _.ErrorMessage == "'Vault' must not be empty.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -53,7 +53,7 @@ internal class GetSecretValueQueryValidatorTests
                             .With(_ => _.Secret, string.Empty)
                             .Create();
         var result = await _sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -64,7 +64,7 @@ internal class GetSecretValueQueryValidatorTests
                             .Create();
         var result = await _sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.Secret) && _.ErrorMessage == "'Secret' must not be empty.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -72,7 +72,7 @@ internal class GetSecretValueQueryValidatorTests
     {
         GetSecretValueQuery query = null!;
         var result = await _sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -81,6 +81,6 @@ internal class GetSecretValueQueryValidatorTests
         GetSecretValueQuery query = null!;
         var result = await _sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(GetSecretValueQuery) && _.ErrorMessage == "'GetSecretValueQuery' must not be null.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 }

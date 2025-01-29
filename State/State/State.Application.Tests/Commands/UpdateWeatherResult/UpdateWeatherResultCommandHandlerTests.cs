@@ -68,7 +68,7 @@ internal class UpdateWeatherResultCommandHandlerTests
         var command = _fixture.Build<UpdateWeatherResultCommand>().With(_ => _.JobId, job.JobId).Create();
         await _context.Sut.Handle(command, CancellationToken.None);
         job = _context.GetJob(job.JobId);
-        Assert.That(job?.WeatherSuccessful, Is.EqualTo(command.Weather.IsSuccessful));
+        job?.WeatherSuccessful.ShouldBe(command.Weather.IsSuccessful);
     }
 
     [Test]
@@ -84,7 +84,7 @@ internal class UpdateWeatherResultCommandHandlerTests
         var command = _fixture.Build<UpdateWeatherResultCommand>().With(_ => _.JobId, job.JobId).Create();
         await _context.Sut.Handle(command, CancellationToken.None);
         job = _context.GetJob(job.JobId);
-        Assert.That(job?.WeatherForecast, Is.EqualTo(command.Weather));
+        job?.WeatherForecast.ShouldBe(command.Weather);
     }
 
     [Test]
@@ -93,7 +93,7 @@ internal class UpdateWeatherResultCommandHandlerTests
         _context.WithJobRepositoryException();
         var command = _fixture.Create<UpdateWeatherResultCommand>();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -109,7 +109,7 @@ internal class UpdateWeatherResultCommandHandlerTests
         var command = _fixture.Build<UpdateWeatherResultCommand>().With(_ => _.JobId, job.JobId).Create();
         _context.WithSendException(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -125,7 +125,7 @@ internal class UpdateWeatherResultCommandHandlerTests
         var command = _fixture.Build<UpdateWeatherResultCommand>().With(_ => _.JobId, job.JobId).Create();
         _context.WithSendFailure(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]

@@ -2,7 +2,6 @@
 using Microservices.Shared.Queues.RabbitMQ.UnitTests.ApiModels;
 using Microservices.Shared.Queues.RabbitMQ.UnitTests.QueueModels;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Collections.Concurrent;
@@ -168,19 +167,19 @@ internal class RabbitMQQueueTestsContext
 
     internal RabbitMQQueueTestsContext AssertQueueCreatedOnce(string queue, bool durable, bool exclusive, bool autoDelete)
     {
-        Assert.That(_queues, Has.Exactly(1).Matches<QueueModel>(_ => (_.Queue == queue) && (_.Durable == durable) && (_.Exclusive == exclusive) && (_.AutoDelete == autoDelete)));
+        _queues.Where(_ => (_.Queue == queue) && (_.Durable == durable) && (_.Exclusive == exclusive) && (_.AutoDelete == autoDelete)).ShouldHaveSingleItem();
         return this;
     }
 
     internal RabbitMQQueueTestsContext AssertExchangeCreatedOnce(string exchange, string type)
     {
-        Assert.That(_exchanges, Has.Exactly(1).Matches<ExchangeModel>(_ => (_.Exchange == exchange) && (_.Type == type)));
+        _exchanges.Where(_ => (_.Exchange == exchange) && (_.Type == type)).ShouldHaveSingleItem();
         return this;
     }
 
     internal RabbitMQQueueTestsContext AssertMessagePublished(string exchange, string routingKey, SendMessage message)
     {
-        Assert.That(_published, Has.Exactly(1).Matches<PublishModel>(_ => (_.Exchange == exchange) && (_.RoutingKey == routingKey) && (Encoding.UTF8.GetString(_.Body.ToArray()) == JsonSerializer.Serialize(message))));
+        _published.Where(_ => (_.Exchange == exchange) && (_.RoutingKey == routingKey) && (Encoding.UTF8.GetString(_.Body.ToArray()) == JsonSerializer.Serialize(message))).ShouldHaveSingleItem();
         return this;
     }
 
@@ -204,40 +203,40 @@ internal class RabbitMQQueueTestsContext
 
     internal RabbitMQQueueTestsContext AssertBindingWithoutHeaders(string queue, string exchange, string routingKey)
     {
-        Assert.That(_bindings, Has.Exactly(1).Matches<BindingModel>(_ => (_.Queue == queue) && (_.Exchange == exchange) && (_.RoutingKey == routingKey)));
+        _bindings.Where(_ => (_.Queue == queue) && (_.Exchange == exchange) && (_.RoutingKey == routingKey)).ShouldHaveSingleItem();
         return this;
     }
 
     internal RabbitMQQueueTestsContext AssertQueueHeaders(string queueName, IDictionary<string, object>? arguments)
     {
         var queue = _queues.FirstOrDefault(_ => _.Queue == queueName);
-        Assert.That(queue, Is.Not.Null, "Queue not found");
+        queue.ShouldNotBeNull("Queue not found");
         if (arguments is null)
-            Assert.That(queue!.Arguments, Is.Null, "Different arguments");
+            queue!.Arguments.ShouldBeNull("Different arguments");
         else
         {
-            Assert.That(arguments.Keys.ToArray(), Is.EquivalentTo(queue!.Arguments!.Keys.ToArray()), "Different keys");
+            arguments.Keys.ShouldBe(queue!.Arguments!.Keys, "Different keys");
             foreach (var key in arguments.Keys)
-                Assert.That(arguments[key], Is.EqualTo(queue.Arguments![key]), $"Different {key} value");
+                arguments[key].ShouldBe(queue.Arguments![key], $"Different {key} value");
         }
         return this;
     }
 
     internal RabbitMQQueueTestsContext AssertExchangeNames(params string[] exchangeNames)
     {
-        Assert.That(exchangeNames, Is.EquivalentTo(_exchanges.Select(_ => _.Exchange)));
+        exchangeNames.ShouldBe(_exchanges.Select(_ => _.Exchange), ignoreOrder: true);
         return this;
     }
 
     internal RabbitMQQueueTestsContext AssertQueueNames(params string[] queueNames)
     {
-        Assert.That(queueNames, Is.EquivalentTo(_queues.Select(_ => _.Queue)));
+        queueNames.ShouldBe(_queues.Select(_ => _.Queue), ignoreOrder: true);
         return this;
     }
 
     internal RabbitMQQueueTestsContext AssertBindings(params BindingModel[] bindingModels)
     {
-        Assert.That(bindingModels, Is.EquivalentTo(_bindings));
+        bindingModels.ShouldBe(_bindings, ignoreOrder: true);
         return this;
     }
 

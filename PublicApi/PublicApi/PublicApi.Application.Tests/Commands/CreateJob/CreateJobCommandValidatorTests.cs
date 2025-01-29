@@ -24,7 +24,7 @@ internal class CreateJobCommandValidatorTests
     {
         var command = _fixture.Create<CreateJobCommand>();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.True);
+        result.IsValid.ShouldBeTrue();
     }
 
     [Test]
@@ -34,7 +34,7 @@ internal class CreateJobCommandValidatorTests
                               .With(_ => _.IdempotencyKey, string.Empty)
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -45,7 +45,7 @@ internal class CreateJobCommandValidatorTests
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(command.IdempotencyKey) && _.ErrorMessage == "'Idempotency Key' must not be empty.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -55,7 +55,7 @@ internal class CreateJobCommandValidatorTests
                               .With(_ => _.StartingAddress, string.Empty)
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -66,7 +66,7 @@ internal class CreateJobCommandValidatorTests
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(command.StartingAddress) && _.ErrorMessage == "'Starting Address' must not be empty.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -76,7 +76,7 @@ internal class CreateJobCommandValidatorTests
                               .With(_ => _.DestinationAddress, string.Empty)
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -87,7 +87,7 @@ internal class CreateJobCommandValidatorTests
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(command.DestinationAddress) && _.ErrorMessage == "'Destination Address' must not be empty.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -97,7 +97,7 @@ internal class CreateJobCommandValidatorTests
                               .With(_ => _.Email, string.Empty)
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -108,6 +108,6 @@ internal class CreateJobCommandValidatorTests
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(command.Email) && _.ErrorMessage == "'Email' must not be empty.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 }

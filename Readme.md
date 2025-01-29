@@ -53,7 +53,7 @@ The example shown was captured when running with real external services.
     <a href="Screenshots/MetricsImaging.png" target="_blank" style="display:inline-block;vertical-align:top;"><img src="Screenshots/MetricsImaging.png" width="100px"/></a>
     <a href="Screenshots/MetricsRabbitMQ.png" target="_blank" style="display:inline-block;vertical-align:top;"><img src="Screenshots/MetricsRabbitMQ.png" width="100px"/></a>
 
-  - Over 500 tests (unit and integration) providing 100% code coverage using Moq and AutoFixture.
+  - Over 500 tests (unit and integration) providing 100% code coverage using NSubstitute ~~Moq~~, AutoFixture and Shouldly. Integration tests using TestContainers for external dependencies, including a RabbitMQ cluster.
 
     <a href="Screenshots/CodeCoverage.png" target="_blank"><img src="Screenshots/CodeCoverageHeader.png" width="400px"/></a>
 
@@ -105,9 +105,10 @@ This codebase showcases the following technologies:
 • Minimal API
 • Mocks
 • MongoDB
-• Moq
+• ~~Moq~~
 • MySQL
 • Nginx
+• NSubstitute
 • NuGet
 • NUnit
 • OAuth2
@@ -120,6 +121,7 @@ This codebase showcases the following technologies:
 • REST
 • Seq
 • Serilog
+• Shouldly
 • Structured logging
 • Swagger
 • TestContainers

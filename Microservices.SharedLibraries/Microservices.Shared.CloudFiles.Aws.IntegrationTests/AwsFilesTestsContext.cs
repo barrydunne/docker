@@ -5,7 +5,6 @@ using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using System.Net;
 
 namespace Microservices.Shared.CloudFiles.Aws.IntegrationTests;
@@ -25,7 +24,8 @@ internal class AwsFilesTestsContext : IDisposable
     {
         // Run a LocalStack container. Bind port 4566 to random local port, and wait for HTTP site to be available.
         _container = new ContainerBuilder()
-            .WithImage("localstack/localstack:3.4")
+            .WithImage("localstack/localstack:4.0")
+            .WithName($"AwsFilesTests.LocalStack_{Guid.NewGuid():N}")
             .WithPortBinding(4566, true)
             .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(wait =>
             {

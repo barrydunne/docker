@@ -1,6 +1,5 @@
 ﻿using Imaging.Application.Commands.SaveImage;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 
 namespace Imaging.Application.Tests.Commands.SaveImage;
 

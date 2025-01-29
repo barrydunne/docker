@@ -19,7 +19,7 @@ internal class DummyApiTests
         var correlationId = _fixture.Create<Guid>();
         _context.WithWeather(coordinates, weather);
         var result = await _context.Sut.GetWeatherAsync(coordinates, correlationId);
-        Assert.That(result, Is.EqualTo(weather));
+        result.ShouldBe(weather);
     }
 
     [Test]
@@ -28,6 +28,6 @@ internal class DummyApiTests
         var coordinates = _fixture.Create<Coordinates>();
         var correlationId = _fixture.Create<Guid>();
         var result = await _context.Sut.GetWeatherAsync(coordinates, correlationId);
-        Assert.That(result?.Items?.Length ?? 0, Is.GreaterThan(0));
+        (result?.Items?.Length ?? 0).ShouldBeGreaterThan(0);
     }
 }

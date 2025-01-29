@@ -1,6 +1,5 @@
 ﻿using Directions.Application.Queries.GetDirections;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 
 namespace Directions.Application.Tests.QueryHandlers.GetDirectionsQueryHandler;
 

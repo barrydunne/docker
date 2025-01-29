@@ -58,7 +58,7 @@ internal class CreateJobCommandHandlerTests
                               .With(_ => _.StartingAddress, MockJobRepository.FailingStartingAddress)
                               .Create();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -68,7 +68,7 @@ internal class CreateJobCommandHandlerTests
                               .With(_ => _.StartingAddress, MockJobRepository.FailingStartingAddress)
                               .Create();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo(MockJobRepository.FailingStartingAddress));
+        result.Error?.Message.ShouldBe(MockJobRepository.FailingStartingAddress);
     }
 
     [Test]
@@ -77,7 +77,7 @@ internal class CreateJobCommandHandlerTests
         var command = _fixture.Create<CreateJobCommand>();
         _context.WithSendException(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -86,7 +86,7 @@ internal class CreateJobCommandHandlerTests
         var command = _fixture.Create<CreateJobCommand>();
         _context.WithSendException(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo(_context.GetError(command)));
+        result.Error?.Message.ShouldBe(_context.GetError(command));
     }
 
     [Test]
@@ -95,7 +95,7 @@ internal class CreateJobCommandHandlerTests
         var command = _fixture.Create<CreateJobCommand>();
         _context.WithSendFailure(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -104,6 +104,6 @@ internal class CreateJobCommandHandlerTests
         var command = _fixture.Create<CreateJobCommand>();
         _context.WithSendFailure(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo(_context.GetError(command)));
+        result.Error?.Message.ShouldBe(_context.GetError(command));
     }
 }

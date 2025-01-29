@@ -47,7 +47,7 @@ internal class GenerateWeatherCommandHandlerTests
     {
         var command = _fixture.Create<GenerateWeatherCommand>();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -56,7 +56,7 @@ internal class GenerateWeatherCommandHandlerTests
         var command = _fixture.Create<GenerateWeatherCommand>();
         _context.WithInvalidCoordinates(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -65,7 +65,7 @@ internal class GenerateWeatherCommandHandlerTests
         var command = _fixture.Create<GenerateWeatherCommand>();
         _context.WithCoordinatesException(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -101,7 +101,7 @@ internal class GenerateWeatherCommandHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -111,6 +111,6 @@ internal class GenerateWeatherCommandHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo(message));
+        result.Error?.Message.ShouldBe(message);
     }
 }

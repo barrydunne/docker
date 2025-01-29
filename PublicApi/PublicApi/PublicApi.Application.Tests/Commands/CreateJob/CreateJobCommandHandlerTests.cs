@@ -55,7 +55,7 @@ internal class CreateJobCommandHandlerTests
                               .With(_ => _.IdempotencyKey, job.IdempotencyKey)
                               .Create();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.Value, Is.EqualTo(job.JobId));
+        result.Value.ShouldBe(job.JobId);
     }
 
     [Test]
@@ -97,7 +97,7 @@ internal class CreateJobCommandHandlerTests
                               .With(_ => _.IdempotencyKey, MockJobRepository.FailingIdempotencyKey)
                               .Create();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -107,6 +107,6 @@ internal class CreateJobCommandHandlerTests
                               .With(_ => _.IdempotencyKey, MockJobRepository.FailingIdempotencyKey)
                               .Create();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo(MockJobRepository.FailingIdempotencyKey));
+        result.Error!.Value.Message.ShouldBe(MockJobRepository.FailingIdempotencyKey);
     }
 }

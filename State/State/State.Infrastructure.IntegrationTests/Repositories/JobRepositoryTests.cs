@@ -7,10 +7,11 @@ namespace State.Infrastructure.IntegrationTests.Repositories;
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 [Parallelizable(ParallelScope.Self)]
 [TestFixture(Category = "JobRepository")]
-public class JobRepositoryTests
+public class JobRepositoryTests : IDisposable
 {
     private readonly Fixture _fixture;
     private readonly JobRepositoryTestsContext _context;
+    private bool _disposedValue;
 
     public JobRepositoryTests()
     {
@@ -36,7 +37,7 @@ public class JobRepositoryTests
         var job = _fixture.Create<Job>();
         await _context.Sut.InsertAsync(job);
         var retrieved = await _context.Sut.GetJobByIdAsync(job.JobId);
-        Assert.That(JsonSerializer.Serialize(retrieved), Is.EqualTo(JsonSerializer.Serialize(job)));
+        JsonSerializer.Serialize(retrieved).ShouldBe(JsonSerializer.Serialize(job));
     }
 
     [Test]
@@ -44,7 +45,7 @@ public class JobRepositoryTests
     {
         var job = _fixture.Create<Job>();
         var retrieved = await _context.Sut.GetJobByIdAsync(job.JobId);
-        Assert.That(retrieved, Is.Null);
+        retrieved.ShouldBeNull();
     }
 
     [Test]
@@ -68,7 +69,7 @@ public class JobRepositoryTests
     {
         var job = _fixture.Create<Job>();
         var status = await _context.Sut.GetJobCompletionStatusAsync(job.JobId);
-        Assert.That(status, Is.Null);
+        status.ShouldBeNull();
     }
 
     [Test]
@@ -79,7 +80,7 @@ public class JobRepositoryTests
         job.Directions = null;
         await _context.Sut.InsertAsync(job);
         var status = await _context.Sut.GetJobCompletionStatusAsync(job.JobId);
-        Assert.That(status, Is.Null);
+        status.ShouldBeNull();
     }
 
     [Test]
@@ -90,7 +91,7 @@ public class JobRepositoryTests
         job.WeatherForecast = null;
         await _context.Sut.InsertAsync(job);
         var status = await _context.Sut.GetJobCompletionStatusAsync(job.JobId);
-        Assert.That(status, Is.Null);
+        status.ShouldBeNull();
     }
 
     [Test]
@@ -101,7 +102,7 @@ public class JobRepositoryTests
         job.ImagingResult = null;
         await _context.Sut.InsertAsync(job);
         var status = await _context.Sut.GetJobCompletionStatusAsync(job.JobId);
-        Assert.That(status, Is.Null);
+        status.ShouldBeNull();
     }
 
     [Test]
@@ -113,7 +114,7 @@ public class JobRepositoryTests
         job.ImagingSuccessful = true;
         await _context.Sut.InsertAsync(job);
         var status = await _context.Sut.GetJobCompletionStatusAsync(job.JobId);
-        Assert.That(status, Is.False);
+        status.ShouldBe(false);
     }
 
     [Test]
@@ -125,7 +126,7 @@ public class JobRepositoryTests
         job.ImagingSuccessful = true;
         await _context.Sut.InsertAsync(job);
         var status = await _context.Sut.GetJobCompletionStatusAsync(job.JobId);
-        Assert.That(status, Is.False);
+        status.ShouldBe(false);
     }
 
     [Test]
@@ -137,7 +138,7 @@ public class JobRepositoryTests
         job.ImagingSuccessful = false;
         await _context.Sut.InsertAsync(job);
         var status = await _context.Sut.GetJobCompletionStatusAsync(job.JobId);
-        Assert.That(status, Is.False);
+        status.ShouldBe(false);
     }
 
     [Test]
@@ -149,7 +150,7 @@ public class JobRepositoryTests
         job.ImagingSuccessful = true;
         await _context.Sut.InsertAsync(job);
         var status = await _context.Sut.GetJobCompletionStatusAsync(job.JobId);
-        Assert.That(status, Is.True);
+        status.ShouldBe(true);
     }
 
     [Test]
@@ -161,7 +162,7 @@ public class JobRepositoryTests
         var geocoding = _fixture.Create<GeocodingResult>();
         await _context.Sut.UpdateJobStatusAsync(job.JobId, successful, geocoding);
         var retrieved = await _context.Sut.GetJobByIdAsync(job.JobId);
-        Assert.That(retrieved?.GeocodingResult, Is.EqualTo(geocoding));
+        retrieved?.GeocodingResult.ShouldBe(geocoding);
     }
 
     [Test]
@@ -173,7 +174,7 @@ public class JobRepositoryTests
         var geocoding = _fixture.Create<GeocodingResult>();
         await _context.Sut.UpdateJobStatusAsync(job.JobId, successful, geocoding);
         var retrieved = await _context.Sut.GetJobByIdAsync(job.JobId);
-        Assert.That(retrieved?.GeocodingSuccessful, Is.EqualTo(successful));
+        retrieved?.GeocodingSuccessful.ShouldBe(successful);
     }
 
     [Test]
@@ -185,7 +186,7 @@ public class JobRepositoryTests
         var directions = _fixture.Create<Directions>();
         await _context.Sut.UpdateJobStatusAsync(job.JobId, successful, directions);
         var retrieved = await _context.Sut.GetJobByIdAsync(job.JobId);
-        Assert.That(JsonSerializer.Serialize(retrieved?.Directions), Is.EqualTo(JsonSerializer.Serialize(directions)));
+        JsonSerializer.Serialize(retrieved?.Directions).ShouldBe(JsonSerializer.Serialize(directions));
     }
 
     [Test]
@@ -197,7 +198,7 @@ public class JobRepositoryTests
         var directions = _fixture.Create<Directions>();
         await _context.Sut.UpdateJobStatusAsync(job.JobId, successful, directions);
         var retrieved = await _context.Sut.GetJobByIdAsync(job.JobId);
-        Assert.That(retrieved?.DirectionsSuccessful, Is.EqualTo(successful));
+        retrieved?.DirectionsSuccessful.ShouldBe(successful);
     }
 
     [Test]
@@ -209,7 +210,7 @@ public class JobRepositoryTests
         var weather = _fixture.Create<WeatherForecast>();
         await _context.Sut.UpdateJobStatusAsync(job.JobId, successful, weather);
         var retrieved = await _context.Sut.GetJobByIdAsync(job.JobId);
-        Assert.That(JsonSerializer.Serialize(retrieved?.WeatherForecast), Is.EqualTo(JsonSerializer.Serialize(weather)));
+        JsonSerializer.Serialize(retrieved?.WeatherForecast).ShouldBe(JsonSerializer.Serialize(weather));
     }
 
     [Test]
@@ -221,7 +222,7 @@ public class JobRepositoryTests
         var weather = _fixture.Create<WeatherForecast>();
         await _context.Sut.UpdateJobStatusAsync(job.JobId, successful, weather);
         var retrieved = await _context.Sut.GetJobByIdAsync(job.JobId);
-        Assert.That(retrieved?.WeatherSuccessful, Is.EqualTo(successful));
+        retrieved?.WeatherSuccessful.ShouldBe(successful);
     }
 
     [Test]
@@ -233,7 +234,7 @@ public class JobRepositoryTests
         var imaging = _fixture.Create<ImagingResult>();
         await _context.Sut.UpdateJobStatusAsync(job.JobId, successful, imaging);
         var retrieved = await _context.Sut.GetJobByIdAsync(job.JobId);
-        Assert.That(retrieved?.ImagingResult, Is.EqualTo(imaging));
+        retrieved?.ImagingResult.ShouldBe(imaging);
     }
 
     [Test]
@@ -245,7 +246,7 @@ public class JobRepositoryTests
         var imaging = _fixture.Create<ImagingResult>();
         await _context.Sut.UpdateJobStatusAsync(job.JobId, successful, imaging);
         var retrieved = await _context.Sut.GetJobByIdAsync(job.JobId);
-        Assert.That(retrieved?.ImagingSuccessful, Is.EqualTo(successful));
+        retrieved?.ImagingSuccessful.ShouldBe(successful);
     }
 
     [Test]
@@ -255,7 +256,7 @@ public class JobRepositoryTests
         await _context.Sut.InsertAsync(job);
         await _context.Sut.DeleteJobByIdAsync(job.JobId);
         job = await _context.Sut.GetJobByIdAsync(job.JobId);
-        Assert.That(job, Is.Null);
+        job.ShouldBeNull();
     }
 
     [Test]
@@ -264,7 +265,7 @@ public class JobRepositoryTests
         var job = _fixture.Create<Job>();
         await _context.Sut.InsertAsync(job);
         var count = await _context.Sut.DeleteJobByIdAsync(job.JobId);
-        Assert.That(count, Is.EqualTo(1));
+        count.ShouldBe(1);
     }
 
     [Test]
@@ -272,6 +273,22 @@ public class JobRepositoryTests
     {
         var job = _fixture.Create<Job>();
         var count = await _context.Sut.DeleteJobByIdAsync(job.JobId);
-        Assert.That(count, Is.EqualTo(0));
+        count.ShouldBe(0);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+                _context.Dispose();
+            _disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

@@ -33,7 +33,7 @@ internal class GetDirectionsQueryHandlerTests
         var directions = _fixture.Create<Microservices.Shared.Events.Directions>();
         _context.WithExternalResult(directions);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.EqualTo(directions));
+        result.Value.ShouldBe(directions);
     }
 
     [Test]
@@ -43,7 +43,7 @@ internal class GetDirectionsQueryHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -53,6 +53,6 @@ internal class GetDirectionsQueryHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo(message));
+        result.Error!.Value.Message.ShouldBe(message);
     }
 }

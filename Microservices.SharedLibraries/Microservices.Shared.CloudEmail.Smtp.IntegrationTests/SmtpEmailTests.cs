@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using System.Net.Mail;
+﻿using System.Net.Mail;
 using System.Net.Mime;
 
 namespace Microservices.Shared.CloudEmail.Smtp.IntegrationTests;
@@ -24,7 +23,7 @@ internal class SmtpEmailTests : IDisposable
         var cc = new[] { _fixture.Create<MailAddress>().Address, _fixture.Create<MailAddress>().Address };
         var subject = _fixture.Create<string>();
         var result = await _context.Sut.SendEmailAsync(subject, html, null, to, cc, null, (contentId, stream, MediaTypeNames.Image.Png));
-        Assert.That(result, Is.True);
+        result.ShouldBeTrue();
     }
 
     protected virtual void Dispose(bool disposing)

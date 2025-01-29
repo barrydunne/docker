@@ -55,7 +55,7 @@ internal class GeocodeAddressesCommandHandlerTests
     {
         var command = _fixture.Create<GeocodeAddressesCommand>();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -64,7 +64,7 @@ internal class GeocodeAddressesCommandHandlerTests
         var command = _fixture.Create<GeocodeAddressesCommand>();
         _context.WithInvalidStartingAddress(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -73,7 +73,7 @@ internal class GeocodeAddressesCommandHandlerTests
         var command = _fixture.Create<GeocodeAddressesCommand>();
         _context.WithInvalidDestinationAddress(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -84,7 +84,7 @@ internal class GeocodeAddressesCommandHandlerTests
             .WithInvalidStartingAddress(command)
             .WithInvalidDestinationAddress(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -93,7 +93,7 @@ internal class GeocodeAddressesCommandHandlerTests
         var command = _fixture.Create<GeocodeAddressesCommand>();
         _context.WithStartingAddressException(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -102,7 +102,7 @@ internal class GeocodeAddressesCommandHandlerTests
         var command = _fixture.Create<GeocodeAddressesCommand>();
         _context.WithDestinationAddressException(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -113,7 +113,7 @@ internal class GeocodeAddressesCommandHandlerTests
             .WithStartingAddressException(command)
             .WithDestinationAddressException(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -189,7 +189,7 @@ internal class GeocodeAddressesCommandHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -199,6 +199,6 @@ internal class GeocodeAddressesCommandHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo(message));
+        result.Error?.Message.ShouldBe(message);
     }
 }

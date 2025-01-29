@@ -24,7 +24,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
     {
         var query = CreateGetEmailsSentBetweenTimesQuery();
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.True);
+        result.IsValid.ShouldBeTrue();
     }
 
     [Test]
@@ -32,7 +32,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
     {
         var query = CreateGetEmailsSentBetweenTimesQuery(fromTime: DateTimeOffset.MinValue);
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -41,7 +41,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
         var query = CreateGetEmailsSentBetweenTimesQuery(fromTime: DateTimeOffset.MinValue);
         var result = await _context.Sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.FromTime) && _.ErrorMessage.StartsWith("'From Time' must be greater than or equal to "));
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -49,7 +49,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
     {
         var query = CreateGetEmailsSentBetweenTimesQuery(fromTime: DateTimeOffset.MaxValue);
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -58,7 +58,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
         var query = CreateGetEmailsSentBetweenTimesQuery(fromTime: DateTimeOffset.MaxValue);
         var result = await _context.Sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.FromTime) && _.ErrorMessage.StartsWith("'From Time' must be less than or equal to "));
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -66,7 +66,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
     {
         var query = CreateGetEmailsSentBetweenTimesQuery(toTime: DateTimeOffset.MinValue);
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -75,7 +75,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
         var query = CreateGetEmailsSentBetweenTimesQuery(toTime: DateTimeOffset.MinValue);
         var result = await _context.Sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.ToTime) && _.ErrorMessage.StartsWith("'To Time' must be greater than or equal to "));
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -83,7 +83,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
     {
         var query = CreateGetEmailsSentBetweenTimesQuery(toTime: DateTimeOffset.MaxValue);
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -92,7 +92,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
         var query = CreateGetEmailsSentBetweenTimesQuery(toTime: DateTimeOffset.MaxValue);
         var result = await _context.Sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.ToTime) && _.ErrorMessage.StartsWith("'To Time' must be less than or equal to "));
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -100,7 +100,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
     {
         var query = CreateGetEmailsSentBetweenTimesQuery(pageSize: int.MinValue);
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -109,7 +109,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
         var query = CreateGetEmailsSentBetweenTimesQuery(pageSize: int.MinValue);
         var result = await _context.Sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.PageSize) && _.ErrorMessage == "'Page Size' must be greater than or equal to '1'.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -117,7 +117,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
     {
         var query = CreateGetEmailsSentBetweenTimesQuery(pageSize: int.MaxValue);
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -126,7 +126,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
         var query = CreateGetEmailsSentBetweenTimesQuery(pageSize: int.MaxValue);
         var result = await _context.Sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.PageSize) && _.ErrorMessage == "'Page Size' must be less than or equal to '500'.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -134,7 +134,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
     {
         var query = CreateGetEmailsSentBetweenTimesQuery(pageNumber: int.MinValue);
         var result = await _context.Sut.TestValidateAsync(query);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -143,7 +143,7 @@ internal class GetEmailsSentBetweenTimesQueryValidatorTests
         var query = CreateGetEmailsSentBetweenTimesQuery(pageNumber: int.MinValue);
         var result = await _context.Sut.TestValidateAsync(query);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(query.PageNumber) && _.ErrorMessage == "'Page Number' must be greater than or equal to '1'.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     private GetEmailsSentBetweenTimesQuery CreateGetEmailsSentBetweenTimesQuery(DateTimeOffset? fromTime = null, DateTimeOffset? toTime = null, int? pageSize = null, int? pageNumber = null)

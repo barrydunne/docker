@@ -9,27 +9,33 @@ internal class AwsFilesTests
     private readonly Fixture _fixture = new();
 
     [Test]
-    public void UploadFileAsync_guards_against_missing_container_argument()
+    public async Task UploadFileAsync_guards_against_missing_container_argument()
     {
         var name = _fixture.Create<string>();
         using var content = new MemoryStream();
-        Assert.That(async () => await _context.Sut.UploadFileAsync(string.Empty, name, content), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input container was empty. (Parameter 'container')"));
+        var func = async () => await _context.Sut.UploadFileAsync(string.Empty, name, content);
+        var ex = await func.ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldBe("Required input container was empty. (Parameter 'container')");
     }
 
     [Test]
-    public void UploadFileAsync_guards_against_missing_name_argument()
+    public async Task UploadFileAsync_guards_against_missing_name_argument()
     {
         var container = _fixture.Create<string>();
         using var content = new MemoryStream();
-        Assert.That(async () => await _context.Sut.UploadFileAsync(container, string.Empty, content), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input name was empty. (Parameter 'name')"));
+        async Task<bool> func() => await _context.Sut.UploadFileAsync(container, string.Empty, content);
+        var ex = await func().ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldBe("Required input name was empty. (Parameter 'name')");
     }
 
     [Test]
-    public void UploadFileAsync_guards_against_missing_content_argument()
+    public async Task UploadFileAsync_guards_against_missing_content_argument()
     {
         var container = _fixture.Create<string>();
         var name = _fixture.Create<string>();
-        Assert.That(async () => await _context.Sut.UploadFileAsync(container, name, null!), Throws.TypeOf<ArgumentNullException>().With.Property("Message").EqualTo("Value cannot be null. (Parameter 'content')"));
+        async Task<bool> func() => await _context.Sut.UploadFileAsync(container, name, null!);
+        var ex = await func().ShouldThrowAsync<ArgumentNullException>();
+        ex.Message.ShouldBe("Value cannot be null. (Parameter 'content')");
     }
 
     [Test]
@@ -76,42 +82,50 @@ internal class AwsFilesTests
         content.Write(data);
         content.Seek(0, SeekOrigin.Begin);
         var result = await _context.Sut.UploadFileAsync(container, name, content);
-        Assert.That(result, Is.True);
+        result.ShouldBeTrue();
     }
 
     [Test]
-    public void UploadFilesAsync_rethrows_exception()
+    public async Task UploadFilesAsync_rethrows_exception()
     {
         var container = _fixture.Create<string>();
         var name = _fixture.Create<string>();
         using var content = new MemoryStream();
         var exception = new InvalidDataException(_fixture.Create<string>());
         _context.WithUploadException(exception);
-        Assert.That(async () => await _context.Sut.UploadFileAsync(container, name, content), Throws.TypeOf<InvalidDataException>().With.Property("Message").EqualTo(exception.Message));
+        async Task<bool> func() => await _context.Sut.UploadFileAsync(container, name, content);
+        var ex = await func().ShouldThrowAsync<InvalidDataException>();
+        ex.Message.ShouldBe(exception.Message);
     }
 
     [Test]
-    public void DownloadFileAsync_guards_against_missing_container_argument()
+    public async Task DownloadFileAsync_guards_against_missing_container_argument()
     {
         var name = _fixture.Create<string>();
         using var content = new MemoryStream();
-        Assert.That(async () => await _context.Sut.DownloadFileAsync(string.Empty, name, content), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input container was empty. (Parameter 'container')"));
+        async Task<bool> func() => await _context.Sut.DownloadFileAsync(string.Empty, name, content);
+        var ex = await func().ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldBe("Required input container was empty. (Parameter 'container')");
     }
 
     [Test]
-    public void DownloadFileAsync_guards_against_missing_name_argument()
+    public async Task DownloadFileAsync_guards_against_missing_name_argument()
     {
         var container = _fixture.Create<string>();
         using var content = new MemoryStream();
-        Assert.That(async () => await _context.Sut.DownloadFileAsync(container, string.Empty, content), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input name was empty. (Parameter 'name')"));
+        async Task<bool> func() => await _context.Sut.DownloadFileAsync(container, string.Empty, content);
+        var ex = await func().ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldBe("Required input name was empty. (Parameter 'name')");
     }
 
     [Test]
-    public void DownloadFileAsync_guards_against_missing_content_argument()
+    public async Task DownloadFileAsync_guards_against_missing_content_argument()
     {
         var container = _fixture.Create<string>();
         var name = _fixture.Create<string>();
-        Assert.That(async () => await _context.Sut.DownloadFileAsync(container, name, null!), Throws.TypeOf<ArgumentNullException>().With.Property("Message").EqualTo("Value cannot be null. (Parameter 'content')"));
+        async Task<bool> func() => await _context.Sut.DownloadFileAsync(container, name, null!);
+        var ex = await func().ShouldThrowAsync<ArgumentNullException>();
+        ex.Message.ShouldBe("Value cannot be null. (Parameter 'content')");
     }
 
     [Test]
@@ -123,7 +137,7 @@ internal class AwsFilesTests
         var data = _fixture.Create<byte[]>();
         _context.WithFile(container, name, data);
         await _context.Sut.DownloadFileAsync(container, name, content);
-        Assert.That(data.SequenceEqual(content.ToArray()), Is.True);
+        data.ShouldBe(content.ToArray());
     }
 
     [Test]
@@ -135,32 +149,38 @@ internal class AwsFilesTests
         var data = _fixture.Create<byte[]>();
         _context.WithFile(container, name, data);
         var result = await _context.Sut.DownloadFileAsync(container, name, content);
-        Assert.That(result, Is.True);
+        result.ShouldBeTrue();
     }
 
     [Test]
-    public void DownloadFileAsync_rethrows_exception()
+    public async Task DownloadFileAsync_rethrows_exception()
     {
         var container = _fixture.Create<string>();
         var name = _fixture.Create<string>();
         using var content = new MemoryStream();
         var exception = new InvalidDataException(_fixture.Create<string>());
         _context.WithDownloadException(exception);
-        Assert.That(async () => await _context.Sut.DownloadFileAsync(container, name, content), Throws.TypeOf<InvalidDataException>().With.Property("Message").EqualTo(exception.Message));
+        async Task<bool> func() => await _context.Sut.DownloadFileAsync(container, name, content);
+        var ex = await func().ShouldThrowAsync<InvalidDataException>();
+        ex.Message.ShouldBe(exception.Message);
     }
 
     [Test]
-    public void FileExistsAsync_guards_against_missing_container_argument()
+    public async Task FileExistsAsync_guards_against_missing_container_argument()
     {
         var name = _fixture.Create<string>();
-        Assert.That(async () => await _context.Sut.FileExistsAsync(string.Empty, name), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input container was empty. (Parameter 'container')"));
+        async Task<bool> func() => await _context.Sut.FileExistsAsync(string.Empty, name);
+        var ex = await func().ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldBe("Required input container was empty. (Parameter 'container')");
     }
 
     [Test]
-    public void FileExistsAsync_guards_against_missing_name_argument()
+    public async Task FileExistsAsync_guards_against_missing_name_argument()
     {
         var container = _fixture.Create<string>();
-        Assert.That(async () => await _context.Sut.FileExistsAsync(container, string.Empty), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input name was empty. (Parameter 'name')"));
+        async Task<bool> func() => await _context.Sut.FileExistsAsync(container, string.Empty);
+        var ex = await func().ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldBe("Required input name was empty. (Parameter 'name')");
     }
 
     [Test]
@@ -171,7 +191,7 @@ internal class AwsFilesTests
         var data = _fixture.Create<byte[]>();
         _context.WithFile(container, name, data);
         var result = await _context.Sut.FileExistsAsync(container, name);
-        Assert.That(result, Is.True);
+        result.ShouldBeTrue();
     }
 
     [Test]
@@ -181,7 +201,7 @@ internal class AwsFilesTests
         var name = _fixture.Create<string>();
         _context.WithBucket(container);
         var result = await _context.Sut.FileExistsAsync(container, name);
-        Assert.That(result, Is.False);
+        result.ShouldBeFalse();
     }
 
     [Test]
@@ -190,11 +210,11 @@ internal class AwsFilesTests
         var container = _fixture.Create<string>();
         var name = _fixture.Create<string>();
         var result = await _context.Sut.FileExistsAsync(container, name);
-        Assert.That(result, Is.False);
+        result.ShouldBeFalse();
     }
 
     [Test]
-    public void FileExistsAsync_rethrows_exception()
+    public async Task FileExistsAsync_rethrows_exception()
     {
         var container = _fixture.Create<string>();
         var name = _fixture.Create<string>();
@@ -202,21 +222,27 @@ internal class AwsFilesTests
         _context.WithFile(container, name, data);
         var exception = new InvalidDataException(_fixture.Create<string>());
         _context.WithFileExistsException(exception);
-        Assert.That(async () => await _context.Sut.FileExistsAsync(container, name), Throws.TypeOf<InvalidDataException>().With.Property("Message").EqualTo(exception.Message));
+        async Task<bool> func() => await _context.Sut.FileExistsAsync(container, name);
+        var ex = await func().ShouldThrowAsync<InvalidDataException>();
+        ex.Message.ShouldBe(exception.Message);
     }
 
     [Test]
-    public void DeleteFileAsync_guards_against_missing_container_argument()
+    public async Task DeleteFileAsync_guards_against_missing_container_argument()
     {
         var name = _fixture.Create<string>();
-        Assert.That(async () => await _context.Sut.DeleteFileAsync(string.Empty, name), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input container was empty. (Parameter 'container')"));
+        async Task<bool> func() => await _context.Sut.DeleteFileAsync(string.Empty, name);
+        var ex = await func().ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldBe("Required input container was empty. (Parameter 'container')");
     }
 
     [Test]
-    public void DeleteFileAsync_guards_against_missing_name_argument()
+    public async Task DeleteFileAsync_guards_against_missing_name_argument()
     {
         var container = _fixture.Create<string>();
-        Assert.That(async () => await _context.Sut.DeleteFileAsync(container, string.Empty), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input name was empty. (Parameter 'name')"));
+        async Task<bool> func() => await _context.Sut.DeleteFileAsync(container, string.Empty);
+        var ex = await func().ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldBe("Required input name was empty. (Parameter 'name')");
     }
 
     [Test]
@@ -238,11 +264,11 @@ internal class AwsFilesTests
         var data = _fixture.Create<byte[]>();
         _context.WithFile(container, name, data);
         var result = await _context.Sut.DeleteFileAsync(container, name);
-        Assert.That(result, Is.True);
+        result.ShouldBeTrue();
     }
 
     [Test]
-    public void DeleteFileAsync_rethrows_exception()
+    public async Task DeleteFileAsync_rethrows_exception()
     {
         var container = _fixture.Create<string>();
         var name = _fixture.Create<string>();
@@ -250,21 +276,27 @@ internal class AwsFilesTests
         _context.WithFile(container, name, data);
         var exception = new InvalidDataException(_fixture.Create<string>());
         _context.WithDeleteFileException(exception);
-        Assert.That(async () => await _context.Sut.DeleteFileAsync(container, name), Throws.TypeOf<InvalidDataException>().With.Property("Message").EqualTo(exception.Message));
+        async Task<bool> func() => await _context.Sut.DeleteFileAsync(container, name);
+        var ex = await func().ShouldThrowAsync<InvalidDataException>();
+        ex.Message.ShouldBe(exception.Message);
     }
 
     [Test]
     public void GetBucketAndKey_guards_against_missing_container_argument()
     {
         var name = _fixture.Create<string>();
-        Assert.That(() => AwsFiles.GetBucketAndKey(string.Empty, name), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input container was empty. (Parameter 'container')"));
+        Action action = () => AwsFiles.GetBucketAndKey(string.Empty, name);
+        var ex = action.ShouldThrow<ArgumentException>();
+        ex.Message.ShouldBe("Required input container was empty. (Parameter 'container')");
     }
 
     [Test]
     public void GetBucketAndKey_guards_against_missing_name_argument()
     {
         var container = _fixture.Create<string>();
-        Assert.That(() => AwsFiles.GetBucketAndKey(container, string.Empty), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input name was empty. (Parameter 'name')"));
+        Action action = () => AwsFiles.GetBucketAndKey(container, string.Empty);
+        var ex = action.ShouldThrow<ArgumentException>();
+        ex.Message.ShouldBe("Required input name was empty. (Parameter 'name')");
     }
 
     [Test]
@@ -279,7 +311,7 @@ internal class AwsFilesTests
         var (bucket, _) = AwsFiles.GetBucketAndKey(container, name);
 
         var expected = $"{a}.{b}...{c}".ToLower();
-        Assert.That(bucket, Is.EqualTo(expected));
+        bucket.ShouldBe(expected);
     }
 
     [Test]
@@ -294,6 +326,6 @@ internal class AwsFilesTests
         var (_, key) = AwsFiles.GetBucketAndKey(container, name);
 
         var expected = $"{a}/{b}/{c}";
-        Assert.That(key, Is.EqualTo(expected));
+        key.ShouldBe(expected);
     }
 }

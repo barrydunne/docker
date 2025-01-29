@@ -1,7 +1,6 @@
 ﻿using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using RestSharp;
 using System.Net;
 using System.Net.Mime;
@@ -84,13 +83,13 @@ internal class SecretsManagerSecretsTestsContext
 
     internal SecretsManagerSecretsTestsContext AssertThatSecretsApiCalledOnce()
     {
-        Assert.That(_mockRestSharpFactory.MockRestClient.Requests, Has.Exactly(1).Items);
+        _mockRestSharpFactory.MockRestClient.Requests.ShouldHaveSingleItem();
         return this;
     }
 
     internal SecretsManagerSecretsTestsContext AssertWarningLogged(string message)
     {
-        Assert.That(_mockLogger.Messages, Does.Contain($"[{LogLevel.Warning}] {message}"));
+        _mockLogger.Messages.ShouldContain($"[{LogLevel.Warning}] {message}");
         return this;
     }
 }

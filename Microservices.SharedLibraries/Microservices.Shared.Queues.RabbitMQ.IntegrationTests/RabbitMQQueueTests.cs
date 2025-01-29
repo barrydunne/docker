@@ -55,7 +55,7 @@ public class RabbitMQQueueTests : IDisposable
         while ((received.Count == 0) && (DateTime.UtcNow < timeout))
             await Task.Delay(TimeSpan.FromMilliseconds(100));
         sut.Stop();
-        Assert.That(received, Does.Contain(message));
+        received.ShouldContain(message);
     }
 
     [Test]
@@ -125,7 +125,7 @@ public class RabbitMQQueueTests : IDisposable
         while ((received.Count == 0) && (DateTime.UtcNow < timeout))
             await Task.Delay(TimeSpan.FromMilliseconds(100));
         //sut.Stop(); // Don't stop transient queue or it will be deleted
-        Assert.That(received, Does.Contain(message));
+        received.ShouldContain(message);
     }
 
     [Test]
@@ -200,7 +200,7 @@ public class RabbitMQQueueTests : IDisposable
         while ((received.Count == 0) && (DateTime.UtcNow < timeout))
             await Task.Delay(TimeSpan.FromMilliseconds(100));
         //sut.Stop(); // Don't stop transient queue or it will be deleted
-        Assert.That(received, Does.Contain(message));
+        received.ShouldContain(message);
     }
 
     [Test]
@@ -361,7 +361,7 @@ public class RabbitMQQueueTests : IDisposable
         while ((retried.Count == 0) && (DateTime.UtcNow < timeout))
             await Task.Delay(TimeSpan.FromMilliseconds(100));
         //sut.Stop(); // Don't stop transient queue or it will be deleted
-        Assert.That(retried, Does.Contain(message.Message));
+        retried.ShouldContain(message.Message);
     }
 
     protected virtual void Dispose(bool disposing)

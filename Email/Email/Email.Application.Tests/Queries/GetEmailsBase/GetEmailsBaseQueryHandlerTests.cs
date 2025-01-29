@@ -41,7 +41,7 @@ internal class GetEmailsBaseQueryHandlerTests
         _context.WithException();
         var query = new GetEmailsSentToRecipientQuery(email, 10, 1);
         var result = await _context.Sut.Handle(query, CancellationToken.None);
-        Assert.That(result.Value, Is.Not.Null);
-        Assert.That(result.Value, Is.Empty);
+        result.Value.ShouldNotBeNull();
+        result.Value.ShouldBeEmpty();
     }
 }

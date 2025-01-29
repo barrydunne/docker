@@ -1,13 +1,16 @@
-﻿using Email.Application.Models;
+﻿using DotNet.Testcontainers.Containers;
+using Email.Application.Models;
 using Email.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Concurrent;
+using Testcontainers.MySql;
 
 namespace Email.Infrastructure.IntegrationTests.Repositories;
 
 internal class EmailRepositoryTestsContext : IDisposable
 {
     private readonly Fixture _fixture;
+    private readonly IDatabaseContainer _container;
     private readonly EmailRepositoryDbContext _db;
     private readonly string _database;
 
@@ -27,7 +30,18 @@ internal class EmailRepositoryTestsContext : IDisposable
 
         _fixture = new();
         _database = _fixture.Create<string>();
-        var connectionString = $"Server=localhost;Port=17306;User Id=integration.tests;Password=password;Database={_database};";
+
+        _container = new MySqlBuilder()
+            .WithImage("mysql:8.1")
+            .WithName($"EmailRepositoryTests.MySql_{Guid.NewGuid():N}")
+            .WithUsername("integration.tests")
+            .WithPassword("password")
+            .WithDatabase(_database)
+            .Build();
+
+        _container.StartAsync().GetAwaiter().GetResult();
+
+        var connectionString = _container.GetConnectionString();
         var options = new DbContextOptionsBuilder<EmailRepositoryDbContext>().UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)).Options;
         _db = new EmailRepositoryDbContext(options);
         _db.Database.EnsureCreated();
@@ -55,7 +69,10 @@ internal class EmailRepositoryTestsContext : IDisposable
         if (!_disposedValue)
         {
             if (disposing)
+            {
                 _db.Database.EnsureDeleted();
+                _container.DisposeAsync().GetAwaiter().GetResult();
+            }
             _disposedValue = true;
         }
     }

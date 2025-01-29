@@ -1,5 +1,4 @@
 ﻿using Microservices.Shared.Mocks;
-using NSubstitute;
 using Weather.Application.Queries.GetWeather;
 
 namespace Weather.Application.Tests.Queries.GetWeather;

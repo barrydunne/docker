@@ -55,7 +55,7 @@ internal class UpdateGeocodingResultCommandHandlerTests
     {
         var command = _fixture.Create<UpdateGeocodingResultCommand>();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo("Job not yet available for update."));
+        result.Error?.Message.ShouldBe("Job not yet available for update.");
     }
 
     [Test]
@@ -86,7 +86,7 @@ internal class UpdateGeocodingResultCommandHandlerTests
         var command = new UpdateGeocodingResultCommand(job.JobId, _fixture.Build<GeocodingCoordinates>().With(_ => _.IsSuccessful, true).Create(), _fixture.Build<GeocodingCoordinates>().With(_ => _.IsSuccessful, true).Create());
         _context.WithPublishException();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -97,6 +97,6 @@ internal class UpdateGeocodingResultCommandHandlerTests
         var command = new UpdateGeocodingResultCommand(job.JobId, _fixture.Build<GeocodingCoordinates>().With(_ => _.IsSuccessful, true).Create(), _fixture.Build<GeocodingCoordinates>().With(_ => _.IsSuccessful, false).Create());
         _context.WithSendException(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 }

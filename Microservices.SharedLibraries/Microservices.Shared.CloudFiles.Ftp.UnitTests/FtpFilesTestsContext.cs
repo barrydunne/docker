@@ -1,6 +1,5 @@
 ﻿using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 
 namespace Microservices.Shared.CloudFiles.Ftp.UnitTests;
 
@@ -77,13 +76,13 @@ internal class FtpFilesTestsContext
 
     internal FtpFilesTestsContext AssertHostSet()
     {
-        Assert.That(_mockAsyncFtpClient.Host, Is.EqualTo(_options.Host));
+        _mockAsyncFtpClient.Host.ShouldBe(_options.Host);
         return this;
     }
 
     internal FtpFilesTestsContext AssertPortSet()
     {
-        Assert.That(_mockAsyncFtpClient.Port, Is.EqualTo(_options.Port));
+        _mockAsyncFtpClient.Port.ShouldBe(_options.Port);
         return this;
     }
 
@@ -100,7 +99,7 @@ internal class FtpFilesTestsContext
     internal FtpFilesTestsContext AssertFileUploaded(string container, string name, byte[] data)
     {
         _mockAsyncFtpClient.Files.TryGetValue($"{_options.BaseDir}/{container}/{name}", out var remote);
-        Assert.That(remote?.SequenceEqual(data), Is.True);
+        remote.ShouldBe(data);
         return this;
     }
 

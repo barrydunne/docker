@@ -25,7 +25,7 @@ internal class SaveImageCommandValidatorTests
     {
         var command = _fixture.Create<SaveImageCommand>();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.True);
+        result.IsValid.ShouldBeTrue();
     }
 
     [Test]
@@ -35,7 +35,7 @@ internal class SaveImageCommandValidatorTests
                               .With(_ => _.JobId, Guid.Empty)
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -46,7 +46,7 @@ internal class SaveImageCommandValidatorTests
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(command.JobId) && _.ErrorMessage == "'Job Id' must not be empty.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -56,7 +56,7 @@ internal class SaveImageCommandValidatorTests
                               .With(_ => _.Address, string.Empty)
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -67,7 +67,7 @@ internal class SaveImageCommandValidatorTests
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(command.Address) && _.ErrorMessage == "'Address' must not be empty.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -77,7 +77,7 @@ internal class SaveImageCommandValidatorTests
                               .With(_ => _.Coordinates, (Coordinates)null!)
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -88,6 +88,6 @@ internal class SaveImageCommandValidatorTests
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(command.Coordinates) && _.ErrorMessage == "'Coordinates' must not be empty.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 }

@@ -1,11 +1,14 @@
-﻿using Microservices.Shared.Mocks;
+﻿using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
+using DotNet.Testcontainers.Containers;
+using Microservices.Shared.Mocks;
 using Microservices.Shared.Queues.RabbitMQ.IntegrationTests.ApiModels;
 using Microsoft.Extensions.Options;
-using NSubstitute;
 using RabbitMQ.Client;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Net.Mime;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 
@@ -13,14 +16,16 @@ namespace Microservices.Shared.Queues.RabbitMQ.IntegrationTests;
 
 internal class RabbitMQQueueTestsContext : IDisposable
 {
-    private const string _baseUrl = "http://localhost:10672";
     private const string _auth = "YWRtaW46UEBzc3cwcmQ=";
 
+    private readonly IContainer _containerNode1;
+    private readonly IContainer _containerNode2;
     private readonly Fixture _fixture;
     private readonly string _vHost;
     private readonly RabbitMQQueueOptions _options;
     private readonly IOptions<RabbitMQQueueOptions> _mockOptions;
     private readonly HttpClient _httpClient;
+    private readonly string _baseUrl;
 
     private bool _disposedValue;
 
@@ -28,6 +33,15 @@ internal class RabbitMQQueueTestsContext : IDisposable
 
     public RabbitMQQueueTestsContext()
     {
+        var network = new NetworkBuilder()
+            .WithName($"RabbitMQQueueTests_{Guid.NewGuid():N}")
+            .Build();
+
+        _containerNode1 = CreateRabbitNode(1, network);
+        _containerNode1.StartAsync().GetAwaiter().GetResult();
+        _containerNode2 = CreateRabbitNode(2, network);
+        _containerNode2.StartAsync().GetAwaiter().GetResult();
+
         /* These tests require a user and password to be created in the target RabbitMQ.
          * For example in the shell of the RabbitMQ container:
          *
@@ -37,12 +51,28 @@ internal class RabbitMQQueueTestsContext : IDisposable
          * Every test context instance will create, use and delete its own virtual host in RabbitMQ.
          */
 
+        _containerNode1.ExecAsync(["rabbitmqctl", "add_user", "integration.tests", "password"]).GetAwaiter().GetResult();
+        _containerNode1.ExecAsync(["rabbitmqctl", "set_user_tags", "integration.tests", "administrator"]).GetAwaiter().GetResult();
+
         _fixture = new();
+        _baseUrl = $"http://localhost:{_containerNode1.GetMappedPublicPort(15672)}";
         _vHost = _fixture.Create<string>();
         
         Suffix = _fixture.Create<string>();
 
-        _options = new RabbitMQQueueOptions { Nodes = new[] { "localhost:10572", "localhost:10573" }, User = "integration.tests", Password = "password", VirtualHost = _vHost, SubscriberSuffix = Suffix, RetryDelayMilliseconds = 0 };
+        _options = new RabbitMQQueueOptions 
+        { 
+            Nodes = new[] 
+            { 
+                $"localhost:{_containerNode1.GetMappedPublicPort(5672)}",
+                $"localhost:{_containerNode2.GetMappedPublicPort(5672)}"
+            },
+            User = "integration.tests",
+            Password = "password",
+            VirtualHost = _vHost,
+            SubscriberSuffix = Suffix,
+            RetryDelayMilliseconds = 0
+        };
         _mockOptions = Substitute.For<IOptions<RabbitMQQueueOptions>>();
         _mockOptions
             .Value
@@ -52,6 +82,41 @@ internal class RabbitMQQueueTestsContext : IDisposable
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", _auth);
 
         CreateVHostAsync().Wait();
+    }
+
+    private IContainer CreateRabbitNode(int node, DotNet.Testcontainers.Networks.INetwork network)
+    {
+        using var mem = new MemoryStream();
+        using var source = Assembly.GetExecutingAssembly().GetManifestResourceStream("Microservices.Shared.Queues.RabbitMQ.IntegrationTests.rabbit-container-script.txt");
+        source!.CopyTo(mem);
+        var script = mem.ToArray().Where(_ => _ != 13).ToArray();
+
+        var builder = new ContainerBuilder()
+            .WithImage("rabbitmq:3.12.7-management")
+            .WithName($"RabbitMQQueueTests.Node{node}_{Guid.NewGuid():N}")
+            .WithPortBinding(5672, true)
+            .WithPortBinding(15672, true)
+            .WithNetwork(network)
+            .WithHostname($"rabbitmq{node}")
+            .WithNetworkAliases($"rabbitmq{node}")
+            .WithEnvironment("RABBITMQ_DEFAULT_USER", "admin")
+            .WithEnvironment("RABBITMQ_DEFAULT_PASS", "P@ssw0rd")
+            .WithEnvironment("RABBITMQ_DEFAULT_VHOST", "microservices")
+            .WithEnvironment($"RABBITMQ_NODENAME", $"rabbit{node}")
+            .WithEnvironment("RABBITMQ_ERLANG_COOKIE", "2fde70c0-3606-4576-b83f-85e964f66f8d")
+            .WithResourceMapping(script, "/opt/rabbitmq/start-cluster.sh", UnixFileModes.UserExecute)
+            .WithCommand("/opt/rabbitmq/start-cluster.sh");
+
+        if (node == 2)
+        {
+            builder = builder
+                .WithEnvironment("RABBITMQ_JOIN_NODE", "rabbit1@rabbitmq1")
+                .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Background job with PID .*"));
+        }
+        else
+            builder = builder.WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(15672));
+
+        return builder.Build();
     }
 
     internal RabbitMQQueue<TMessage> Sut<TMessage>() => new(_mockOptions, new ConnectionFactory(), new MockLogger<RabbitMQQueue<TMessage>>());
@@ -72,13 +137,13 @@ internal class RabbitMQQueueTestsContext : IDisposable
     internal async Task AssertExchangeExistsAsync(string name, string type)
     {
         var exchanges = await GetEntitiesAsync<ExchangeModel>();
-        Assert.That(exchanges, Has.Exactly(1).Matches<ExchangeModel>(_ => (_.VHost == _vHost) && (_.Name == name) && (_.Type == type)));
+        exchanges.Where(_ => (_.VHost == _vHost) && (_.Name == name) && (_.Type == type)).ShouldHaveSingleItem();
     }
 
     internal async Task AssertQueueExistsAsync(string queueName, bool durable, bool autoDelete)
     {
         var queues = await GetEntitiesAsync<QueueModel>();
-        Assert.That(queues, Has.Exactly(1).Matches<QueueModel>(_ => (_.VHost == _vHost) && (_.Name == queueName) && (_.Durable == durable) && (_.AutoDelete == autoDelete)));
+        queues.Where(_ => (_.VHost == _vHost) && (_.Name == queueName) && (_.Durable == durable) && (_.AutoDelete == autoDelete)).ShouldHaveSingleItem();
     }
 
     internal async Task AssertQueueMessageCount(string name, int count)
@@ -95,19 +160,19 @@ internal class RabbitMQQueueTestsContext : IDisposable
                 break;
             await Task.Delay(TimeSpan.FromMilliseconds(250));
         }
-        Assert.That(queue?.MessageCount, Is.EqualTo(count));
+        queue?.MessageCount.ShouldBe(count);
     }
 
     internal async Task AssertBindingExistsAsync(string queueName, string exchangeName, string routingKey)
     {
         var bindings = await GetEntitiesAsync<BindingModel>();
-        Assert.That(bindings, Has.Exactly(1).Matches<BindingModel>(_ => (_.VHost == _vHost) && (_.Source == exchangeName) && (_.Destination == queueName) && (_.DestinationType == "queue") && (_.RoutingKey == routingKey)));
+        bindings.Where(_ => (_.VHost == _vHost) && (_.Source == exchangeName) && (_.Destination == queueName) && (_.DestinationType == "queue") && (_.RoutingKey == routingKey)).ShouldHaveSingleItem();
     }
 
     internal async Task AssertDeadLetterExchangeExistsAsync(string queueName, string exchangeName)
     {
         var queues = await GetEntitiesAsync<QueueModel>();
-        Assert.That(queues, Has.Exactly(1).Matches<QueueModel>(_ => (_.VHost == _vHost) && (_.Name == queueName) && (_.Arguments is not null) && (_.Arguments[Headers.XDeadLetterExchange]?.ToString() == exchangeName)));
+        queues.Where(_ => (_.VHost == _vHost) && (_.Name == queueName) && (_.Arguments is not null) && (_.Arguments[Headers.XDeadLetterExchange]?.ToString() == exchangeName)).ShouldHaveSingleItem();
     }
 
     private async Task CreateVHostAsync()
@@ -143,6 +208,8 @@ internal class RabbitMQQueueTestsContext : IDisposable
             {
                 DeleteVHostAsync().Wait();
                 _httpClient?.Dispose();
+                _containerNode2.DisposeAsync().GetAwaiter().GetResult();
+                _containerNode1.DisposeAsync().GetAwaiter().GetResult();
             }
             _disposedValue = true;
         }

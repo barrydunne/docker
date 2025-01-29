@@ -3,7 +3,6 @@ using Amazon.SimpleEmail.Model;
 using Microservices.Shared.Mocks;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using System.Collections.Concurrent;
 using System.Net.Mail;
@@ -59,7 +58,7 @@ internal class AwsEmailTestsContext
     internal void AssertMessageSent(Func<MimeMessage, bool> assertion)
     {
         var message = _mails.FirstOrDefault();
-        Assert.That(message, Is.Not.Null, "No message sent");
-        Assert.That(assertion.Invoke(message!), Is.True, "Assertion failed");
+        message.ShouldNotBeNull("No message sent");
+        assertion.Invoke(message!).ShouldBeTrue("Assertion failed");
     }
 }

@@ -40,6 +40,6 @@ internal class NotifyJobStatusUpdateCommandHandlerTests
         var command = _fixture.Create<NotifyJobStatusUpdateCommand>();
         _context.WithPublishException();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 }

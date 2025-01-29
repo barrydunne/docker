@@ -297,8 +297,8 @@ services:
 
   aws.microservices-infrastructure:
     # To be able to view emails with AWS, use localstack-pro image which can forward the SMTP traffic to smtp.microservices-infrastructure
-    #image: localstack/localstack-pro:3.7
-    image: localstack/localstack:3.7
+    #image: localstack/localstack-pro:4.0
+    image: localstack/localstack:4.0
     container_name: aws.microservices-infrastructure
     environment:
       - SMTP_HOST=172.30.0.13:1025

@@ -4,7 +4,6 @@ using Microservices.Shared.Mocks;
 using System.Collections.Concurrent;
 using Geocoding.Application.ExternalApi;
 using Geocoding.Application.Queries.GetAddressCoordinates;
-using NSubstitute;
 
 namespace Geocoding.Application.Tests.Queries.GetAddressCoordinates;
 
@@ -111,7 +110,7 @@ internal class GetAddressCoordinatesQueryHandlerTestsContext
 
     internal GetAddressCoordinatesQueryHandlerTestsContext AssertCacheUpdated(string address)
     {
-        Assert.That(_cache.ContainsKey(address), Is.True);
+        _cache.ShouldContainKey(address);
         return this;
     }
 }

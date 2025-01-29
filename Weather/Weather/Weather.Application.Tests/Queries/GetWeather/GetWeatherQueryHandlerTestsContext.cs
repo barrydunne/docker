@@ -1,6 +1,5 @@
 ﻿using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 using Weather.Application.ExternalApi;
 using Weather.Application.Queries.GetWeather;
 

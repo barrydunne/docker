@@ -2,7 +2,6 @@
 using Microservices.Shared.Mocks;
 using Imaging.Application.ExternalApi;
 using Imaging.Application.Queries.GetImageUrl;
-using NSubstitute;
 
 namespace Imaging.Application.Tests.QueryHandlers.GetImageUrl;
 

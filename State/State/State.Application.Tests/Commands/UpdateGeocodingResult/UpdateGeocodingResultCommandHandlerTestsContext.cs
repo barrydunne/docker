@@ -2,7 +2,6 @@
 using MediatR;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 using State.Application.Commands.NotifyJobStatusUpdate;
 using State.Application.Commands.NotifyProcessingComplete;
 using State.Application.Commands.UpdateGeocodingResult;
@@ -96,13 +95,13 @@ internal class UpdateGeocodingResultCommandHandlerTestsContext
     internal UpdateGeocodingResultCommandHandlerTestsContext AssertLocationsReadyEventPublished(UpdateGeocodingResultCommand command)
     {
         var published = _mockQueue.Messages.FirstOrDefault(_ => _.JobId == command.JobId);
-        Assert.That(published, Is.Not.Null);
+        published.ShouldNotBeNull();
         return this;
     }
 
     internal UpdateGeocodingResultCommandHandlerTestsContext AssertNotifyProcessingCompleteCommandSent(Guid jobId)
     {
-        Assert.That(_notifyJobStatusUpdateCommands, Has.Exactly(1).Matches<NotifyJobStatusUpdateCommand>(_ => _.JobId == jobId));
+        _notifyJobStatusUpdateCommands.Where(_ => _.JobId == jobId).ShouldHaveSingleItem();
         return this;
     }
 }

@@ -25,7 +25,7 @@ internal class UpdateWeatherResultCommandValidatorTests
     {
         var command = _fixture.Create<UpdateWeatherResultCommand>();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.True);
+        result.IsValid.ShouldBeTrue();
     }
 
     [Test]
@@ -35,7 +35,7 @@ internal class UpdateWeatherResultCommandValidatorTests
                               .With(_ => _.JobId, Guid.Empty)
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -46,7 +46,7 @@ internal class UpdateWeatherResultCommandValidatorTests
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(command.JobId) && _.ErrorMessage == "'Job Id' must not be empty.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 
     [Test]
@@ -56,7 +56,7 @@ internal class UpdateWeatherResultCommandValidatorTests
                               .With(_ => _.Weather, (WeatherForecast)null!)
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
-        Assert.That(result.IsValid, Is.False);
+        result.IsValid.ShouldBeFalse();
     }
 
     [Test]
@@ -67,6 +67,6 @@ internal class UpdateWeatherResultCommandValidatorTests
                               .Create();
         var result = await _context.Sut.TestValidateAsync(command);
         var error = result.Errors.SingleOrDefault(_ => _.PropertyName == nameof(command.Weather) && _.ErrorMessage == "'Weather' must not be empty.");
-        Assert.That(error, Is.Not.Null);
+        error.ShouldNotBeNull();
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microservices.Shared.Mocks;
-using NSubstitute;
 using PublicApi.Application.Caching;
 using PublicApi.Application.Models;
 using PublicApi.Application.Queries.GetJobStatus;
@@ -87,13 +86,13 @@ internal class GetJobStatusQueryHandlerTestsContext
 
     private GetJobStatusQueryHandlerTestsContext AssertJobRequests(Guid jobId, int count)
     {
-        Assert.That(_mockJobRepository.JobRequests, Has.Exactly(count).EqualTo(jobId));
+        _mockJobRepository.JobRequests.Count(_ => _ == jobId).ShouldBe(count);
         return this;
     }
 
     internal GetJobStatusQueryHandlerTestsContext AssertCacheUpdated(Guid jobId)
     {
-        Assert.That(_cache.ContainsKey(jobId), Is.True);
+        _cache.ShouldContainKey(jobId);
         return this;
     }
 }

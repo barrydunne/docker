@@ -1,6 +1,5 @@
 ﻿using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using NSubstitute;
 using State.Application.Commands.NotifyProcessingComplete;
 
 namespace State.Application.Tests.Commands.NotifyProcessingComplete;
@@ -47,7 +46,7 @@ internal class NotifyProcessingCompleteCommandHandlerTestsContext
             && _.Directions == command.Job.Directions
             && _.Weather == command.Job.WeatherForecast
             && _.Imaging == command.Job.ImagingResult);
-        Assert.That(published, Is.Not.Null);
+        published.ShouldNotBeNull();
         return this;
     }
 }

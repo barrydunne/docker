@@ -6,8 +6,6 @@ using MediatR;
 using Microservices.Shared.CloudFiles;
 using Microservices.Shared.Events;
 using Microservices.Shared.Mocks;
-using NSubstitute;
-using NUnit.Framework.Constraints;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http.Headers;
@@ -183,28 +181,28 @@ internal class SaveImageCommandHandlerTestsContext
 
     internal SaveImageCommandHandlerTestsContext AssertImageUrlObtained(SaveImageCommand command)
     {
-        Assert.That(_imageUrls.Keys, Does.Contain(command.Coordinates));
+        _imageUrls.Keys.ShouldContain(command.Coordinates);
         return this;
     }
 
     internal SaveImageCommandHandlerTestsContext AssertImageSavedToCloud()
     {
-        Assert.That(_imageBytes.SequenceEqual(_uploaded.FirstOrDefault().Bytes));
+        _imageBytes.ShouldBe(_uploaded.FirstOrDefault().Bytes);
         return this;
     }
 
     internal SaveImageCommandHandlerTestsContext AssertImagingCompleteEventPublished(SaveImageCommand command)
-        => AssertImagingCompleteEventPublished(command, Is.Not.Null);
+        => AssertImagingCompleteEventPublished(command, published => published.ShouldNotBeNull());
     internal SaveImageCommandHandlerTestsContext AssertImagingCompleteEventNotPublished(SaveImageCommand command)
-        => AssertImagingCompleteEventPublished(command, Is.Null);
-    private SaveImageCommandHandlerTestsContext AssertImagingCompleteEventPublished(SaveImageCommand command, IResolveConstraint expression)
+        => AssertImagingCompleteEventPublished(command, published => published.ShouldBeNull());
+    private SaveImageCommandHandlerTestsContext AssertImagingCompleteEventPublished(SaveImageCommand command, Action<ImagingCompleteEvent?> assert)
     {
         var published = _mockQueue.Messages.FirstOrDefault(_
             => _.JobId == command.JobId
             && _.Imaging.IsSuccessful == _validCoordinates
             && _.Imaging.Error == (_validCoordinates ? null : GetError(command))
             && _.Imaging.ImageUrl == (_validCoordinates ? _imageUrls[command.Coordinates] : null));
-        Assert.That(published, expression);
+        assert(published);
         return this;
     }
 }

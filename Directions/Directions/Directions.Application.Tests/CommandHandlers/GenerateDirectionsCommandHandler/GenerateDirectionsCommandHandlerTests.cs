@@ -47,7 +47,7 @@ internal class GenerateDirectionsCommandHandlerTests
     {
         var command = _fixture.Create<GenerateDirectionsCommand>();
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -56,7 +56,7 @@ internal class GenerateDirectionsCommandHandlerTests
         var command = _fixture.Create<GenerateDirectionsCommand>();
         _context.WithInvalidCoordinates(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -65,7 +65,7 @@ internal class GenerateDirectionsCommandHandlerTests
         var command = _fixture.Create<GenerateDirectionsCommand>();
         _context.WithCoordinatesException(command);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsSuccess, Is.True);
+        result.IsSuccess.ShouldBeTrue();
     }
 
     [Test]
@@ -101,7 +101,7 @@ internal class GenerateDirectionsCommandHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.IsError, Is.True);
+        result.IsError.ShouldBeTrue();
     }
 
     [Test]
@@ -111,6 +111,6 @@ internal class GenerateDirectionsCommandHandlerTests
         var message = _fixture.Create<string>();
         _context.WithException(message);
         var result = await _context.Sut.Handle(command, CancellationToken.None);
-        Assert.That(result.Error?.Message, Is.EqualTo(message));
+        result.Error!.Value.Message.ShouldBe(message);
     }
 }

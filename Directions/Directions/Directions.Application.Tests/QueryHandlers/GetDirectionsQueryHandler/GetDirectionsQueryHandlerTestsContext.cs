@@ -2,7 +2,6 @@
 using Microservices.Shared.Mocks;
 using Directions.Application.ExternalApi;
 using Directions.Application.Queries.GetDirections;
-using NSubstitute;
 
 using EventDirections = Microservices.Shared.Events.Directions;
 

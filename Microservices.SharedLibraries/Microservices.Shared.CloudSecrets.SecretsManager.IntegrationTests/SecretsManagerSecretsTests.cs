@@ -1,5 +1,3 @@
-using AutoFixture;
-
 namespace Microservices.Shared.CloudSecrets.SecretsManager.IntegrationTests;
 
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
@@ -21,16 +19,35 @@ public class SecretsManagerSecretsTests : IDisposable
     [Test]
     public async Task GetSecretsAsync_returns_secrets_when_exist()
     {
+        // http://localhost:10083/secrets/vaults/infrastructure
+
+        // HTTP/1.1 200 OK
+        // Content-Type: application/json; charset=utf-8
+        // Date: Wed, 29 Jan 2025 15:48:01 GMT
+        // Server: Kestrel
+        // Transfer-Encoding: chunked
+        //
+        // {"rabbit.user":"admin","rabbit.password":"P@ssw0rd","rabbit.vhost":"microservices"}
         var secrets = await _context.Sut.GetSecretsAsync(_vault);
-        Assert.That(secrets, Is.Not.Null.Or.Empty);
+        secrets.ShouldNotBeNull();
+        secrets.ShouldNotBeEmpty();
     }
 
     [Test]
     public async Task GetSecretsAsync_returns_empty_when_does_not_exist()
     {
+        // http://localhost:10083/secrets/vaults/infrastructure
+
+        // HTTP/1.1 200 OK
+        // Content-Type: application/json; charset=utf-8
+        // Date: Wed, 29 Jan 2025 15:48:01 GMT
+        // Server: Kestrel
+        // Transfer-Encoding: chunked
+        //
+        // {}
         var vault = _fixture.Create<string>();
         var secrets = await _context.Sut.GetSecretsAsync(vault);
-        Assert.That(secrets, Is.Empty);
+        secrets.ShouldBeEmpty();
     }
 
     [Test]
@@ -38,7 +55,7 @@ public class SecretsManagerSecretsTests : IDisposable
     {
         _context.WithForbiddenResponse();
         var secrets = await _context.Sut.GetSecretsAsync(_vault);
-        Assert.That(secrets, Is.Empty);
+        secrets.ShouldBeEmpty();
     }
 
     [Test]
@@ -46,7 +63,7 @@ public class SecretsManagerSecretsTests : IDisposable
     {
         _context.WithProblemResponse();
         var secrets = await _context.Sut.GetSecretsAsync(_vault);
-        Assert.That(secrets, Is.Empty);
+        secrets.ShouldBeEmpty();
     }
 
     [Test]
@@ -54,7 +71,7 @@ public class SecretsManagerSecretsTests : IDisposable
     {
         _context.WithUnknownHost();
         var secrets = await _context.Sut.GetSecretsAsync(_vault);
-        Assert.That(secrets, Is.Empty);
+        secrets.ShouldBeEmpty();
     }
 
     [Test]
@@ -69,7 +86,7 @@ public class SecretsManagerSecretsTests : IDisposable
     public async Task GetSecretValueAsync_returns_secrets_when_exist()
     {
         var value = await _context.Sut.GetSecretValueAsync(_vault, _secret);
-        Assert.That(value, Is.EqualTo(_value));
+        value.ShouldBe(_value);
     }
 
     [Test]
@@ -77,7 +94,7 @@ public class SecretsManagerSecretsTests : IDisposable
     {
         var vault = _fixture.Create<string>();
         var value = await _context.Sut.GetSecretValueAsync(vault, _secret);
-        Assert.That(value, Is.Null);
+        value.ShouldBeNull();
     }
 
     [Test]
@@ -85,7 +102,7 @@ public class SecretsManagerSecretsTests : IDisposable
     {
         var secret = _fixture.Create<string>();
         var value = await _context.Sut.GetSecretValueAsync(_vault, secret);
-        Assert.That(value, Is.Null);
+        value.ShouldBeNull();
     }
 
     [Test]
@@ -93,7 +110,7 @@ public class SecretsManagerSecretsTests : IDisposable
     {
         _context.WithForbiddenResponse();
         var value = await _context.Sut.GetSecretValueAsync(_vault, _secret);
-        Assert.That(value, Is.Null);
+        value.ShouldBeNull();
     }
 
     [Test]
@@ -101,7 +118,7 @@ public class SecretsManagerSecretsTests : IDisposable
     {
         _context.WithProblemResponse();
         var value = await _context.Sut.GetSecretValueAsync(_vault, _secret);
-        Assert.That(value, Is.Null);
+        value.ShouldBeNull();
     }
 
     [Test]
@@ -109,7 +126,7 @@ public class SecretsManagerSecretsTests : IDisposable
     {
         _context.WithUnknownHost();
         var value = await _context.Sut.GetSecretValueAsync(_vault, _secret);
-        Assert.That(value, Is.Null);
+        value.ShouldBeNull();
     }
 
     [Test]

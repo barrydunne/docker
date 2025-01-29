@@ -1,5 +1,4 @@
 ﻿using Microservices.Shared.Mocks;
-using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core.Abstractions;

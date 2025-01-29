@@ -17,7 +17,7 @@ internal class EmailRepositoryTests : IDisposable
         var entity = _fixture.Build<SentEmail>().Without(_ => _.Id).Create();
         await _context.Sut.InsertAsync(entity);
         var saved = await _context.Sut.GetEmailsSentToRecipientAsync(entity.RecipientEmail, 0, 1);
-        Assert.That(saved.FirstOrDefault(_ => _.JobId == entity.JobId)?.Id, Is.Not.Null);
+        (saved.FirstOrDefault(_ => _.JobId == entity.JobId)?.Id).ShouldNotBeNull();
     }
 
     [Test]
@@ -29,7 +29,7 @@ internal class EmailRepositoryTests : IDisposable
         var take = pageSize;
         var expected = _context.SeedData.OrderBy(_ => _.SentTime).Skip(skip).Take(take);
         var actual = await _context.Sut.GetEmailsSentToRecipientAsync(_context.SeedData.First().RecipientEmail, skip, take);
-        Assert.That(string.Join(", ", actual.Select(_ => _.JobId)), Is.EqualTo(string.Join(", ", expected.Select(_ => _.JobId))));
+        string.Join(", ", actual.Select(_ => _.JobId)).ShouldBe(string.Join(", ", expected.Select(_ => _.JobId)));
     }
 
     [Test]
@@ -43,7 +43,7 @@ internal class EmailRepositoryTests : IDisposable
         var end = new DateTimeOffset(DateTime.Today.AddDays(50));
         var expected = _context.SeedData.Where(_ => _.SentTime >= start && _.SentTime <= end).OrderBy(_ => _.SentTime).Skip(skip).Take(take);
         var actual = await _context.Sut.GetEmailsSentBetweenTimesAsync(start, end, skip, take);
-        Assert.That(string.Join(", ", actual.Select(_ => _.JobId)), Is.EqualTo(string.Join(", ", expected.Select(_ => _.JobId))));
+        string.Join(", ", actual.Select(_ => _.JobId)).ShouldBe(string.Join(", ", expected.Select(_ => _.JobId)));
     }
 
     protected virtual void Dispose(bool disposing)

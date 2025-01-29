@@ -18,7 +18,7 @@ public class AwsSecretsTests
         var vaultSecrets = _fixture.Create<Dictionary<string, string>>();
         _context.WithVault(vault, vaultSecrets);
         var secrets = await _context.Sut.GetSecretsAsync(vault);
-        Assert.That(secrets, Is.EquivalentTo(vaultSecrets));
+        secrets.ShouldBeEquivalentTo(vaultSecrets);
     }
 
     [Test]
@@ -29,7 +29,7 @@ public class AwsSecretsTests
         _context.WithVault(vault, vaultSecrets);
         await _context.Sut.GetSecretsAsync(vault);
         var secrets = await _context.Sut.GetSecretsAsync(vault);
-        Assert.That(secrets, Is.EquivalentTo(vaultSecrets));
+        secrets.ShouldBeEquivalentTo(vaultSecrets);
     }
 
     [Test]
@@ -48,12 +48,16 @@ public class AwsSecretsTests
     {
         var vault = _fixture.Create<string>();
         var secrets = await _context.Sut.GetSecretsAsync(vault);
-        Assert.That(secrets, Is.Empty);
+        secrets.ShouldBeEmpty();
     }
 
     [Test]
-    public void GetSecretsAsync_guards_against_missing_vault_argument()
-        => Assert.That(async () => await _context.Sut.GetSecretsAsync(string.Empty), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input vault was empty. (Parameter 'vault')"));
+    public async Task GetSecretsAsync_guards_against_missing_vault_argument()
+    {
+        async Task<Dictionary<string, string>> func() => await _context.Sut.GetSecretsAsync(string.Empty);
+        var ex = await func().ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldBe("Required input vault was empty. (Parameter 'vault')");
+    }
 
     [Test]
     public async Task GetSecretValueAsync_returns_secrets_when_exist()
@@ -64,7 +68,7 @@ public class AwsSecretsTests
         // Pick a random secret
         var secret = vaultSecrets.Keys.OrderBy(_ => Random.Shared.NextDouble()).First();
         var value = await _context.Sut.GetSecretValueAsync(vault, secret);
-        Assert.That(value, Is.EqualTo(vaultSecrets[secret]));
+        value.ShouldBe(vaultSecrets[secret]);
     }
 
     [Test]
@@ -76,7 +80,7 @@ public class AwsSecretsTests
         // Pick a random secret
         var secret = vaultSecrets.Keys.OrderBy(_ => Random.Shared.NextDouble()).First();
         var value = await _context.Sut.GetSecretValueAsync(vault, secret);
-        Assert.That(value, Is.EqualTo(vaultSecrets[secret]));
+        value.ShouldBe(vaultSecrets[secret]);
     }
 
     [Test]
@@ -85,7 +89,7 @@ public class AwsSecretsTests
         var vault = _fixture.Create<string>();
         var secret = _fixture.Create<string>();
         var value = await _context.Sut.GetSecretValueAsync(vault, secret);
-        Assert.That(value, Is.Null);
+        value.ShouldBeNull();
     }
 
     [Test]
@@ -96,7 +100,7 @@ public class AwsSecretsTests
         _context.WithVault(vault, vaultSecrets);
         var secret = _fixture.Create<string>();
         var value = await _context.Sut.GetSecretValueAsync(vault, secret);
-        Assert.That(value, Is.Null);
+        value.ShouldBeNull();
     }
 
     [Test]
@@ -106,7 +110,7 @@ public class AwsSecretsTests
         _context.WithBlankVault(vault);
         var secret = _fixture.Create<string>();
         var value = await _context.Sut.GetSecretValueAsync(vault, secret);
-        Assert.That(value, Is.Null);
+        value.ShouldBeNull();
     }
 
     [Test]
@@ -116,7 +120,7 @@ public class AwsSecretsTests
         _context.WithUnsuccessfulResponse();
         var secret = _fixture.Create<string>();
         var value = await _context.Sut.GetSecretValueAsync(vault, secret);
-        Assert.That(value, Is.Null);
+        value.ShouldBeNull();
     }
 
     [Test]
@@ -128,16 +132,20 @@ public class AwsSecretsTests
     }
 
     [Test]
-    public void GetSecretValueAsync_guards_against_missing_vault_argument()
+    public async Task GetSecretValueAsync_guards_against_missing_vault_argument()
     {
         var secret = _fixture.Create<string>();
-        Assert.That(async () => await _context.Sut.GetSecretValueAsync(string.Empty, secret), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input vault was empty. (Parameter 'vault')"));
+        async Task<string?> func() => await _context.Sut.GetSecretValueAsync(string.Empty, secret);
+        var ex = await func().ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldBe("Required input vault was empty. (Parameter 'vault')");
     }
 
     [Test]
-    public void GetSecretValueAsync_guards_against_missing_secret_argument()
+    public async Task GetSecretValueAsync_guards_against_missing_secret_argument()
     {
         var vault = _fixture.Create<string>();
-        Assert.That(async () => await _context.Sut.GetSecretValueAsync(vault, string.Empty), Throws.TypeOf<ArgumentException>().With.Property("Message").EqualTo("Required input secret was empty. (Parameter 'secret')"));
+        async Task<string?> func() => await _context.Sut.GetSecretValueAsync(vault, string.Empty);
+        var ex = await func().ShouldThrowAsync<ArgumentException>();
+        ex.Message.ShouldBe("Required input secret was empty. (Parameter 'secret')");
     }
 }
