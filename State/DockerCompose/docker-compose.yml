@@ -10,7 +10,7 @@ networks:
 services:
 
   mongo.microservices-state:
-    image: mongo:7.0.2
+    image: mongo:8.0.4
     container_name: mongo.microservices-state
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin

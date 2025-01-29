@@ -92,7 +92,7 @@ internal class RabbitMQQueueTestsContext : IDisposable
         var script = mem.ToArray().Where(_ => _ != 13).ToArray();
 
         var builder = new ContainerBuilder()
-            .WithImage("rabbitmq:3.12.7-management")
+            .WithImage("rabbitmq:4.0.5-management")
             .WithName($"RabbitMQQueueTests.Node{node}_{Guid.NewGuid():N}")
             .WithPortBinding(5672, true)
             .WithPortBinding(15672, true)

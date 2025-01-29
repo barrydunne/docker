@@ -25,7 +25,7 @@ To use real external services API keys are required and the services must be ena
   - Run `./Scripts/build-all.ps1` to build and run all services followed by a full synthetic end-to-end test that posts a new request and verifies the final email is received.
   - Use the API at http://localhost:11080/ to post requests. (_An endpoint is available to generate authentication tokens required to make requests_)
   - Check the notification emails at http://localhost:17080 (_Emails are caught here and not sent publicly_)
-  - View logs at http://localhost:10081/#/events?range=1d&signal=signal-17&tail
+  - View logs at http://localhost:10081/#/events?range=1d&signal=signal-19&tail
   - View the metrics at http://localhost:10088/dashboards
 
 ## Sample
@@ -432,7 +432,7 @@ Aspire Dashboard - http://localhost:10089
 | ------------| -------------- | -------------- | -------------------- | ------- |
 | 172.30.0.2  | 10672*, 10692* | Infrastructure | RabbitMQ node 1      | http://localhost:10672 (admin / P@ssw0rd) http://localhost:10692/metrics |
 | 172.30.0.3  | 10673*, 10693* | Infrastructure | RabbitMQ node 2      | http://localhost:10673 (admin / P@ssw0rd) http://localhost:10693/metrics |
-| 172.30.0.4  | 10081          | Infrastructure | **Seq**              | http://localhost:10081/#/events?range=1d&signal=signal-17&tail |
+| 172.30.0.4  | 10081          | Infrastructure | **Seq**              | http://localhost:10081/#/events?range=1d&signal=signal-19&tail |
 | 172.30.0.5  |                | Infrastructure | Seq Init             |  |
 | 172.30.0.6  | 10082*         | Infrastructure | Prometheus           | http://localhost:10082 |
 | 172.30.0.7  | 10088          | Infrastructure | **Grafana**          | http://localhost:10088/d/publicapi/public-api?orgId=1&refresh=5s&from=now-1h&to=now |

@@ -74,7 +74,7 @@ services:
       - rabbitmq1.microservices-infrastructure
 
   seq.microservices-infrastructure:
-    image: datalust/seq:2023.4
+    image: datalust/seq:2024.3
     container_name: seq.microservices-infrastructure
     environment:
       - ACCEPT_EULA=Y
@@ -182,7 +182,7 @@ services:
       retries: 10
 
   redis.microservices-infrastructure:
-    image: redis:7.2.2
+    image: redis:7.4.2
     container_name: redis.microservices-infrastructure
     restart: unless-stopped
     networks:
@@ -212,7 +212,7 @@ services:
       - redis.microservices-infrastructure
 
   redis-metrics.microservices-infrastructure:
-    image: oliver006/redis_exporter:v1.55.0
+    image: oliver006/redis_exporter:v1.67.0
     container_name: redis-metrics.microservices-infrastructure
     environment:
       REDIS_ADDR: "redis:6379"

@@ -26,7 +26,7 @@ internal class SecretsManagerSecretsTestsContext : IDisposable
         // Run a container with simulated API responses.
         var conf = GetNginxConf();
         _containerApi = new ContainerBuilder()
-            .WithImage("nginx:1.25.3")
+            .WithImage("nginx:1.27.3")
             .WithName($"SecretsManagerTests.Nginx_{Guid.NewGuid():N}")
             .WithResourceMapping(conf, "/etc/nginx/conf.d/default.conf")
             .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(80))

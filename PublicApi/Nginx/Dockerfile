@@ -1,4 +1,4 @@
-FROM nginx:1.25.3
+FROM nginx:1.27.3
 ADD conf.d /etc/nginx/conf.d
 
 # Health check to verify container is running OK

@@ -15,7 +15,7 @@ function Invoke-Tests {
         exit 1
     }
 }
-<#
+
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudEmail.Aws.UnitTests/Microservices.Shared.CloudEmail.Aws.UnitTests.csproj' -includeAssembly 'Microservices.Shared.CloudEmail.Aws' -coverageName 'cea.u'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudEmail.Aws.IntegrationTests/Microservices.Shared.CloudEmail.Aws.IntegrationTests.csproj' -includeAssembly 'Microservices.Shared.CloudEmail.Aws' -coverageName 'cea.i'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudEmail.Smtp.UnitTests/Microservices.Shared.CloudEmail.Smtp.UnitTests.csproj' -includeAssembly 'Microservices.Shared.CloudEmail.Smtp' -coverageName 'ce.u'
@@ -31,7 +31,6 @@ Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.CloudSe
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.Queues.RabbitMQ.UnitTests/Microservices.Shared.Queues.RabbitMQ.UnitTests.csproj' -includeAssembly 'Microservices.Shared.Queues.RabbitMQ' -coverageName 'mq.u'
 Invoke-Tests -csproj 'Microservices.SharedLibraries/Microservices.Shared.Queues.RabbitMQ.IntegrationTests/Microservices.Shared.Queues.RabbitMQ.IntegrationTests.csproj' -includeAssembly 'Microservices.Shared.Queues.RabbitMQ' -coverageName 'mq.i'
 Invoke-Tests -csproj 'Infrastructure/SecretsManager/SecretsManager.Application.Tests/SecretsManager.Application.Tests.csproj' -includeAssembly 'SecretsManager.Application' -coverageName 'sm.a'
-#>
 Invoke-Tests -csproj 'PublicApi/PublicApi/PublicApi.Application.Tests/PublicApi.Application.Tests.csproj' -includeAssembly 'PublicApi.Application' -coverageName 'p.a'
 Invoke-Tests -csproj 'PublicApi/PublicApi/PublicApi.Infrastructure.IntegrationTests/PublicApi.Infrastructure.IntegrationTests.csproj' -includeAssembly 'PublicApi.Infrastructure' -coverageName 'p.r'
 Invoke-Tests -csproj 'State/State/State.Application.Tests/State.Application.Tests.csproj' -includeAssembly 'State.Application' -coverageName 's.a'

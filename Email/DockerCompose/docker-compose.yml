@@ -10,9 +10,8 @@ networks:
 services:
 
   mysql.microservices-email:
-    image: mysql:8.1
+    image: mysql:9.2
     container_name: mysql.microservices-email
-    command: --default-authentication-plugin=caching_sha2_password
     environment:
       - MYSQL_DATABASE=email
       - MYSQL_USER=admin

@@ -32,7 +32,7 @@ internal class EmailRepositoryTestsContext : IDisposable
         _database = _fixture.Create<string>();
 
         _container = new MySqlBuilder()
-            .WithImage("mysql:8.1")
+            .WithImage("mysql:9.2")
             .WithName($"EmailRepositoryTests.MySql_{Guid.NewGuid():N}")
             .WithUsername("integration.tests")
             .WithPassword("password")

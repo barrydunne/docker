@@ -22,7 +22,7 @@ internal class FtpFilesTestsContext : IDisposable
     internal FtpFilesTestsContext()
     {
         var builder = new ContainerBuilder()
-            .WithImage("ubuntu/nginx:1.18-20.04_beta") // nginx is just a convenient image to use to get an ubuntu container to work with
+            .WithImage("ubuntu/nginx:1.26-24.10_edge") // nginx is just a convenient image to use to get an ubuntu container to work with
             .WithName($"FtpFilesTests.FTP_{Guid.NewGuid():N}")
             .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(80))
             .WithPortBinding(10020, 20)

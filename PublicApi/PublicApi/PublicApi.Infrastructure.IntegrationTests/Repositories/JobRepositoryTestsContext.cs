@@ -31,7 +31,7 @@ internal class JobRepositoryTestsContext : IDisposable
          */
 
         _container = new MongoDbBuilder()
-            .WithImage("mongo:7.0.2")
+            .WithImage("mongo:8.0.4")
             .WithName($"JobRepositoryTests.Mongo_{Guid.NewGuid():N}")
             .WithUsername("integration.tests")
             .WithPassword("password")
