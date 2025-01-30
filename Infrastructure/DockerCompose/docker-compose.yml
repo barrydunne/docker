@@ -129,6 +129,10 @@ services:
         ipv4_address: 172.30.0.6
     ports:
       - 10082:9090 # HTTP
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--log.level=debug"
+      - "--web.enable-lifecycle"
     healthcheck:
       test: ["CMD-SHELL", "wget --spider -q http://localhost:9090/-/healthy"]
       interval: 30s
