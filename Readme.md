@@ -23,7 +23,7 @@ To use real external services API keys are required and the services must be ena
 
   - Have Docker installed and running, have .net 8 SDK installed.
   - Run `./Scripts/build-all.ps1` to build and run all services followed by a full synthetic end-to-end test that posts a new request and verifies the final email is received.
-  - Use the API at http://localhost:11080/ to post requests. (_An endpoint is available to generate authentication tokens required to make requests_)
+  - Use the API at http://localhost:11080/ to post requests. Documentation is at http://localhost:11080/docs/. (_An endpoint is available to generate authentication tokens required to make requests_)
   - Check the notification emails at http://localhost:17080 (_Emails are caught here and not sent publicly_)
   - View logs at http://localhost:10081/#/events?range=1d&signal=signal-19&tail
   - View the metrics at http://localhost:10088/dashboards

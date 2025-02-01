@@ -15,7 +15,7 @@ using IoC = Email.Api.IoC;
 
 await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
-    .WithSwagger()
+    .WithSwagger(title: "Email API")
     .WithHealthHandler()
     .WithServices(IoC.RegisterServices)
     .WithEndpoints(Endpoints.Map)

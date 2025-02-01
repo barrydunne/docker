@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNet.KickStarter" Version="1.2.3" />
+    <PackageReference Include="AspNet.KickStarter" Version="1.3.0" />
     <PackageReference Include="Mapster" Version="7.4.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="OpenTelemetry.Contrib.Instrumentation.AWS" Version="1.0.2" />

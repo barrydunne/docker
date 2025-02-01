@@ -10,7 +10,7 @@ using OpenTelemetry.Trace;
 
 await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
-    .WithSwagger()
+    .WithSwagger(title: "Directions API")
     .WithHealthHandler()
     .WithServices(IoC.RegisterServices)
     .WithEndpoints(Endpoints.Map)

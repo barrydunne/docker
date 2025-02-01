@@ -15,7 +15,7 @@ using System.Net;
 
 await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
-    .WithSwagger()
+    .WithSwagger(title: "Imaging API")
     .WithHealthHandler()
     .WithServices(IoC.RegisterServices)
     .WithEndpoints(Endpoints.Map)

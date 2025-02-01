@@ -14,7 +14,7 @@ using State.Application.Commands.UpdateWeatherResult;
 
 await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
-    .WithSwagger()
+    .WithSwagger(title: "State API")
     .WithHealthHandler()
     .WithServices(IoC.RegisterServices)
     .WithEndpoints(Endpoints.Map)

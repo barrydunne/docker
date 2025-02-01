@@ -14,7 +14,7 @@ using System.Text.Json.Serialization;
 
 await new ApiBuilder()
     .WithSerilog(msg => Console.WriteLine($"Serilog: {msg}"))
-    .WithSwagger(useBearerToken: true)
+    .WithSwagger(title: "Public API", useBearerToken: true)
     .WithHealthHandler()
     .WithServices(IoC.RegisterServices)
     .WithEndpoints(Endpoints.Map)
